@@ -1,14 +1,18 @@
 #include "WidgetHandlePipeline.h"
 #include <cassert>
 
-void WidgetHandlePipeline::append(IWidget* widget)
+namespace rendell_ui
 {
-	assert(widget);
-	_widgets.insert(widget);
+	void WidgetHandlePipeline::append(IWidget* widget)
+	{
+		assert(widget);
+		_widgets.insert(widget);
+	}
+
+	void WidgetHandlePipeline::remove(IWidget* widget)
+	{
+		assert(widget);
+		_widgets.erase(widget);
+	}
 }
 
-void WidgetHandlePipeline::remove(IWidget* widget)
-{
-	assert(widget);
-	_widgets.erase(widget);
-}

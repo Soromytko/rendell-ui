@@ -4,7 +4,7 @@
 #include "WidgetHandlePipeline.h"
 #include "WidgetRenderPipeline.h"
 
-namespace rendell_widget
+namespace rendell_ui
 {
 	static WidgetRenderPipelineSharedPtr s_widgetRenderPipeline{ nullptr };
 

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace rendell_widget
+namespace rendell_ui
 {
 	bool init();
 	void release();

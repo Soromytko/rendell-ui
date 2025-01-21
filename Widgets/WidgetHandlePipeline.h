@@ -2,15 +2,18 @@
 #include <set>
 #include "IWidgetCollection.h"
 
-class WidgetHandlePipeline : public IWidgetCollection
+namespace rendell_ui
 {
-public:
-	WidgetHandlePipeline() = default;
-	~WidgetHandlePipeline() = default;
+	class WidgetHandlePipeline : public IWidgetCollection
+	{
+	public:
+		WidgetHandlePipeline() = default;
+		~WidgetHandlePipeline() = default;
 
-	void append(IWidget* widget) override;
-	void remove(IWidget* widget) override;
+		void append(IWidget* widget) override;
+		void remove(IWidget* widget) override;
 
-private:
-	std::set<IWidget*> _widgets{};
-};
+	private:
+		std::set<IWidget*> _widgets{};
+	};
+}

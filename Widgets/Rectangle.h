@@ -1,17 +1,20 @@
 #pragma once
 #include "Widget.h"
 
-class Rectangle : public Widget
+namespace rendell_ui
 {
-public:
-	Rectangle(Widget* parent = nullptr);
-	~Rectangle();
+	class Rectangle : public Widget
+	{
+	public:
+		Rectangle(Widget* parent = nullptr);
+		~Rectangle();
 
-	void draw() const override;
+		void draw() const override;
 
-private:
-	rendell::VertexArraySharedPtr _vertexArray;
+	private:
+		rendell::VertexArraySharedPtr _vertexArray;
 
-};
+	};
 
-typedef std::shared_ptr<Rectangle> RectangleSharedPtr;
+	typedef std::shared_ptr<Rectangle> RectangleSharedPtr;
+}

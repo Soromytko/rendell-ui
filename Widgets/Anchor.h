@@ -2,38 +2,41 @@
 #include <cstdint>
 #include <tuple>
 
-enum class Anchor : uint8_t
+namespace rendell_ui
 {
-	// Anchors
-	left,
-	right,
-	bottom,
-	top,
-	center,
-	leftBottom,
-	leftTop,
-	rightBottom,
-	rightTop,
+	enum class Anchor : uint8_t
+	{
+		// Anchors
+		left,
+		right,
+		bottom,
+		top,
+		center,
+		leftBottom,
+		leftTop,
+		rightBottom,
+		rightTop,
 
-	// Stretch
-	topStretch,
-	horizontalStretch,
-	bottomStretch,
-	leftStretch,
-	verticalStretch,
-	rightStretch,
-	middleStretch,
-};
+		// Stretch
+		topStretch,
+		horizontalStretch,
+		bottomStretch,
+		leftStretch,
+		verticalStretch,
+		rightStretch,
+		middleStretch,
+	};
 
-struct Margins
-{
-	float left;
-	float right;
-	float bottom;
-	float top;
-};
+	struct Margins
+	{
+		float left;
+		float right;
+		float bottom;
+		float top;
+	};
 
-inline bool operator==(const Margins& lhs, const Margins& rhs)
-{
-	return std::tie(lhs.left, lhs.right, lhs.bottom, lhs.top) == std::tie(rhs.left, rhs.right, rhs.bottom, rhs.top);
+	inline bool operator==(const Margins& lhs, const Margins& rhs)
+	{
+		return std::tie(lhs.left, lhs.right, lhs.bottom, lhs.top) == std::tie(rhs.left, rhs.right, rhs.bottom, rhs.top);
+	}
 }

@@ -3,16 +3,19 @@
 #include <memory>
 #include "IWidget.h"
 
-class IWidgetCollection
+namespace rendell_ui
 {
-protected:
-	IWidgetCollection() = default;
+	class IWidgetCollection
+	{
+	protected:
+		IWidgetCollection() = default;
 
-public:
-	~IWidgetCollection() = default;
+	public:
+		~IWidgetCollection() = default;
 
-	virtual void append(IWidget* value) = 0;
-	virtual void remove(IWidget* value) = 0;
-};
+		virtual void append(IWidget* value) = 0;
+		virtual void remove(IWidget* value) = 0;
+	};
 
-typedef std::shared_ptr<IWidgetCollection> IWidgetCollectionSharedPtr;
+	typedef std::shared_ptr<IWidgetCollection> IWidgetCollectionSharedPtr;
+}

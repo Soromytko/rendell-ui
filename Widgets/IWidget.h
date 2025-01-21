@@ -1,14 +1,17 @@
 #pragma once
 
-class IWidget
+namespace rendell_ui
 {
-protected:
-	IWidget() = default;
+	class IWidget
+	{
+	protected:
+		IWidget() = default;
 
-public:
-	virtual ~IWidget() = default;
+	public:
+		virtual ~IWidget() = default;
 
-	virtual void updateRecursively() = 0;
-	virtual void draw() const = 0;
+		virtual void updateRecursively() = 0;
+		virtual void draw() const = 0;
 
-};
+	};
+}
