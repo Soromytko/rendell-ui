@@ -1,3 +1,6 @@
 [submodule "rendell-text"]
 	path = rendell-text
 	url = https://github.com/Soromytko/rendell-text
+[submodule "glm"]
+	path = glm
+	url = https://github.com/g-truc/glm.git
