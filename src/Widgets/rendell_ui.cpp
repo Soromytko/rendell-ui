@@ -1,5 +1,4 @@
-#include "rendell_widget.h"
-#include "rendell_widget.h"
+#include "rendell_ui.h"
 #include "WidgetRegistrator.h"
 #include "WidgetHandlePipeline.h"
 #include "WidgetRenderPipeline.h"
