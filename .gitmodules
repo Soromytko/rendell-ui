@@ -10,3 +10,6 @@
 [submodule "glfw"]
 	path = glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "rendell"]
+	path = rendell
+	url = https://github.com/Soromytko/rendell.git
