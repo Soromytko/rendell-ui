@@ -19,15 +19,6 @@ set(SOURCE_FILES
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
     src/Shaders/RectangleShader.cpp
-
-    rendell-text/src/rendell_text.cpp
-    rendell-text/src/FontRaster.cpp
-    rendell-text/src/TextRenderer.cpp
-    rendell-text/src/TextBuffer.cpp
-    rendell-text/src/GlyphBuffer.cpp
-    rendell-text/src/TextBatch.cpp
-    rendell-text/src/RasteredFontStorage.cpp
-    rendell-text/src/RasteredFontStorageManager.cpp
 )
 
 set(HEADER_FILES
@@ -44,15 +35,6 @@ set(HEADER_FILES
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h
     src/Shaders/RectangleShader.h
-
-    rendell-text/src/rendell_text.h
-    rendell-text/src/FontRaster.h
-    rendell-text/src/TextRenderer.h
-    rendell-text/src/TextBuffer.h
-    rendell-text/src/GlyphBuffer.h
-    rendell-text/src/TextBatch.h
-    rendell-text/src/RasteredFontStorage.h
-    rendell-text/src/RasteredFontStorageManager.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
@@ -71,11 +53,13 @@ target_link_libraries(${BINARY_NAME} glfw)
 add_subdirectory(freetype)
 target_link_libraries(${BINARY_NAME} freetype)
 
-# Rendell-text
-target_include_directories(${BINARY_NAME} PUBLIC rendell-text/include)
-
 # rendell
-target_include_directories(${BINARY_NAME} PUBLIC ${RENDELL_INCLUDE_DIRECTORIES})
+target_link_libraries(${BINARY_NAME} ${RENDELL_LIB})
 
 # Glm
-target_include_directories(${BINARY_NAME} PUBLIC ${GLM_INCLUDE_DIRECTORIES})
+target_link_libraries(${BINARY_NAME} ${GLM_LIB})
+
+# Rendell-text
+set(FREETYPE_LIB freetype)
+add_subdirectory(rendell-text)
+target_link_libraries(${BINARY_NAME} rendell_text)
