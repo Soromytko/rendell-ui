@@ -27,6 +27,11 @@ namespace rendell_ui
 		s_instance = nullptr;
 	}
 
+	bool WidgetRegistrator::hasInstance()
+	{
+		return s_instance != nullptr;
+	}
+
 	WidgetRegistrator* WidgetRegistrator::getInstance()
 	{
 		assert(s_instance);

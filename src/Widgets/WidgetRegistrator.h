@@ -15,6 +15,7 @@ namespace rendell_ui
 
 		static void init(std::initializer_list<IWidgetCollectionSharedPtr> collections);
 		static void release();
+		static bool hasInstance();
 		static WidgetRegistrator* getInstance();
 
 		void registerWidget(IWidget* widget);

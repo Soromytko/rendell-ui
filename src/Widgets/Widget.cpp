@@ -15,7 +15,10 @@ namespace rendell_ui
 
 	Widget::~Widget()
 	{
-		WidgetRegistrator::getInstance()->unregisterWidget(this);
+		if (WidgetRegistrator::hasInstance())
+		{
+			WidgetRegistrator::getInstance()->unregisterWidget(this);
+		}
 
 		for (Widget* widget : _children)
 		{
