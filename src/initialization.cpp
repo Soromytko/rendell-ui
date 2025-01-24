@@ -1,7 +1,8 @@
-#include "rendell_ui.h"
-#include "WidgetRegistrator.h"
-#include "WidgetHandlePipeline.h"
-#include "WidgetRenderPipeline.h"
+#include "initialization.h"
+#include "Shaders/ShaderStorage.h"
+#include "Widgets/WidgetRegistrator.h"
+#include "Widgets/WidgetHandlePipeline.h"
+#include "Widgets/WidgetRenderPipeline.h"
 
 namespace rendell_ui
 {
@@ -16,12 +17,15 @@ namespace rendell_ui
 			s_widgetRenderPipeline,
 			});
 
+		ShaderStorage::init();
+
 		return true;
 	}
 
 	void release()
 	{
 		WidgetRegistrator::release();
+		ShaderStorage::release();
 	}
 
 	void draw()

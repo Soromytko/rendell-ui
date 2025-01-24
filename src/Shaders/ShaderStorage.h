@@ -3,18 +3,21 @@
 #include "Shader.h"
 #include "RectangleShader.h"
 
-class ShaderStorage final
+namespace rendell_ui
 {
-private:
-	ShaderStorage();
+	class ShaderStorage final
+	{
+	private:
+		ShaderStorage();
 
-public:
-	~ShaderStorage() = default;
+	public:
+		~ShaderStorage() = default;
 
-	static void init();
-	static void release();
-	static ShaderStorage* getInstance();
+		static void init();
+		static void release();
+		static ShaderStorage* getInstance();
 
-	const RectangleShaderUniquePtr rectangleShader;
+		const RectangleShaderUniquePtr rectangleShader;
 
-};
+	};
+}
