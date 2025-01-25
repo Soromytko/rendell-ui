@@ -202,7 +202,18 @@ namespace rendell_ui
 			_transform.setPosition(
 				parentPosition +
 				glm::vec2(-halfParentSize.x, -halfParentSize.y) +
-				glm::vec2(_margins.left, _margins.bottom) -
+				glm::vec2(_margins.left, _margins.bottom) +
+				_size * glm::vec2(0.5f, 0.5f) +
+				_offset
+			);
+			break;
+		}
+		case Anchor::leftTop:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(-halfParentSize.x, halfParentSize.y) +
+				glm::vec2(_margins.left, -_margins.top) +
 				_size * glm::vec2(0.5f, -0.5f) +
 				_offset
 			);
@@ -219,6 +230,17 @@ namespace rendell_ui
 			);
 			break;
 		}
+		case Anchor::rightTop:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(halfParentSize.x, halfParentSize.y) +
+				glm::vec2(-_margins.right, -_margins.top) +
+				_size * glm::vec2(-0.5f, -0.5f) +
+				_offset
+			);
+			break;
+		}
 		case Anchor::topStretch:
 		{
 			_transform.setPosition(
@@ -231,7 +253,63 @@ namespace rendell_ui
 			_size.x = parentSize.x - _margins.left - _margins.right;
 			break;
 		}
-		case Anchor::middleStretch:
+		case Anchor::horizontalStretch:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2((_margins.left - _margins.right) * 0.5f, 0.0f) +
+				_offset
+			);
+			_size.x = parentSize.x - _margins.left - _margins.right;
+			break;
+		}
+		case Anchor::bottomStretch:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(0.0f, -halfParentSize.y) +
+				glm::vec2((_margins.left - _margins.right) * 0.5f, _margins.bottom) +
+				glm::vec2(0.0f, _size.y * 0.5f) +
+				_offset
+			);
+			_size.x = parentSize.x - _margins.left - _margins.right;
+			break;
+		}
+		case Anchor::leftStretch:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(-halfParentSize.x, 0.0f) +
+				glm::vec2(_margins.left, (_margins.bottom - _margins.top) * 0.5f) +
+				glm::vec2(_size.x * 0.5f, 0.0f) +
+				_offset
+			);
+			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			break;
+		}
+		case Anchor::verticalStretch:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(0.0f, (_margins.bottom - _margins.top) * 0.5f) +
+				_offset
+			);
+			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			break;
+		}
+		case Anchor::rightStretch:
+		{
+			_transform.setPosition(
+				parentPosition +
+				glm::vec2(halfParentSize.x, 0.0f) +
+				glm::vec2(-_margins.right, (_margins.bottom - _margins.top) * 0.5f) +
+				glm::vec2(-_size.x * 0.5f, 0.0f) +
+				_offset
+			);
+			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			break;
+		}
+		case Anchor::centerStretch:
 		{
 			_transform.setPosition(
 				parentPosition +

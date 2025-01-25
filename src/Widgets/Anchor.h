@@ -24,7 +24,7 @@ namespace rendell_ui
 		leftStretch,
 		verticalStretch,
 		rightStretch,
-		middleStretch,
+		centerStretch,
 	};
 
 	struct Margins
