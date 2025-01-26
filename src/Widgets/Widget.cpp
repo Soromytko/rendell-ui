@@ -26,6 +26,16 @@ namespace rendell_ui
 		}
 	}
 
+	void Widget::setVisible(bool value)
+	{
+		_visible = value;
+	}
+
+	bool Widget::getVisible() const
+	{
+		return _visible;
+	}
+
 	void Widget::setParent(Widget* widget)
 	{
 		if (_parent == widget || widget == this)

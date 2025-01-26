@@ -20,7 +20,10 @@ namespace rendell_ui
 	{
 		for (IWidget* widget : _widgets)
 		{
-			widget->draw();
+			if (widget->getVisible())
+			{
+				widget->draw();
+			}
 		}
 
 	}

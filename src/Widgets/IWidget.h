@@ -10,6 +10,8 @@ namespace rendell_ui
 	public:
 		virtual ~IWidget() = default;
 
+		virtual bool getVisible() const = 0;
+
 		virtual void updateRecursively() = 0;
 		virtual void draw() const = 0;
 
