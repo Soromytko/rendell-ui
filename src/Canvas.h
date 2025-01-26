@@ -20,6 +20,7 @@ namespace rendell_ui
 		ViewportSharedPtr getViewport() const;
 
 		virtual void onRefreshed(int width, int height);
+		virtual void onKeyInputted(int key, InputAction action);
 
 	private:
 		ViewportSharedPtr _viewport;

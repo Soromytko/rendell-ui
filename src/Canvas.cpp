@@ -45,5 +45,13 @@ namespace rendell_ui
 			widget->updateRecursively();
 		}
 	}
+
+	void Canvas::onKeyInputted(int key, InputAction action)
+	{
+		for (const WidgetSharedPtr& widget : _widgets)
+		{
+			widget->processKeyRecursively(key, action);
+		}
+	}
 	
 }

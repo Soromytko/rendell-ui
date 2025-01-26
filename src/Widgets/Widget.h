@@ -5,6 +5,7 @@
 #include "IWidget.h"
 #include "Anchor.h"
 #include "Transform2D.h"
+#include "../input.h"
 
 namespace rendell_ui
 {
@@ -46,9 +47,11 @@ namespace rendell_ui
 
 	public:
 		void updateRecursively();
+		void processKeyRecursively(int key, InputAction action);
 
 	protected:
 		void update();
+		virtual void processKey(int key, InputAction action) {};
 
 		bool _visible{ true };
 

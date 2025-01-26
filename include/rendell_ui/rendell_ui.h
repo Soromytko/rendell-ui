@@ -7,4 +7,5 @@
 
 #include "../../src/Widgets/Rectangle.h"
 #include "../../src/Widgets/Text.h"
+#include "../../src/Widgets/TextEdit.h"
 

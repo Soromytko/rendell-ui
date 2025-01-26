@@ -7,9 +7,9 @@ namespace rendell_ui
 	{
 	public:
 		Rectangle(Widget* parent = nullptr);
-		~Rectangle();
+		virtual ~Rectangle();
 
-		void draw() const override;
+		virtual void draw() const override;
 
 	private:
 		rendell::VertexArraySharedPtr _vertexArray;
