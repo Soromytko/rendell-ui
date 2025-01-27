@@ -1,4 +1,5 @@
 #include "initialization.h"
+#include "Time.h"
 #include "Shaders/ShaderStorage.h"
 #include "Widgets/WidgetRegistrator.h"
 #include "Widgets/WidgetHandlePipeline.h"
@@ -30,6 +31,7 @@ namespace rendell_ui
 
 	void draw()
 	{
+		Time::updateDeltaTime();
 		s_widgetRenderPipeline->draw();
 	}
 
