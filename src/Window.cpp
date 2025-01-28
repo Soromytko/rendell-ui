@@ -91,12 +91,19 @@ namespace rendell_ui
 		window->onResized(width, height);
 	}
 
+	void inputKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
+	{
+		Window* window = GET_WINDOW(glfwWindow);
+		window->onKeyInputted(key, convertGlfwActionToInputAction(action));
+	}
+
 	void Window::setupWindowCallbacks()
 	{
 		glfwSetWindowUserPointer(_glfwWindow, static_cast<void*>(this));
 
 		glfwSetFramebufferSizeCallback(_glfwWindow, resizeWindowCallback);
 		glfwSetWindowRefreshCallback(_glfwWindow, refreshWindowCallback);
+		glfwSetKeyCallback(_glfwWindow, inputKeyCallback);
 	}
 
 	bool Window::_glfwInitialized = false;

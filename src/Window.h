@@ -1,6 +1,7 @@
 #pragma once
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include "input.h"
 #include "Viewport.h"
 
 namespace rendell_ui
@@ -22,6 +23,7 @@ namespace rendell_ui
 
 		virtual void onRefreshed() {};
 		virtual void onResized(int width, int height) {};
+		virtual void onKeyInputted(int key, InputAction active) {};
 
 	private:
 		bool init();
