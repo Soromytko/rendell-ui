@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "input.h"
-#include "Viewport.h"
+#include "WindowEventHandler.h"
 
 namespace rendell_ui
 {
@@ -19,11 +19,10 @@ namespace rendell_ui
 		static bool isInitialized();
 		static int getWindowCount();
 
-		glm::ivec2 getSize() const;
+		void setEventHandler(WindowEventHandlerSharedPtr eventHandler);
 
-		virtual void onRefreshed() {};
-		virtual void onResized(int width, int height) {};
-		virtual void onKeyInputted(int key, InputAction active) {};
+		glm::ivec2 getSize() const;
+		WindowEventHandlerSharedPtr getEventHandler() const;
 
 	private:
 		bool init();
@@ -31,6 +30,7 @@ namespace rendell_ui
 
 	protected:
 		GLFWwindow* _glfwWindow;
+		WindowEventHandlerSharedPtr _eventHandler{ nullptr };
 		static bool _glfwInitialized;
 		static int _windowCount;
 

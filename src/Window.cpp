@@ -4,6 +4,8 @@
 
 namespace rendell_ui
 {
+	static WindowEventHandlerSharedPtr s_eventHandlerStub;
+
 	Window::Window(int width, int height, const char* title)
 	{
 		if (!init())
@@ -63,11 +65,21 @@ namespace rendell_ui
 		return _windowCount;
 	}
 
+	void Window::setEventHandler(WindowEventHandlerSharedPtr eventHandler)
+	{
+		_eventHandler = eventHandler;
+	}
+
 	glm::ivec2 Window::getSize() const
 	{
 		int width, height;
 		glfwGetFramebufferSize(_glfwWindow, &width, &height);
 		return glm::ivec2(width, height);
+	}
+
+	WindowEventHandlerSharedPtr Window::getEventHandler() const
+	{
+		return _eventHandler;
 	}
 
 	bool Window::init()
@@ -82,23 +94,33 @@ namespace rendell_ui
 	void refreshWindowCallback(GLFWwindow* glfwWindow)
 	{
 		Window* window = GET_WINDOW(glfwWindow);
-		window->onRefreshed();
+		WindowEventHandlerSharedPtr evnetHandler = window->getEventHandler();
+		glm::ivec2 windowSize = window->getSize();
+		evnetHandler->onRefreshed(windowSize.x, windowSize.y);
 	}
 
 	void resizeWindowCallback(GLFWwindow* glfwWindow, int width, int height)
 	{
-		Window* window = GET_WINDOW(glfwWindow);
-		window->onResized(width, height);
+		WindowEventHandlerSharedPtr evnetHandler = GET_WINDOW(glfwWindow)->getEventHandler();
+		evnetHandler->onResized(width, height);
 	}
 
 	void inputKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
 	{
-		Window* window = GET_WINDOW(glfwWindow);
-		window->onKeyInputted(key, convertGlfwActionToInputAction(action));
+		WindowEventHandlerSharedPtr evnetHandler = GET_WINDOW(glfwWindow)->getEventHandler();
+		evnetHandler->onKeyInputted(key, convertGlfwActionToInputAction(action));
 	}
 
 	void Window::setupWindowCallbacks()
 	{
+		if (!_eventHandler)
+		{
+			if (!s_eventHandlerStub)
+			{
+				s_eventHandlerStub = std::make_shared<WindowEventHandler>();
+			}
+			_eventHandler = s_eventHandlerStub;
+		}
 		glfwSetWindowUserPointer(_glfwWindow, static_cast<void*>(this));
 
 		glfwSetFramebufferSizeCallback(_glfwWindow, resizeWindowCallback);

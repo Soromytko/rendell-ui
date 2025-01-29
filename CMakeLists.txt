@@ -11,6 +11,7 @@ set(SOURCE_FILES
     src/Viewport.cpp
     src/Time.cpp
     src/input.cpp
+    src/Canvas.cpp
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
     src/Widgets/Rectangle.cpp
@@ -24,11 +25,13 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
+    src/WindowEventHandler.h
     src/initialization.h
     src/Window.h
     src/Viewport.h
     src/Time.h
     src/input.h
+    src/Canvas.h
     src/Widgets/Widget.h
     src/Widgets/Transform2D.h
     src/Widgets/Rectangle.h
