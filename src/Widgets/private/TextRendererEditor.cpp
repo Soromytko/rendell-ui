@@ -26,28 +26,33 @@ namespace rendell_ui
 		}
 	}
 
-	bool TextRendererEditor::moveCursorToPrevChar()
+	bool TextRendererEditor::moveCursorToPrevChar(uint32_t count)
 	{
-		if (_charIndex <= 0)
+		for (uint32_t i = 0; i < count; i++)
 		{
-			return false;
-		}
+			if (_charIndex <= 0)
+			{
+				return false;
+			}
 
-		_charIndex--;
-		_cursor->moveByDelta(-glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
+			_charIndex--;
+			_cursor->moveByDelta(-glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
+		}
 
 		return true;
 	}
 
-	bool TextRendererEditor::moveCursorToNextChar()
+	bool TextRendererEditor::moveCursorToNextChar(uint32_t count)
 	{
-		if (_charIndex >= _textRenderer->getText().length())
+		for (uint32_t i = 0; i < count; i++)
 		{
-			return false;
+			if (_charIndex + 1 >= _textRenderer->getText().length())
+			{
+				return false;
+			}
+			_cursor->moveByDelta(glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
+			_charIndex++;
 		}
-
-		_cursor->moveByDelta(glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
-		_charIndex++;
 
 		return true;
 	}
@@ -79,6 +84,41 @@ namespace rendell_ui
 		}
 		_cursor->moveTo(glm::vec2(offset, 0.0f));
 
+		return true;
+	}
+
+	bool TextRendererEditor::eraseCursorChar()
+	{
+		if (_charIndex > 0 && _charIndex <= _textRenderer->getText().length())
+		{
+			const size_t currentCharIndex = _charIndex - 1;
+			moveCursorToPrevChar();
+			_textRenderer->eraseChars(currentCharIndex, 1);
+			return true;
+		}
+		return false;
+	}
+
+	bool TextRendererEditor::eraseAllAfterCursor()
+	{
+		_textRenderer->eraseChars(_charIndex, _textRenderer->getText().length() - _charIndex);
+		return true;
+	}
+
+	bool TextRendererEditor::insertCursorChar(unsigned char character)
+	{
+		if (_charIndex >= 0 && _charIndex <= _textRenderer->getText().length())
+		{
+			_textRenderer->insertText(_charIndex, std::wstring{ character });
+			moveCursorToNextChar();
+			return true;
+		}
+		return false;
+	}
+
+	bool TextRendererEditor::insertAfterCursor(const std::wstring& string)	
+	{
+		_textRenderer->insertText(_charIndex, string);
 		return true;
 	}
 

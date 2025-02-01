@@ -160,6 +160,15 @@ namespace rendell_ui
 		}
 	}
 
+	void Widget::processCharRecursively(unsigned char character)
+	{
+		processChar(character);
+		for (Widget* widget : _children)
+		{
+			widget->processCharRecursively(character);
+		}
+	}
+
 	void Widget::update()
 	{
 		const glm::vec2 parentPosition = _parent ? _parent->_transform.getPosition() : glm::vec2(0.0f, 0.0f);

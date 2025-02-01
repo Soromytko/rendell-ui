@@ -20,6 +20,7 @@ namespace rendell_ui
 
 	private:
 		void processKey(int key, InputAction action);
+		void processChar(unsigned char character) override;
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextRendererSharedPtr> _lines{};

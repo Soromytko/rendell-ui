@@ -19,11 +19,16 @@ namespace rendell_ui
 		
 		void setTextRenderer(rendell_text::TextRendererSharedPtr value);
 
-		bool moveCursorToPrevChar();
-		bool moveCursorToNextChar();
+		bool moveCursorToPrevChar(uint32_t count = 1);
+		bool moveCursorToNextChar(uint32_t count = 1);
 		bool moveCursorToStart();
 		bool moveCursorToEnd();
 		bool moveCursorToNearest(size_t charIndex);
+
+		bool eraseCursorChar();
+		bool eraseAllAfterCursor();
+		bool insertCursorChar(unsigned char character);
+		bool insertAfterCursor(const std::wstring& string);
 
 	private:
 		Cursor* _cursor;

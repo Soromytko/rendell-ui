@@ -111,6 +111,12 @@ namespace rendell_ui
 		evnetHandler->onKeyInputted(key, convertGlfwActionToInputAction(action));
 	}
 
+	void inputCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint)
+	{
+		WindowEventHandlerSharedPtr evnetHandler = GET_WINDOW(glfwWindow)->getEventHandler();
+		evnetHandler->onCharInputted(codepoint);
+	}
+
 	void Window::setupWindowCallbacks()
 	{
 		if (!_eventHandler)
@@ -126,6 +132,7 @@ namespace rendell_ui
 		glfwSetFramebufferSizeCallback(_glfwWindow, resizeWindowCallback);
 		glfwSetWindowRefreshCallback(_glfwWindow, refreshWindowCallback);
 		glfwSetKeyCallback(_glfwWindow, inputKeyCallback);
+		glfwSetCharCallback(_glfwWindow, inputCharCallback);
 	}
 
 	bool Window::_glfwInitialized = false;

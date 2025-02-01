@@ -4,6 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
+#define KEY_ENTER 257
+#define KEY_TAB 258
+#define KEY_BACKSPACE 259
+#define KEY_DELETE 261
 #define KEY_RIGHT 262
 #define KEY_LEFT 263
 #define KEY_BOTTOM 264
@@ -132,6 +136,73 @@ namespace rendell_ui
 				_textEditor->updateRecursively();
 			}
 		}
+		else if (key == KEY_ENTER)
+		{
+			std::wstring remaningText{};
+			remaningText.insert(0, _lines[_currentRowIndex]->getText(),
+				_currentColumnIndex, _lines[_currentRowIndex]->getText().length() - _currentColumnIndex);
+			_currentRowIndex++;
+			_lines.insert(_lines.begin() + _currentRowIndex, createTextRenderer(std::move(remaningText), _fontSize));
+			_textEditor->eraseAllAfterCursor();
+			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			_textEditor->moveCursorToStart();
+			_textEditor->_offset.y -= _fontSize.y;
+			_textEditor->updateRecursively();
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_TAB)
+		{
+			static const std::wstring tabString = L"    ";
+			_textEditor->insertAfterCursor(tabString);
+			_textEditor->moveCursorToNextChar(tabString.length());
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_BACKSPACE)
+		{
+			if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
+			{
+				std::wstring remaningText = _lines[_currentRowIndex]->getText();
+				_lines.erase(_lines.begin() + _currentRowIndex);
+				_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
+				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+				_textEditor->moveCursorToEnd();
+				_textEditor->insertAfterCursor(remaningText);
+				_textEditor->_offset.y += _fontSize.y;
+				_textEditor->updateRecursively();
+			}
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_DELETE)
+		{
+			// TODO: Copy paste is here, refactoring is required.
+			if (!_textEditor->moveCursorToNextChar() && _currentRowIndex < _lines.size() - 1)
+			{
+				_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
+				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+				_textEditor->moveCursorToStart();
+				_textEditor->_offset.y -= _fontSize.y;
+				_textEditor->updateRecursively();
+			}
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
+			{
+				std::wstring remaningText = _lines[_currentRowIndex]->getText();
+				_lines.erase(_lines.begin() + _currentRowIndex);
+				_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
+				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+				_textEditor->moveCursorToEnd();
+				_textEditor->insertAfterCursor(remaningText);
+				_textEditor->_offset.y += _fontSize.y;
+				_textEditor->updateRecursively();
+			}
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+	}
+
+	void TextEdit::processChar(unsigned char character)
+	{
+		_textEditor->insertCursorChar(character);
+		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
 }

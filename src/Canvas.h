@@ -21,6 +21,7 @@ namespace rendell_ui
 
 		virtual void onRefreshed(int width, int height);
 		virtual void onKeyInputted(int key, InputAction action);
+		virtual void onCharInputted(unsigned char character) override;
 
 	private:
 		ViewportSharedPtr _viewport;

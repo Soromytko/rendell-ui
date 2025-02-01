@@ -13,6 +13,7 @@ namespace rendell_ui
 		virtual void onRefreshed(int width, int height) {};
 		virtual void onResized(int width, int height) {};
 		virtual void onKeyInputted(int key, InputAction active) {};
+		virtual void onCharInputted(unsigned char character) {};
 	};
 
 	typedef std::shared_ptr<WindowEventHandler> WindowEventHandlerSharedPtr;

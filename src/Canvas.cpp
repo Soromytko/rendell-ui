@@ -53,5 +53,13 @@ namespace rendell_ui
 			widget->processKeyRecursively(key, action);
 		}
 	}
+
+	void Canvas::onCharInputted(unsigned char character)
+	{
+		for (const WidgetSharedPtr& widget : _widgets)
+		{
+			widget->processCharRecursively(character);
+		}
+	}
 	
 }
