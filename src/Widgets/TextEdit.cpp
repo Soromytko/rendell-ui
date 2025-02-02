@@ -80,7 +80,7 @@ namespace rendell_ui
 			{
 				line->setFontSize(_fontSize);
 			}
-			_textEditor->updateSize();
+			_textEditor->updateSize(true);
 		}
 	}
 

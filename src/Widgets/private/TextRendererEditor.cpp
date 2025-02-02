@@ -28,7 +28,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextRendererEditor::updateSize()
+	void TextRendererEditor::updateSize(bool shouldCursorOffsetBeRecalculated)
 	{
 		glm::vec2 size = glm::vec2(0.0f, 0.0f);
 		float cursorVerticalOffset = 0.0f;
@@ -43,6 +43,11 @@ namespace rendell_ui
 
 		_cursor->setVerticalOffset(cursorVerticalOffset);
 		setSize(size);
+
+		if (shouldCursorOffsetBeRecalculated)
+		{
+			recalculateCursorOffset();
+		}
 	}
 
 	bool TextRendererEditor::moveCursorToPrevChar(uint32_t count)
@@ -139,6 +144,17 @@ namespace rendell_ui
 	{
 		_textRenderer->insertText(_charIndex, string);
 		return true;
+	}
+
+	void TextRendererEditor::recalculateCursorOffset()
+	{
+		size_t currentCursor = _charIndex;
+		float offset = 0.0f;
+		for (_charIndex = 0; _charIndex < currentCursor; _charIndex++)
+		{
+			offset += _textRenderer->getTextAdvance()[_charIndex];
+		}
+		_cursor->moveTo(glm::vec2(offset, 0.0f));
 	}
 
 }
