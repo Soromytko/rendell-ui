@@ -45,7 +45,7 @@ namespace rendell_ui
 
 	void Cursor::moveByDelta(glm::vec2 delta)
 	{
-		moveTo(_offset + delta - _verticalOffset);
+		moveTo(_offset + delta - glm::vec2(0.0f, _verticalOffset));
 	}
 
 	float Cursor::getThickness() const
