@@ -46,7 +46,7 @@ namespace rendell_ui
 	{
 		for (uint32_t i = 0; i < count; i++)
 		{
-			if (_charIndex + 1 >= _textRenderer->getText().length())
+			if (_charIndex >= _textRenderer->getText().length())
 			{
 				return false;
 			}
