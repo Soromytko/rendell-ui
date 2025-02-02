@@ -1,14 +1,16 @@
 #include "TextRendererEditor.h"
 #include <algorithm>
 
+#define CURSOR_THICKNESS 2.0f
+
 namespace rendell_ui
 {
 	TextRendererEditor::TextRendererEditor(Widget* parent, rendell_text::TextRendererSharedPtr textRenderer) :
 		Widget(parent)
 	{
 		_cursor = new Cursor(this);
-		_cursor->setSize(glm::vec2(2, 24));
-		_cursor->setAnchor(Anchor::leftTop);
+		_cursor->setAnchor(Anchor::leftStretch);
+		_cursor->setThickness(CURSOR_THICKNESS);
 		setTextRenderer(textRenderer);
 	}
 
@@ -19,11 +21,28 @@ namespace rendell_ui
 
 	void TextRendererEditor::setTextRenderer(rendell_text::TextRendererSharedPtr value)
 	{
-		_textRenderer = value;
-		if (!_textRenderer)
+		if (_textRenderer != value)
 		{
-			return;
+			_textRenderer = value;
+			updateSize();
 		}
+	}
+
+	void TextRendererEditor::updateSize()
+	{
+		glm::vec2 size = glm::vec2(0.0f, 0.0f);
+		float cursorVerticalOffset = 0.0f;
+
+		if (_textRenderer)
+		{
+			const rendell_text::GeneralFontMetrices& metrices = _textRenderer->getGeneralFontMetrices();
+			size.y = metrices.height;
+			// TODO: 0.5 is a magic experimental number.
+			cursorVerticalOffset = metrices.descender * 0.5f;
+		}
+
+		_cursor->setVerticalOffset(cursorVerticalOffset);
+		setSize(size);
 	}
 
 	bool TextRendererEditor::moveCursorToPrevChar(uint32_t count)

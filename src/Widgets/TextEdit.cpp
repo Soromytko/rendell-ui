@@ -30,6 +30,7 @@ namespace rendell_ui
 	{
 		_textEditor = new TextRendererEditor(this);
 		_textEditor->setAnchor(Anchor::leftTop);
+		_textEditor->updateSize();
 	}
 
 	void TextEdit::draw() const
@@ -79,6 +80,7 @@ namespace rendell_ui
 			{
 				line->setFontSize(_fontSize);
 			}
+			_textEditor->updateSize();
 		}
 	}
 

@@ -18,6 +18,7 @@ namespace rendell_ui
 		size_t getCursorCharIndex() const;
 		
 		void setTextRenderer(rendell_text::TextRendererSharedPtr value);
+		void updateSize();
 
 		bool moveCursorToPrevChar(uint32_t count = 1);
 		bool moveCursorToNextChar(uint32_t count = 1);
