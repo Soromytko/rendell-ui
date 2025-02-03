@@ -43,7 +43,7 @@ namespace rendell_ui
 		for (const rendell_text::TextRendererSharedPtr& line : _lines)
 		{
 			const glm::mat4 worldMat = glm::translate(transformMat, glm::vec3(-_size.x * 0.5f, height, 0.0f));
-			height -= _fontSize.y;
+			height -= line->getGeneralFontMetrices().height;
 
 			line->setMatrix(projectMat * viewMat * worldMat);
 			line->draw();
@@ -84,6 +84,18 @@ namespace rendell_ui
 		}
 	}
 
+	void TextEdit::setupTextEditor()
+	{
+		float offset = 0.0f;
+		for (size_t row = 0; row < _currentRowIndex; row++)
+		{
+			rendell_text::TextRendererSharedPtr& line = _lines[row];
+			offset += static_cast<float>(line->getGeneralFontMetrices().height);
+		}
+		_textEditor->setOffset(glm::vec2(0.0, -offset));
+		_textEditor->updateRecursively();
+	}
+
 	void TextEdit::processKey(int key, InputAction action)
 	{
 		if (action != InputAction::pressed && action != InputAction::repeat)
@@ -99,8 +111,7 @@ namespace rendell_ui
 				_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToEnd();
-				_textEditor->_offset.y += _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 		}
@@ -111,8 +122,7 @@ namespace rendell_ui
 				_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToStart();
-				_textEditor->_offset.y -= _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 		}
@@ -123,8 +133,7 @@ namespace rendell_ui
 				_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToNearest(_currentColumnIndex);
-				_textEditor->_offset.y -= _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 		}
 		else if (key == KEY_TOP)
@@ -134,8 +143,7 @@ namespace rendell_ui
 				_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToNearest(_currentColumnIndex);
-				_textEditor->_offset.y += _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 		}
 		else if (key == KEY_ENTER)
@@ -148,8 +156,7 @@ namespace rendell_ui
 			_textEditor->eraseAllAfterCursor();
 			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToStart();
-			_textEditor->_offset.y -= _fontSize.y;
-			_textEditor->updateRecursively();
+			setupTextEditor();
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 		}
 		else if (key == KEY_TAB)
@@ -169,8 +176,7 @@ namespace rendell_ui
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToEnd();
 				_textEditor->insertAfterCursor(remaningText);
-				_textEditor->_offset.y += _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 		}
@@ -182,8 +188,7 @@ namespace rendell_ui
 				_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToStart();
-				_textEditor->_offset.y -= _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 			if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
@@ -194,8 +199,7 @@ namespace rendell_ui
 				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToEnd();
 				_textEditor->insertAfterCursor(remaningText);
-				_textEditor->_offset.y += _fontSize.y;
-				_textEditor->updateRecursively();
+				setupTextEditor();
 			}
 			_currentColumnIndex = _textEditor->getCursorCharIndex();
 		}

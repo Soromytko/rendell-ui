@@ -19,6 +19,8 @@ namespace rendell_ui
 		void setFontSize(glm::ivec2 value);
 
 	private:
+		void setupTextEditor();
+
 		void processKey(int key, InputAction action);
 		void processChar(unsigned char character) override;
 
