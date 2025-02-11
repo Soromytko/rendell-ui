@@ -1,5 +1,6 @@
 #include "WidgetRenderPipeline.h"
 #include <cassert>
+#include <algorithm>
 
 namespace rendell_ui
 {
