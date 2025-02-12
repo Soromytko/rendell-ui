@@ -81,6 +81,98 @@ namespace rendell_ui
 		return true;
 	}
 
+	static bool isSpaceCharPredicate(wchar_t currentChar)
+	{
+		return currentChar == L' ';
+	}
+
+	bool TextRendererEditor::moveCursorToPrevWord()
+	{
+		if (moveCursorToPrevUntil(L" ")) {
+			moveCursorToPrevUntil(isSpaceCharPredicate);
+			return true;
+		}
+		moveCursorToPrevUntil(isSpaceCharPredicate);
+
+		return false;
+	}
+
+	bool TextRendererEditor::moveCursorToNextWord()
+	{
+		if (moveCursorToNextUntil(L" ")) {
+			moveCursorToNextUntil(isSpaceCharPredicate);
+			return true;
+		}
+		moveCursorToNextUntil(isSpaceCharPredicate);
+
+		return false;
+	}
+
+	bool TextRendererEditor::moveCursorToPrevUntil(std::function<bool(wchar_t currentChar)> predicate)
+	{
+		const std::wstring& text = _textRenderer->getText();
+		const std::vector<uint32_t>& textAdvanced = _textRenderer->getTextAdvance();
+		uint32_t cursorDelta = 0;
+		for (uint32_t i = cursorDelta; i >= 0 && _charIndex > 0; i--)
+		{
+			_charIndex--;
+			if (!predicate(text[_charIndex]))
+			{
+				_charIndex++;
+				break;
+			}
+			cursorDelta += textAdvanced[_charIndex];
+		}
+
+		if (cursorDelta != 0)
+		{
+			_cursor->moveByDelta(-glm::vec2(cursorDelta, 0.0f));
+			return true;
+		}
+
+		return false;
+	}
+
+	bool TextRendererEditor::moveCursorToNextUntil(std::function<bool(wchar_t currentChar)> predicate)
+	{
+		const std::wstring& text = _textRenderer->getText();
+		const std::vector<uint32_t>& textAdvanced = _textRenderer->getTextAdvance();
+		uint32_t cursorDelta = 0;
+		for (uint32_t i = _charIndex; i < text.length(); i++)
+		{
+			if (!predicate(text[_charIndex]))
+			{
+				break;
+			}
+			cursorDelta += textAdvanced[_charIndex];
+			_charIndex++;
+		}
+
+		if (cursorDelta > 0)
+		{
+			_cursor->moveByDelta(glm::vec2(cursorDelta, 0.0f));
+			return true;
+		}
+
+		return false;
+	}
+
+	bool TextRendererEditor::moveCursorToNextUntil(const std::wstring& breakingCharacters)
+	{
+		return moveCursorToNextUntil([&breakingCharacters](wchar_t currentChar) -> bool
+			{
+				return breakingCharacters.find(currentChar) == std::wstring::npos;
+			});
+	}
+
+	bool TextRendererEditor::moveCursorToPrevUntil(const std::wstring& breakingCharacters)
+	{
+		return moveCursorToPrevUntil([&breakingCharacters](wchar_t currentChar) -> bool
+			{
+				return breakingCharacters.find(currentChar) == std::wstring::npos;
+			});
+	}
+
 	bool TextRendererEditor::moveCursorToStart()
 	{
 		_charIndex = 0;
@@ -123,6 +215,33 @@ namespace rendell_ui
 		return false;
 	}
 
+	bool TextRendererEditor::eraseWordBeforeCursor()
+	{
+		const size_t endIndex = _charIndex;
+		if (moveCursorToPrevWord())
+		{
+			const size_t startIndex = _charIndex;
+			const size_t count = endIndex - startIndex;
+			_textRenderer->eraseChars(startIndex, count);
+			return true;
+		}
+		return false;
+	}
+
+	bool TextRendererEditor::eraseWordAfterCursor()
+	{
+		const size_t startIndex = _charIndex;
+		if (moveCursorToNextWord())
+		{
+			const size_t endIndex = _charIndex;
+			const size_t count = endIndex - startIndex;
+			moveCursorToPrevChar(count);
+			_textRenderer->eraseChars(startIndex, count);
+			return true;
+		}
+		return false;
+	}
+
 	bool TextRendererEditor::eraseAllAfterCursor()
 	{
 		_textRenderer->eraseChars(_charIndex, _textRenderer->getText().length() - _charIndex);
@@ -140,7 +259,7 @@ namespace rendell_ui
 		return false;
 	}
 
-	bool TextRendererEditor::insertAfterCursor(const std::wstring& string)	
+	bool TextRendererEditor::insertAfterCursor(const std::wstring& string)
 	{
 		_textRenderer->insertText(_charIndex, string);
 		return true;

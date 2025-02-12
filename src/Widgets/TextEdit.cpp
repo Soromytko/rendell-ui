@@ -103,6 +103,37 @@ namespace rendell_ui
 			return;
 		}
 
+		if (modControl.hasCtrlMod())
+		{
+			processKeyWithCtrl(key);
+			return;
+		}
+		else if (modControl.hasShiftMod())
+		{
+			if (key == KEY_DELETE)
+			{
+				if (_lines.size() > 1)
+				{
+					_lines.erase(_lines.begin() + _currentRowIndex);
+					if (_currentRowIndex == _lines.size())
+					{
+						_currentRowIndex--;
+					}
+					_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+					setupTextEditor();
+					_textEditor->moveCursorToNearest(_currentColumnIndex);
+				}
+				else if (_lines.size() == 1)
+				{
+					_lines[_currentRowIndex]->setText(L"");
+					_textEditor->moveCursorToStart();
+				}
+				_currentColumnIndex = _textEditor->getCursorCharIndex();
+				return;
+
+			}
+		}
+
 		if (key == KEY_LEFT)
 		{
 			if (!_textEditor->moveCursorToPrevChar() && _currentRowIndex > 0)
@@ -209,6 +240,34 @@ namespace rendell_ui
 	{
 		_textEditor->insertCursorChar(character);
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
+	}
+
+	void TextEdit::processKeyWithCtrl(int key)
+	{
+		if (key == KEY_LEFT)
+		{
+			_textEditor->moveCursorToPrevWord();
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_RIGHT)
+		{
+			_textEditor->moveCursorToNextWord();
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_BACKSPACE)
+		{
+			_textEditor->eraseWordBeforeCursor();
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+		}
+		else if (key == KEY_DELETE)
+		{
+			if (!_textEditor->eraseWordAfterCursor() && _currentRowIndex + 1 < _lines.size())
+			{
+				_lines[_currentRowIndex]->setText(_lines[_currentRowIndex]->getText() + _lines[_currentRowIndex + 1]->getText());
+				_lines.erase(_lines.begin() + _currentRowIndex + 1);
+				_textEditor->eraseWordAfterCursor();
+			}
+		}
 	}
 
 }
