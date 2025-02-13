@@ -96,7 +96,7 @@ namespace rendell_ui
 		_textEditor->updateRecursively();
 	}
 
-	void TextEdit::processKey(int key, InputAction action)
+	void TextEdit::processKey(int key, InputAction action, InputModControl modControl)
 	{
 		if (action != InputAction::pressed && action != InputAction::repeat)
 		{

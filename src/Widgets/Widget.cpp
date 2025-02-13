@@ -151,12 +151,12 @@ namespace rendell_ui
 		}
 	}
 
-	void Widget::processKeyRecursively(int key, InputAction action)
+	void Widget::processKeyRecursively(int key, InputAction action, InputModControl modControl)
 	{
-		processKey(key, action);
+		processKey(key, action, modControl);
 		for (Widget* widget : _children)
 		{
-			widget->processKeyRecursively(key, action);
+			widget->processKeyRecursively(key, action, modControl);
 		}
 	}
 

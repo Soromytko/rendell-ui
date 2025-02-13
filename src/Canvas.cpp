@@ -46,11 +46,11 @@ namespace rendell_ui
 		}
 	}
 
-	void Canvas::onKeyInputted(int key, InputAction action)
+	void Canvas::onKeyInputted(int key, InputAction action, InputModControl modControln)
 	{
 		for (const WidgetSharedPtr& widget : _widgets)
 		{
-			widget->processKeyRecursively(key, action);
+			widget->processKeyRecursively(key, action, modControln);
 		}
 	}
 
