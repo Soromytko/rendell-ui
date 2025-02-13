@@ -46,7 +46,7 @@ namespace rendell_ui
 		}
 	}
 
-	void Canvas::onKeyInputted(int key, InputAction action, InputModControl modControln)
+	void Canvas::onKeyInputted(InputKey key, InputAction action, InputModControl modControln)
 	{
 		for (const WidgetSharedPtr& widget : _widgets)
 		{

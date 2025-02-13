@@ -14,6 +14,31 @@ namespace rendell_ui
 		return 0;
 	}
 
+	InputKey convertGlfwKeyToInputKey(int key)
+	{
+		switch (key)
+		{
+		case GLFW_KEY_SPACE: return InputKey::space;
+		case GLFW_KEY_A: return InputKey::a;
+		case GLFW_KEY_B: return InputKey::b;
+		case GLFW_KEY_C: return InputKey::c;
+		case GLFW_KEY_D: return InputKey::d;
+		case GLFW_KEY_E: return InputKey::e;
+		case GLFW_KEY_F: return InputKey::f;
+		case GLFW_KEY_V: return InputKey::v;
+		case GLFW_KEY_W: return InputKey::w;
+		case GLFW_KEY_X: return InputKey::x;
+		case GLFW_KEY_ENTER: return InputKey::enter;
+		case GLFW_KEY_TAB: return InputKey::tab;
+		case GLFW_KEY_BACKSPACE: return InputKey::backspace;
+		case GLFW_KEY_DELETE: return InputKey::del;
+		case GLFW_KEY_RIGHT: return InputKey::right;
+		case GLFW_KEY_LEFT: return InputKey::left;
+		case GLFW_KEY_DOWN: return InputKey::down;
+		case GLFW_KEY_UP: return InputKey::up;
+		}
+	}
+
 	InputAction convertGlfwActionToInputAction(int action)
 	{
 		switch (action)

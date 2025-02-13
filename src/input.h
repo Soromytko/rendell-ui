@@ -2,6 +2,20 @@
 
 namespace rendell_ui
 {
+	enum class InputKey
+	{
+		space,
+
+		a, b, c, d, e, f, v, w, x,
+
+		enter,
+		tab,
+		backspace,
+		del,
+
+		right, left, down, up,
+	};
+
 	enum class InputAction
 	{
 		pressed,
@@ -30,5 +44,6 @@ namespace rendell_ui
 		int _mods;
 	};
 
+	InputKey convertGlfwKeyToInputKey(int key);
 	InputAction convertGlfwActionToInputAction(int action);
 }

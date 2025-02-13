@@ -4,15 +4,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
-#define KEY_ENTER 257
-#define KEY_TAB 258
-#define KEY_BACKSPACE 259
-#define KEY_DELETE 261
-#define KEY_RIGHT 262
-#define KEY_LEFT 263
-#define KEY_BOTTOM 264
-#define KEY_TOP 265
-
 namespace rendell_ui
 {
 	static rendell_text::TextRendererSharedPtr createTextRenderer(std::wstring&& text, glm::vec2 fontSize)
@@ -96,7 +87,7 @@ namespace rendell_ui
 		_textEditor->updateRecursively();
 	}
 
-	void TextEdit::processKey(int key, InputAction action, InputModControl modControl)
+	void TextEdit::processKey(InputKey key, InputAction action, InputModControl modControl)
 	{
 		if (action != InputAction::pressed && action != InputAction::repeat)
 		{
@@ -105,14 +96,14 @@ namespace rendell_ui
 
 		switch (key)
 		{
-		case KEY_ENTER: processKeyEnter(modControl); return;
-		case KEY_TAB: processKeyTab(modControl); return;
-		case KEY_BACKSPACE: processKeyBackspace(modControl); return;
-		case KEY_DELETE: processKeyDelete(modControl); return;
-		case KEY_RIGHT: processKeyRight(modControl); return;
-		case KEY_LEFT: processKeyLeft(modControl); return;
-		case KEY_BOTTOM: processKeyDown(modControl); return;
-		case KEY_TOP: processKeyUp(modControl); return;
+		case InputKey::enter: processKeyEnter(modControl); return;
+		case InputKey::tab: processKeyTab(modControl); return;
+		case InputKey::backspace: processKeyBackspace(modControl); return;
+		case InputKey::del: processKeyDelete(modControl); return;
+		case InputKey::right: processKeyRight(modControl); return;
+		case InputKey::left: processKeyLeft(modControl); return;
+		case InputKey::down: processKeyDown(modControl); return;
+		case InputKey::up: processKeyUp(modControl); return;
 		}
 	}
 

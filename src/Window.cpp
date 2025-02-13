@@ -108,8 +108,9 @@ namespace rendell_ui
 	void inputKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods)
 	{
 		WindowEventHandlerSharedPtr evnetHandler = GET_WINDOW(glfwWindow)->getEventHandler();
+		InputKey inputKey = convertGlfwKeyToInputKey(key);
 		InputModControl modControl{ mods };
-		evnetHandler->onKeyInputted(key, convertGlfwActionToInputAction(action), modControl);
+		evnetHandler->onKeyInputted(inputKey, convertGlfwActionToInputAction(action), modControl);
 	}
 
 	void inputCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint)

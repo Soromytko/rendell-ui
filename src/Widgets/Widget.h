@@ -47,12 +47,12 @@ namespace rendell_ui
 
 	public:
 		void updateRecursively();
-		void processKeyRecursively(int key, InputAction action, InputModControl modControl);
+		void processKeyRecursively(InputKey key, InputAction action, InputModControl modControl);
 		void processCharRecursively(unsigned char character);
 
 	protected:
 		void update();
-		virtual void processKey(int key, InputAction action, InputModControl modControl) {};
+		virtual void processKey(InputKey key, InputAction action, InputModControl modControl) {};
 		virtual void processChar(unsigned char character) {};
 
 		bool _visible{ true };
