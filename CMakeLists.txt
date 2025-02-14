@@ -7,10 +7,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
     src/initialization.cpp
-    src/Window.cpp
+    src/Window/Window.cpp
+    src/Window/window_input.cpp
     src/Viewport.cpp
     src/Time.cpp
-    src/input.cpp
     src/Canvas.cpp
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
@@ -28,12 +28,12 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
-    src/WindowEventHandler.h
     src/initialization.h
-    src/Window.h
+    src/Window/Window.h
+    src/Window/WindowEventHandler.h
+    src/Window/window_input.h
     src/Viewport.h
     src/Time.h
-    src/input.h
     src/Canvas.h
     src/Widgets/Widget.h
     src/Widgets/Transform2D.h

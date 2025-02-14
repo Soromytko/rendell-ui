@@ -1,7 +1,7 @@
 #pragma once
 #include <set>
 #include <memory>
-#include "WindowEventHandler.h"
+#include "Window/WindowEventHandler.h"
 #include "Viewport.h"
 #include "Widgets/Widget.h"
 

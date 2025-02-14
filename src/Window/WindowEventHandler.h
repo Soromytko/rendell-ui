@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "input.h"
+#include "window_input.h"
 
 namespace rendell_ui
 {
