@@ -9,6 +9,7 @@ set(SOURCE_FILES
     src/initialization.cpp
     src/Window/Window.cpp
     src/Window/window_input.cpp
+    src/Window/window_callbacks.cpp
     src/Viewport.cpp
     src/Time.cpp
     src/Canvas.cpp
@@ -32,6 +33,7 @@ set(HEADER_FILES
     src/Window/Window.h
     src/Window/WindowEventHandler.h
     src/Window/window_input.h
+    src/Window/window_callbacks.h
     src/Viewport.h
     src/Time.h
     src/Canvas.h
