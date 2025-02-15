@@ -19,8 +19,8 @@ namespace rendell_ui
 		const std::set<WidgetSharedPtr>& getWidgets() const;
 		ViewportSharedPtr getViewport() const;
 
-		virtual void onRefreshed(int width, int height);
-		virtual void onKeyInputted(InputKey key, InputAction action, InputModControl modControl);
+		virtual void onRefreshed(int width, int height) override;
+		virtual void onKeyInputted(InputKey key, InputAction action, InputModControl modControl) override;
 		virtual void onMouseButtonInputted(const MouseInput& mouseInput) override;
 		virtual void onCharInputted(unsigned char character) override;
 
