@@ -203,6 +203,31 @@ namespace rendell_ui
 		return true;
 	}
 
+	void TextRendererEditor::setupCursorByOffset(double offset)
+	{
+		const std::vector<uint32_t>& textAdvance = _textRenderer->getTextAdvance();
+
+		double accOffset = 0.0f;
+		double distance = abs(offset - accOffset);
+		for (int64_t i = 0; i < textAdvance.size(); i++)
+		{
+			accOffset += textAdvance[i];
+			double newDistance = abs(offset - accOffset);
+			if (newDistance < distance)
+			{
+				distance = newDistance;
+			}
+			else
+			{
+				_cursor->moveTo(glm::vec2(accOffset - textAdvance[i], 0.0f));
+				_charIndex = i;
+				return;
+			}
+		}
+
+		moveCursorToEnd();
+	}
+
 	bool TextRendererEditor::eraseCursorChar()
 	{
 		if (_charIndex > 0 && _charIndex <= _textRenderer->getText().length())

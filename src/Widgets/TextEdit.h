@@ -22,6 +22,8 @@ namespace rendell_ui
 		void setupTextEditor();
 
 		void processKey(InputKey key, InputAction action, InputModControl modControl) override;
+		void processMouseButton(const MouseInput& mouseInput) override;
+
 		void processKeyEnter(InputModControl modControl);
 		void processKeyTab(InputModControl modControl);
 		void processKeyBackspace(InputModControl modControl);

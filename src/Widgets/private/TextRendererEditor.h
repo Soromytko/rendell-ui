@@ -30,6 +30,7 @@ namespace rendell_ui
 		bool moveCursorToStart();
 		bool moveCursorToEnd();
 		bool moveCursorToNearest(size_t charIndex);
+		void setupCursorByOffset(double offset);
 
 		bool eraseCursorChar();
 		bool eraseWordBeforeCursor();

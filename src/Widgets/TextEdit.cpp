@@ -107,6 +107,36 @@ namespace rendell_ui
 		}
 	}
 
+	void TextEdit::processMouseButton(const MouseInput& mouseInput)
+	{
+		if (mouseInput.button == InputMouseButton::middleButton)
+		{
+			return;
+		}
+
+		double offset = _lines[0]->getGeneralFontMetrices().height * 0.5f;
+		double distance = abs(mouseInput.y - _lines[0]->getGeneralFontMetrices().height * 0.5f);
+		for (size_t row = 0; row < _lines.size(); row++)
+		{
+			offset += _lines[row]->getGeneralFontMetrices().height;
+			double currentDistance = abs(mouseInput.y - offset);
+			if (currentDistance < distance)
+			{
+				distance = currentDistance;
+			}
+			else
+			{
+				_currentRowIndex = row;
+				_textEditor->setTextRenderer(_lines[row]);
+				setupTextEditor();
+				break;
+			}
+		}
+
+		_textEditor->setupCursorByOffset(mouseInput.x);
+		_currentColumnIndex = _textEditor->getCursorCharIndex();
+	}
+
 	void TextEdit::processKeyEnter(InputModControl modControl)
 	{
 		std::wstring remaningText{};
