@@ -54,6 +54,14 @@ namespace rendell_ui
 		}
 	}
 
+	void Canvas::onMouseButtonInputted(const MouseInput& mouseInput)
+	{
+		for (const WidgetSharedPtr& widget : _widgets)
+		{
+			widget->processMouseButtonRecursively(mouseInput);
+		}
+	}
+
 	void Canvas::onCharInputted(unsigned char character)
 	{
 		for (const WidgetSharedPtr& widget : _widgets)

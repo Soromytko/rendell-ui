@@ -39,6 +39,16 @@ namespace rendell_ui
 		}
 	}
 
+	InputMouseButton convertGlfwMouseButtonToInputMouseButton(int button)
+	{
+		switch (button)
+		{
+		case GLFW_MOUSE_BUTTON_LEFT: return InputMouseButton::leftButton;
+		case GLFW_MOUSE_BUTTON_MIDDLE: return InputMouseButton::middleButton;
+		case GLFW_MOUSE_BUTTON_RIGHT: return InputMouseButton::rightButton;
+		}
+	}
+
 	InputAction convertGlfwActionToInputAction(int action)
 	{
 		switch (action)

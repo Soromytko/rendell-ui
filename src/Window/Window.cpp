@@ -105,6 +105,7 @@ namespace rendell_ui
 		glfwSetFramebufferSizeCallback(_glfwWindow, resizeWindowCallback);
 		glfwSetWindowRefreshCallback(_glfwWindow, refreshWindowCallback);
 		glfwSetKeyCallback(_glfwWindow, inputKeyCallback);
+		glfwSetMouseButtonCallback(_glfwWindow, inputMouseBottonCallback);
 		glfwSetCharCallback(_glfwWindow, inputCharCallback);
 	}
 

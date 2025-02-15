@@ -21,6 +21,7 @@ namespace rendell_ui
 
 		virtual void onRefreshed(int width, int height);
 		virtual void onKeyInputted(InputKey key, InputAction action, InputModControl modControl);
+		virtual void onMouseButtonInputted(const MouseInput& mouseInput) override;
 		virtual void onCharInputted(unsigned char character) override;
 
 	private:

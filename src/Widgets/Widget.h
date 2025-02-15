@@ -48,11 +48,13 @@ namespace rendell_ui
 	public:
 		void updateRecursively();
 		void processKeyRecursively(InputKey key, InputAction action, InputModControl modControl);
+		void processMouseButtonRecursively(const MouseInput& mouseInput);
 		void processCharRecursively(unsigned char character);
 
 	protected:
 		void update();
 		virtual void processKey(InputKey key, InputAction action, InputModControl modControl) {};
+		virtual void processMouseButton(const MouseInput& mouseInput) {};
 		virtual void processChar(unsigned char character) {};
 
 		bool _visible{ true };

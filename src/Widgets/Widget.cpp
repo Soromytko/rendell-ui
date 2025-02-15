@@ -160,6 +160,15 @@ namespace rendell_ui
 		}
 	}
 
+	void Widget::processMouseButtonRecursively(const MouseInput& mouseInput)
+	{
+		processMouseButton(mouseInput);
+		for (Widget* widget : _children)
+		{
+			widget->processMouseButtonRecursively(mouseInput);
+		}
+	}
+
 	void Widget::processCharRecursively(unsigned char character)
 	{
 		processChar(character);

@@ -10,4 +10,7 @@ namespace rendell_ui
 	void inputKeyCallback(GLFWwindow* glfwWindow, int key, int scancode, int action, int mods);
 
 	void inputCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint);
+
+	void inputMouseBottonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
+
 }

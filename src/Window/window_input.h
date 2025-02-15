@@ -16,6 +16,13 @@ namespace rendell_ui
 		right, left, down, up,
 	};
 
+	enum class InputMouseButton
+	{
+		leftButton,
+		middleButton,
+		rightButton,
+	};
+
 	enum class InputAction
 	{
 		pressed,
@@ -44,6 +51,15 @@ namespace rendell_ui
 		int _mods;
 	};
 
+	struct MouseInput
+	{
+		InputMouseButton button;
+		InputAction action;
+		InputModControl modControl;
+		double x, y;
+	};
+
 	InputKey convertGlfwKeyToInputKey(int key);
+	InputMouseButton convertGlfwMouseButtonToInputMouseButton(int button);
 	InputAction convertGlfwActionToInputAction(int action);
 }
