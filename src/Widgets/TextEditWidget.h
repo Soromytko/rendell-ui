@@ -7,11 +7,11 @@
 
 namespace rendell_ui
 {
-	class TextEdit final : public Widget
+	class TextEditWidget final : public Widget
 	{
 	public:
-		TextEdit(Widget* parent = nullptr);
-		~TextEdit() = default;
+		TextEditWidget(Widget* parent = nullptr);
+		~TextEditWidget() = default;
 
 		void draw() const override;
 

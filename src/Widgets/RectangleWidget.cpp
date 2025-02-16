@@ -18,7 +18,7 @@ namespace rendell_ui
 	static uint32_t s_sizeUniformIndex{ 0 };
 	static uint32_t s_colorUniformIndex{ 0 };
 
-	Rectangle::Rectangle(Widget* parent) : Widget(parent)
+	RectangleWidget::RectangleWidget(Widget* parent) : Widget(parent)
 	{
 		_shaderProgram = ShaderStorage::getInstance()->rectangleShader->getShaderProgram();
 		if (!s_isUniformIndexObtained)
@@ -37,12 +37,12 @@ namespace rendell_ui
 		_vertexArray = rendell::createVertexArray(nullptr, { vertexBuffer });
 	}
 
-	Rectangle::~Rectangle()
+	RectangleWidget::~RectangleWidget()
 	{
 
 	}
 
-	void Rectangle::draw() const
+	void RectangleWidget::draw() const
 	{
 		updateUniforms();
 

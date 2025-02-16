@@ -7,7 +7,7 @@ namespace rendell_ui
 {
 	class TextRendererEditor final : public Widget
 	{
-		friend class TextEdit;
+		friend class TextEditWidget;
 
 	protected:
 		TextRendererEditor(Widget* parent, rendell_text::TextRendererSharedPtr textRenderer = nullptr);

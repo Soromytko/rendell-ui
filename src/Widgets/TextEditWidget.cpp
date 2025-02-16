@@ -17,14 +17,14 @@ namespace rendell_ui
 		return result;
 	}
 
-	TextEdit::TextEdit(Widget* parent) : Widget(parent)
+	TextEditWidget::TextEditWidget(Widget* parent) : Widget(parent)
 	{
 		_textEditor = new TextRendererEditor(this);
 		_textEditor->setAnchor(Anchor::leftTop);
 		_textEditor->updateSize();
 	}
 
-	void TextEdit::draw() const
+	void TextEditWidget::draw() const
 	{
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();
 		const glm::mat4& viewMat = Viewport::getCurrent()->getViewMat();
@@ -41,7 +41,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEdit::setText(const std::wstring& value)
+	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_lines.clear();
 
@@ -62,7 +62,7 @@ namespace rendell_ui
 
 	}
 
-	void TextEdit::setFontSize(glm::ivec2 value)
+	void TextEditWidget::setFontSize(glm::ivec2 value)
 	{
 		if (value != _fontSize)
 		{
@@ -75,7 +75,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEdit::setupTextEditor()
+	void TextEditWidget::setupTextEditor()
 	{
 		float offset = 0.0f;
 		for (size_t row = 0; row < _currentRowIndex; row++)
@@ -87,7 +87,7 @@ namespace rendell_ui
 		_textEditor->updateRecursively();
 	}
 
-	void TextEdit::processKey(InputKey key, InputAction action, InputModControl modControl)
+	void TextEditWidget::processKey(InputKey key, InputAction action, InputModControl modControl)
 	{
 		if (action != InputAction::pressed && action != InputAction::repeat)
 		{
@@ -107,7 +107,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEdit::processMouseButton(const MouseInput& mouseInput)
+	void TextEditWidget::processMouseButton(const MouseInput& mouseInput)
 	{
 		if (mouseInput.button == InputMouseButton::middleButton)
 		{
@@ -137,7 +137,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyEnter(InputModControl modControl)
+	void TextEditWidget::processKeyEnter(InputModControl modControl)
 	{
 		std::wstring remaningText{};
 		remaningText.insert(0, _lines[_currentRowIndex]->getText(),
@@ -151,7 +151,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyTab(InputModControl modControl)
+	void TextEditWidget::processKeyTab(InputModControl modControl)
 	{
 		static const std::wstring tabString = L"    ";
 		_textEditor->insertAfterCursor(tabString);
@@ -159,7 +159,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyBackspace(InputModControl modControl)
+	void TextEditWidget::processKeyBackspace(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
@@ -179,7 +179,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyDelete(InputModControl modControl)
+	void TextEditWidget::processKeyDelete(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
@@ -232,7 +232,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyRight(InputModControl modControl)
+	void TextEditWidget::processKeyRight(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
@@ -249,7 +249,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyLeft(InputModControl modControl)
+	void TextEditWidget::processKeyLeft(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
@@ -267,7 +267,7 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEdit::processKeyDown(InputModControl modControl)
+	void TextEditWidget::processKeyDown(InputModControl modControl)
 	{
 		if (_currentRowIndex < _lines.size() - 1)
 		{
@@ -278,7 +278,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEdit::processKeyUp(InputModControl modControl)
+	void TextEditWidget::processKeyUp(InputModControl modControl)
 	{
 		if (_currentRowIndex > 0)
 		{
@@ -289,7 +289,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEdit::processChar(unsigned char character)
+	void TextEditWidget::processChar(unsigned char character)
 	{
 		_textEditor->insertCursorChar(character);
 		_currentColumnIndex = _textEditor->getCursorCharIndex();

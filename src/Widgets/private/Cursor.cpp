@@ -3,7 +3,7 @@
 
 namespace rendell_ui
 {
-	Cursor::Cursor(Widget* parent) : Rectangle(parent)
+	Cursor::Cursor(Widget* parent) : RectangleWidget(parent)
 	{
 
 	}
@@ -21,7 +21,7 @@ namespace rendell_ui
 			return;
 		}
 
-		Rectangle::draw();
+		RectangleWidget::draw();
 
 	}
 

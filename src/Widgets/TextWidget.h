@@ -4,11 +4,11 @@
 
 namespace rendell_ui
 {
-	class Text : public Widget
+	class TextWidget : public Widget
 	{
 	public:
-		Text(Widget* parent = nullptr);
-		~Text() = default;
+		TextWidget(Widget* parent = nullptr);
+		~TextWidget() = default;
 
 		void setColor(glm::vec4 value) override;
 		void draw() const override;
@@ -26,6 +26,4 @@ namespace rendell_ui
 	private:
 		rendell_text::TextRendererSharedPtr _textRenderer{ nullptr };
 	};
-
-	typedef std::shared_ptr<Text> TextWidgetSharedPtr;
 }

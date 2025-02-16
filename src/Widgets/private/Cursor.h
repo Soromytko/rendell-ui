@@ -3,7 +3,7 @@
 
 namespace rendell_ui
 {
-	class Cursor final : public Rectangle
+	class Cursor final : public RectangleWidget
 	{
 		friend class TextRendererEditor;
 

@@ -3,11 +3,11 @@
 
 namespace rendell_ui
 {
-	class Rectangle : public Widget
+	class RectangleWidget : public Widget
 	{
 	public:
-		Rectangle(Widget* parent = nullptr);
-		virtual ~Rectangle();
+		RectangleWidget(Widget* parent = nullptr);
+		virtual ~RectangleWidget();
 
 		virtual void draw() const override;
 
@@ -16,5 +16,5 @@ namespace rendell_ui
 
 	};
 
-	typedef std::shared_ptr<Rectangle> RectangleSharedPtr;
+	typedef std::shared_ptr<RectangleWidget> RectangleSharedPtr;
 }
