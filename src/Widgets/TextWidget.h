@@ -27,5 +27,5 @@ namespace rendell_ui
 		rendell_text::TextRendererSharedPtr _textRenderer{ nullptr };
 	};
 
-	typedef std::shared_ptr<Text> TextSharedPtr;
+	typedef std::shared_ptr<Text> TextWidgetSharedPtr;
 }

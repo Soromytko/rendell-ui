@@ -1,4 +1,4 @@
-#include "Text.h"
+#include "TextWidget.h"
 #include "../Viewport.h"
 
 namespace rendell_ui

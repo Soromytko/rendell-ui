@@ -1,4 +1,4 @@
-#include "Rectangle.h"
+#include "RectangleWidget.h"
 #include <cassert>
 #include <array>
 #include "../Viewport.h"

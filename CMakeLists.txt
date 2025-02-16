@@ -15,9 +15,9 @@ set(SOURCE_FILES
     src/Canvas.cpp
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
-    src/Widgets/Rectangle.cpp
-    src/Widgets/Text.cpp
-    src/Widgets/TextEdit.cpp
+    src/Widgets/RectangleWidget.cpp
+    src/Widgets/TextWidget.cpp
+    src/Widgets/TextEditWidget.cpp
     src/Widgets/WidgetRegistrator.cpp
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
@@ -39,9 +39,9 @@ set(HEADER_FILES
     src/Canvas.h
     src/Widgets/Widget.h
     src/Widgets/Transform2D.h
-    src/Widgets/Rectangle.h
-    src/Widgets/Text.h
-    src/Widgets/TextEdit.h
+    src/Widgets/RectangleWidget.h
+    src/Widgets/TextWidget.h
+    src/Widgets/TextEditWidget.h
     src/Widgets/WidgetRegistrator.h
     src/Widgets/WidgetHandlePipeline.h
     src/Widgets/WidgetRenderPipeline.h

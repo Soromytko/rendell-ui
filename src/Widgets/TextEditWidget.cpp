@@ -1,4 +1,4 @@
-#include "TextEdit.h"
+#include "TextEditWidget.h"
 #include "../Viewport.h"
 #include "private/Cursor.h"
 #include <glm/gtc/matrix_transform.hpp>

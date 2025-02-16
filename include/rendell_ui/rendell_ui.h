@@ -5,7 +5,7 @@
 #include "../../src/Viewport.h"
 #include "../../src/Canvas.h"
 
-#include "../../src/Widgets/Rectangle.h"
-#include "../../src/Widgets/Text.h"
-#include "../../src/Widgets/TextEdit.h"
+#include "../../src/Widgets/RectangleWidget.h"
+#include "../../src/Widgets/TextWidget.h"
+#include "../../src/Widgets/TextEditWidget.h"
 
