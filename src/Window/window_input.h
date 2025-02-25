@@ -59,6 +59,13 @@ namespace rendell_ui
 		double x, y;
 	};
 
+	struct KeyboardInput
+	{
+		InputKey key;
+		InputAction action;
+		InputModControl modControl;
+	};
+
 	InputKey convertGlfwKeyToInputKey(int key);
 	InputMouseButton convertGlfwMouseButtonToInputMouseButton(int button);
 	InputAction convertGlfwActionToInputAction(int action);

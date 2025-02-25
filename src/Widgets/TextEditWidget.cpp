@@ -89,7 +89,7 @@ namespace rendell_ui
 
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
-		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) - 
+		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) -
 			cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
 
 		double offset = _lines[0]->getGeneralFontMetrices().height * 0.5f;
@@ -115,23 +115,23 @@ namespace rendell_ui
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
-	void TextEditWidget::onKeyInputted(InputKey key, InputAction action, InputModControl modControl)
+	void TextEditWidget::onKeyInputted(const KeyboardInput& keyboardInput)
 	{
-		if (action != InputAction::pressed && action != InputAction::repeat)
+		if (keyboardInput.action != InputAction::pressed && keyboardInput.action != InputAction::repeat)
 		{
 			return;
 		}
 
-		switch (key)
+		switch (keyboardInput.key)
 		{
-		case InputKey::enter: processKeyEnter(modControl); return;
-		case InputKey::tab: processKeyTab(modControl); return;
-		case InputKey::backspace: processKeyBackspace(modControl); return;
-		case InputKey::del: processKeyDelete(modControl); return;
-		case InputKey::right: processKeyRight(modControl); return;
-		case InputKey::left: processKeyLeft(modControl); return;
-		case InputKey::down: processKeyDown(modControl); return;
-		case InputKey::up: processKeyUp(modControl); return;
+		case InputKey::enter: processKeyEnter(keyboardInput.modControl); return;
+		case InputKey::tab: processKeyTab(keyboardInput.modControl); return;
+		case InputKey::backspace: processKeyBackspace(keyboardInput.modControl); return;
+		case InputKey::del: processKeyDelete(keyboardInput.modControl); return;
+		case InputKey::right: processKeyRight(keyboardInput.modControl); return;
+		case InputKey::left: processKeyLeft(keyboardInput.modControl); return;
+		case InputKey::down: processKeyDown(keyboardInput.modControl); return;
+		case InputKey::up: processKeyUp(keyboardInput.modControl); return;
 		}
 	}
 

@@ -22,7 +22,7 @@ namespace rendell_ui
 		void setupTextEditor();
 
 		void onMouseDown(glm::dvec2 cursorPosition) override;
-		void onKeyInputted(InputKey key, InputAction action, InputModControl modControl) override;
+		void onKeyInputted(const KeyboardInput& keyboardInput) override;
 		void onCharInputted(unsigned char character) override;
 
 		void processKeyEnter(InputModControl modControl);

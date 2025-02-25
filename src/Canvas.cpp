@@ -43,11 +43,11 @@ namespace rendell_ui
 		updateWidgetRecursively();
 	}
 
-	void Canvas::onKeyInputted(InputKey key, InputAction action, InputModControl modControln)
+	void Canvas::onKeyInputted(const KeyboardInput& keyboardInput)
 	{
 		if (_focusedWidget)
 		{
-			_focusedWidget->onKeyInputted(key, action, modControln);
+			_focusedWidget->onKeyInputted(keyboardInput);
 		}
 	}
 
