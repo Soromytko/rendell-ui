@@ -76,6 +76,13 @@ namespace rendell_ui
 		return glm::ivec2(width, height);
 	}
 
+	glm::dvec2 Window::getCursorPosition() const
+	{
+		double x, y;
+		glfwGetCursorPos(_glfwWindow, &x, &y);
+		return static_cast<glm::dvec2>(getSize()) * 0.5 - glm::dvec2(x, y);
+	}
+
 	WindowEventHandlerSharedPtr Window::getEventHandler() const
 	{
 		return _eventHandler;

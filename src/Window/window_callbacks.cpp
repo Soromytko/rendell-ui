@@ -29,15 +29,16 @@ namespace rendell_ui
 
 	void inputMouseBottonCallback(GLFWwindow* glfwWindow, int button, int action, int mods)
 	{
-		WindowEventHandlerSharedPtr eventHandler = GET_WINDOW(glfwWindow)->getEventHandler();
-		double x, y;
-		glfwGetCursorPos(glfwWindow, &x, &y);
+		Window* window = GET_WINDOW(glfwWindow);
+		const glm::vec2 windowSize = window->getSize();
+		const glm::dvec2 cursorPosition = window->getCursorPosition();
+		WindowEventHandlerSharedPtr eventHandler = window->getEventHandler();
 		MouseInput mouseInput
 		{
 			convertGlfwMouseButtonToInputMouseButton(button),
 			convertGlfwActionToInputAction(action),
 			InputModControl{mods},
-			x, y,
+			cursorPosition.x, cursorPosition.y,
 		};
 		eventHandler->onMouseButtonInputted(mouseInput);
 	}

@@ -40,22 +40,27 @@ namespace rendell_ui
 		void setAnchor(Anchor value);
 		Anchor getAnchor() const;
 
+		bool intersect(glm::vec2 point) const;
+
 		virtual void draw() const override {};
+
+		virtual void onFocused() {};
+		virtual void onUnfocused() {};
+		virtual void onMouseClick() {};
+		virtual void onMouseDown(glm::dvec2 cursorPosition) {};
+		virtual void onMouseUp(glm::dvec2 cursorPosition) {};
+		virtual void onMouseOver(glm::dvec2 cursorPosition) {};
+		virtual void onKeyInputted(InputKey key, InputAction action, InputModControl modControl) {};
+		virtual void onCharInputted(unsigned char character) {};
 
 	protected:
 		virtual void updateUniforms() const;
 
 	public:
 		void updateRecursively();
-		void processKeyRecursively(InputKey key, InputAction action, InputModControl modControl);
-		void processMouseButtonRecursively(const MouseInput& mouseInput);
-		void processCharRecursively(unsigned char character);
 
 	protected:
 		void update();
-		virtual void processKey(InputKey key, InputAction action, InputModControl modControl) {};
-		virtual void processMouseButton(const MouseInput& mouseInput) {};
-		virtual void processChar(unsigned char character) {};
 
 		bool _visible{ true };
 

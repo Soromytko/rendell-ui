@@ -1,6 +1,7 @@
 #include "Widget.h"
 #include "../Viewport.h"
 #include "WidgetRegistrator.h"
+#include <algorithm>
 
 namespace rendell_ui
 {
@@ -125,6 +126,14 @@ namespace rendell_ui
 		return _anchor;
 	}
 
+	bool Widget::intersect(glm::vec2 point) const
+	{
+		const glm::vec2 halfSize = _size * 0.5f * _transform.getScale();
+		const glm::vec2 pos = _transform.getPosition();
+		return std::clamp(point.x, pos.x - halfSize.x, pos.x + halfSize.x) == point.x &&
+			std::clamp(point.y, pos.y - halfSize.y, pos.y + halfSize.y) == point.y;
+	}
+
 	void Widget::updateUniforms() const
 	{
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();
@@ -148,33 +157,6 @@ namespace rendell_ui
 		for (Widget* widget : _children)
 		{
 			widget->updateRecursively();
-		}
-	}
-
-	void Widget::processKeyRecursively(InputKey key, InputAction action, InputModControl modControl)
-	{
-		processKey(key, action, modControl);
-		for (Widget* widget : _children)
-		{
-			widget->processKeyRecursively(key, action, modControl);
-		}
-	}
-
-	void Widget::processMouseButtonRecursively(const MouseInput& mouseInput)
-	{
-		processMouseButton(mouseInput);
-		for (Widget* widget : _children)
-		{
-			widget->processMouseButtonRecursively(mouseInput);
-		}
-	}
-
-	void Widget::processCharRecursively(unsigned char character)
-	{
-		processChar(character);
-		for (Widget* widget : _children)
-		{
-			widget->processCharRecursively(character);
 		}
 	}
 

@@ -25,6 +25,12 @@ namespace rendell_ui
 		virtual void onCharInputted(unsigned char character) override;
 
 	private:
+		void setFocusedWidget(Widget* widget);
+		void updateWidgetRecursively();
+		Widget* focusWidgetRecursively(Widget* widget, glm::vec2 cursor);
+
+		Widget* _focusedWidget{ nullptr };
+
 		ViewportSharedPtr _viewport;
 		std::set<WidgetSharedPtr> _widgets;
 

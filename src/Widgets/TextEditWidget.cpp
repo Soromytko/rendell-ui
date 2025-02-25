@@ -87,7 +87,35 @@ namespace rendell_ui
 		_textEditor->updateRecursively();
 	}
 
-	void TextEditWidget::processKey(InputKey key, InputAction action, InputModControl modControl)
+	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
+	{
+		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) - 
+			cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
+
+		double offset = _lines[0]->getGeneralFontMetrices().height * 0.5f;
+		double distance = abs(cursorPosition.y - _lines[0]->getGeneralFontMetrices().height * 0.5f);
+		for (size_t row = 0; row < _lines.size(); row++)
+		{
+			offset += _lines[row]->getGeneralFontMetrices().height;
+			double currentDistance = abs(cursorPosition.y - offset);
+			if (currentDistance < distance)
+			{
+				distance = currentDistance;
+			}
+			else
+			{
+				_currentRowIndex = row;
+				_textEditor->setTextRenderer(_lines[row]);
+				setupTextEditor();
+				break;
+			}
+		}
+
+		_textEditor->setupCursorByOffset(cursorPosition.x);
+		_currentColumnIndex = _textEditor->getCursorCharIndex();
+	}
+
+	void TextEditWidget::onKeyInputted(InputKey key, InputAction action, InputModControl modControl)
 	{
 		if (action != InputAction::pressed && action != InputAction::repeat)
 		{
@@ -107,33 +135,9 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEditWidget::processMouseButton(const MouseInput& mouseInput)
+	void TextEditWidget::onCharInputted(unsigned char character)
 	{
-		if (mouseInput.button == InputMouseButton::middleButton)
-		{
-			return;
-		}
-
-		double offset = _lines[0]->getGeneralFontMetrices().height * 0.5f;
-		double distance = abs(mouseInput.y - _lines[0]->getGeneralFontMetrices().height * 0.5f);
-		for (size_t row = 0; row < _lines.size(); row++)
-		{
-			offset += _lines[row]->getGeneralFontMetrices().height;
-			double currentDistance = abs(mouseInput.y - offset);
-			if (currentDistance < distance)
-			{
-				distance = currentDistance;
-			}
-			else
-			{
-				_currentRowIndex = row;
-				_textEditor->setTextRenderer(_lines[row]);
-				setupTextEditor();
-				break;
-			}
-		}
-
-		_textEditor->setupCursorByOffset(mouseInput.x);
+		_textEditor->insertCursorChar(character);
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
@@ -287,12 +291,6 @@ namespace rendell_ui
 			_textEditor->moveCursorToNearest(_currentColumnIndex);
 			setupTextEditor();
 		}
-	}
-
-	void TextEditWidget::processChar(unsigned char character)
-	{
-		_textEditor->insertCursorChar(character);
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
 }

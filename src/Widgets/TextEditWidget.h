@@ -21,8 +21,9 @@ namespace rendell_ui
 	private:
 		void setupTextEditor();
 
-		void processKey(InputKey key, InputAction action, InputModControl modControl) override;
-		void processMouseButton(const MouseInput& mouseInput) override;
+		void onMouseDown(glm::dvec2 cursorPosition) override;
+		void onKeyInputted(InputKey key, InputAction action, InputModControl modControl) override;
+		void onCharInputted(unsigned char character) override;
 
 		void processKeyEnter(InputModControl modControl);
 		void processKeyTab(InputModControl modControl);
@@ -32,8 +33,6 @@ namespace rendell_ui
 		void processKeyLeft(InputModControl modControl);
 		void processKeyDown(InputModControl modControl);
 		void processKeyUp(InputModControl modControl);
-
-		void processChar(unsigned char character) override;
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextRendererSharedPtr> _lines{};
