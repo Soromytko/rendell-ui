@@ -6,7 +6,11 @@ namespace rendell_ui
 	{
 		space,
 
-		a, b, c, d, e, f, v, w, x,
+		A, B, C, D, E, F,
+		G, H, I, J, K, L,
+		M, N, O, P, Q, R,
+		S, T, U, V, W, X,
+		Y, Z,
 
 		enter,
 		tab,
