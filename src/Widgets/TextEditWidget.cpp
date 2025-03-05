@@ -10,7 +10,7 @@ namespace rendell_ui
 	{
 		rendell_text::TextRendererSharedPtr result = rendell_text::createTextRenderer();
 		result->setText(text);
-		result->setFontPath("../res/Fonts/mononoki/mononoki-Regular.ttf");
+		result->setFontPath(FONT_PATH);
 		result->setFontSize(fontSize);
 		result->setBackgroundColor(glm::vec4(31.0f / 255.0, 31.0f / 255.0, 31.0f / 255.0, 1.0f));
 		result->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));

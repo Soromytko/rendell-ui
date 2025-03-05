@@ -55,6 +55,11 @@ set(HEADER_FILES
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(${BINARY_NAME} PUBLIC include)
 
+target_compile_definitions(${BINARY_NAME}
+    PRIVATE
+        "FONT_PATH=\"${RENDELL_UI_FONT_PATH}\"">
+)
+
 # GLFW
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
