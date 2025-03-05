@@ -37,5 +37,5 @@ namespace rendell_ui
 
 	};
 
-	typedef std::shared_ptr<Canvas> CanvasSharedPtr;
+	DECLARE_SHARED_PTR_FACTORY(Canvas)
 }

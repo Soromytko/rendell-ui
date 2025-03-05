@@ -11,10 +11,10 @@ namespace rendell_ui
 
 	bool init()
 	{
-		s_widgetRenderPipeline = std::make_shared<WidgetRenderPipeline>();
+		s_widgetRenderPipeline = makeWidgetRenderPipeline();
 
 		WidgetRegistrator::init({
-			std::make_shared<WidgetHandlePipeline>(),
+			makeWidgetHandlePipeline(),
 			s_widgetRenderPipeline,
 			});
 

@@ -5,7 +5,7 @@ namespace rendell_ui
 {
 	TextWidget::TextWidget(Widget* parent) : Widget(parent)
 	{
-		_textRenderer = rendell_text::createTextRenderer();
+		_textRenderer = rendell_text::makeTextRenderer();
 	}
 
 	void TextWidget::setFontPath(const std::string& value)

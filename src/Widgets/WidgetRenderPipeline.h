@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "IWidgetCollection.h"
+#include "../defines.h"
 
 namespace rendell_ui
 {
@@ -20,5 +21,5 @@ namespace rendell_ui
 		std::vector<IWidget*> _widgets{};
 	};
 
-	typedef std::shared_ptr<WidgetRenderPipeline> WidgetRenderPipelineSharedPtr;
+	DECLARE_SHARED_PTR_FACTORY(WidgetRenderPipeline)
 }

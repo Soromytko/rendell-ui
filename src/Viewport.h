@@ -1,12 +1,13 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
+#include "defines.h"
 
 namespace rendell_ui
 {
 	class Viewport;
-
-	typedef std::shared_ptr<Viewport> ViewportSharedPtr;
+	
+	DECLARE_SHARED_PTR_FACTORY(Viewport)
 
 	class Viewport final
 	{
@@ -34,4 +35,5 @@ namespace rendell_ui
 		glm::mat4 _viewMat = glm::mat4(1.0f);
 
 	};
+
 }

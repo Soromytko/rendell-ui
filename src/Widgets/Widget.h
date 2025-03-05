@@ -6,6 +6,7 @@
 #include "Anchor.h"
 #include "Transform2D.h"
 #include "../Window/window_input.h"
+#include "../defines.h"
 
 namespace rendell_ui
 {
@@ -85,5 +86,6 @@ namespace rendell_ui
 
 	};
 
-	typedef std::shared_ptr<Widget> WidgetSharedPtr;
+	DECLARE_SHARED_PTR_FACTORY(Widget)
+
 }

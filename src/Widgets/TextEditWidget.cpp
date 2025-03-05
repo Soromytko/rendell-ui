@@ -8,7 +8,7 @@ namespace rendell_ui
 {
 	static rendell_text::TextRendererSharedPtr createTextRenderer(std::wstring&& text, glm::vec2 fontSize)
 	{
-		rendell_text::TextRendererSharedPtr result = rendell_text::createTextRenderer();
+		rendell_text::TextRendererSharedPtr result = rendell_text::makeTextRenderer();
 		result->setText(text);
 		result->setFontPath(FONT_PATH);
 		result->setFontSize(fontSize);

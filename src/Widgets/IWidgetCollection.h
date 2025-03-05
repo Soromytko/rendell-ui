@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include <memory>
 #include "IWidget.h"
+#include "../defines.h"
 
 namespace rendell_ui
 {
@@ -17,5 +17,5 @@ namespace rendell_ui
 		virtual void remove(IWidget* value) = 0;
 	};
 
-	typedef std::shared_ptr<IWidgetCollection> IWidgetCollectionSharedPtr;
+	DECLARE_SHARED_PTR(IWidgetCollection)
 }

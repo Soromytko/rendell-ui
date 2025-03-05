@@ -36,6 +36,6 @@ namespace rendell_ui
 		static int _windowCount;
 
 	};
-
-	typedef std::shared_ptr<Window> WindowSharedPtr;
+	
+	DECLARE_SHARED_PTR_FACTORY(Window)
 }

@@ -16,4 +16,6 @@ namespace rendell_ui
 	private:
 		std::set<IWidget*> _widgets{};
 	};
+
+	DECLARE_SHARED_PTR_FACTORY(WidgetHandlePipeline)
 }

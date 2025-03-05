@@ -16,5 +16,5 @@ namespace rendell_ui
 
 	};
 
-	typedef std::shared_ptr<RectangleWidget> RectangleSharedPtr;
+	DECLARE_SHARED_PTR_FACTORY(RectangleWidget)
 }

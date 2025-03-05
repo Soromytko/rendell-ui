@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "window_input.h"
+#include "../defines.h"
 
 namespace rendell_ui
 {
@@ -17,6 +18,6 @@ namespace rendell_ui
 		virtual void onCharInputted(unsigned char character) {};
 	};
 
-	typedef std::shared_ptr<WindowEventHandler> WindowEventHandlerSharedPtr;
+	DECLARE_SHARED_PTR_FACTORY(WindowEventHandler)
 
 }

@@ -103,7 +103,7 @@ namespace rendell_ui
 		{
 			if (!s_eventHandlerStub)
 			{
-				s_eventHandlerStub = std::make_shared<WindowEventHandler>();
+				s_eventHandlerStub = makeWindowEventHandler();
 			}
 			_eventHandler = s_eventHandlerStub;
 		}
