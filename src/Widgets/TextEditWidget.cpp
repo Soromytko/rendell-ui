@@ -41,25 +41,45 @@ namespace rendell_ui
 		}
 	}
 
+	static std::vector<std::wstring> split_string(const std::wstring& str, const std::wstring& delimiter)
+	{
+		std::vector<std::wstring> result;
+
+		std::wstring::size_type pos = 0;
+		std::wstring::size_type prev = 0;
+		while ((pos = str.find(delimiter, prev)) != std::wstring::npos)
+		{
+			result.push_back(str.substr(prev, pos - prev));
+			prev = pos + delimiter.length();
+		}
+
+		result.push_back(str.substr(prev));
+
+		return result;
+	}
+
 	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_lines.clear();
 
-		std::wstring line;
-		for (auto it = value.begin(); it != value.end(); it++)
+		std::vector<std::wstring> lines = split_string(value, L"\n");
+		for (std::wstring& line : lines)
 		{
-			if (wchar_t currentChar = *it; currentChar != '\n')
-			{
-				line += currentChar;
-			}
-			else
-			{
-				_lines.push_back(createTextRenderer(std::move(line), _fontSize));
-				line.clear();
-			}
+			_lines.push_back(createTextRenderer(std::move(line), _fontSize));
 		}
-		_textEditor->setTextRenderer(_lines[0]);
 
+		if (_lines.size() > 0)
+		{
+			_textEditor->setTextRenderer(_lines[0]);
+			_textEditor->moveCursorToStart();
+			_currentRowIndex = 0;
+			_currentColumnIndex = 0;
+			setupTextEditor();
+		}
+		else
+		{
+			_textEditor->setTextRenderer(nullptr);
+		}
 	}
 
 	void TextEditWidget::setFontSize(glm::ivec2 value)
@@ -89,6 +109,11 @@ namespace rendell_ui
 
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
+		if (_lines.size() == 0)
+		{
+			return;
+		}
+
 		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) -
 			cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
 
