@@ -25,6 +25,8 @@ namespace rendell_ui
 		{
 			delete widget;
 		}
+
+		setParent(nullptr);
 	}
 
 	void Widget::setVisible(bool value)
