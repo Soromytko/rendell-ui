@@ -21,7 +21,7 @@ namespace rendell_ui
 	{
 		for (IWidget* widget : _widgets)
 		{
-			if (widget->getVisible())
+			if (widget->getImplicitVisible())
 			{
 				widget->draw();
 			}

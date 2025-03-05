@@ -18,6 +18,8 @@ namespace rendell_ui
 		void setVisible(bool value);
 		bool getVisible() const override;
 
+		bool getImplicitVisible() const override;
+
 		void setParent(Widget* widget);
 		Widget* getParent() const;
 		const std::set<Widget*>& getChildren() const;
@@ -61,8 +63,10 @@ namespace rendell_ui
 
 	protected:
 		void update();
+		void updateImplicitVisibleRecursively();
 
 		bool _visible{ true };
+		bool _implicitVisible{ true };
 
 		Widget* _parent{ nullptr };
 		std::set<Widget*> _children{};

@@ -31,12 +31,22 @@ namespace rendell_ui
 
 	void Widget::setVisible(bool value)
 	{
-		_visible = value;
+		if (_visible != value)
+		{
+			_visible = value;
+			updateImplicitVisibleRecursively();
+		}
+
 	}
 
 	bool Widget::getVisible() const
 	{
 		return _visible;
+	}
+
+	bool Widget::getImplicitVisible() const
+	{
+		return _implicitVisible;
 	}
 
 	void Widget::setParent(Widget* widget)
@@ -54,6 +64,8 @@ namespace rendell_ui
 			widget->_children.insert(this);
 		}
 		_parent = widget;
+
+		updateImplicitVisibleRecursively();
 	}
 
 	Widget* Widget::getParent() const
@@ -349,4 +361,21 @@ namespace rendell_ui
 		}
 		}
 	}
+
+	void Widget::updateImplicitVisibleRecursively()
+	{
+		// Consider the absence of a parent as an implicit visibility.
+		const bool parentImplicitVisible = _parent ? _parent->_implicitVisible : true;
+
+		const bool newImplicitVisible = parentImplicitVisible && _visible;
+		if (_implicitVisible != newImplicitVisible)
+		{
+			_implicitVisible = newImplicitVisible;
+			for (Widget* child : _children)
+			{
+				child->updateImplicitVisibleRecursively();
+			}
+		}
+	}
+	
 }
