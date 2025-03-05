@@ -18,6 +18,11 @@ namespace rendell_ui
 		_widgets.erase(widget);
 	}
 
+	void Canvas::focusWidget(Widget* widget)
+	{
+		setFocusedWidget(widget);
+	}
+
 	const std::set<WidgetSharedPtr>& Canvas::getWidgets() const
 	{
 		return _widgets;

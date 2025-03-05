@@ -15,6 +15,7 @@ namespace rendell_ui
 
 		void addWidget(WidgetSharedPtr widget);
 		void removeWidget(WidgetSharedPtr widget);
+		void focusWidget(Widget* widget);
 
 		const std::set<WidgetSharedPtr>& getWidgets() const;
 		ViewportSharedPtr getViewport() const;
