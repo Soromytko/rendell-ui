@@ -20,6 +20,7 @@ namespace rendell_ui
 	TextEditWidget::TextEditWidget(Widget* parent) : Widget(parent)
 	{
 		_textEditor = new TextRendererEditor(this);
+		_textEditor->setVisible(false);
 		_textEditor->setAnchor(Anchor::leftTop);
 		_textEditor->updateSize();
 	}
@@ -105,6 +106,20 @@ namespace rendell_ui
 		}
 		_textEditor->setOffset(glm::vec2(0.0, -offset));
 		_textEditor->updateRecursively();
+	}
+
+	void TextEditWidget::onFocused()
+	{
+		_textEditor->setVisible(true);
+		if (!_textEditor->getTextRenderer() && _lines.size() > 0)
+		{
+			_textEditor->setTextRenderer(_lines[0]);
+		}
+	}
+
+	void TextEditWidget::onUnfocused()
+	{
+		_textEditor->setVisible(false);
 	}
 
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)

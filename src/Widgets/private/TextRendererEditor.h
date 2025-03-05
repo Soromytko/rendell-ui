@@ -16,6 +16,7 @@ namespace rendell_ui
 		~TextRendererEditor() = default;
 
 		size_t getCursorCharIndex() const;
+		rendell_text::TextRendererSharedPtr getTextRenderer() const;
 		void setTextRenderer(rendell_text::TextRendererSharedPtr value);
 		void updateSize(bool shouldCursorOffsetBeRecalculated = false);
 

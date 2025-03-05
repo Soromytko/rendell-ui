@@ -21,6 +21,8 @@ namespace rendell_ui
 	private:
 		void setupTextEditor();
 
+		void onFocused() override;
+		void onUnfocused() override;
 		void onMouseDown(glm::dvec2 cursorPosition) override;
 		void onKeyInputted(const KeyboardInput& keyboardInput) override;
 		void onCharInputted(unsigned char character) override;

@@ -11,6 +11,7 @@ namespace rendell_ui
 		_cursor = new Cursor(this);
 		_cursor->setAnchor(Anchor::leftStretch);
 		_cursor->setThickness(CURSOR_THICKNESS);
+		_cursor->setVisible(false);
 		setTextRenderer(textRenderer);
 	}
 
@@ -19,12 +20,19 @@ namespace rendell_ui
 		return _charIndex;
 	}
 
+	rendell_text::TextRendererSharedPtr TextRendererEditor::getTextRenderer() const
+	{
+		return _textRenderer;
+	}
+
 	void TextRendererEditor::setTextRenderer(rendell_text::TextRendererSharedPtr value)
 	{
 		if (_textRenderer != value)
 		{
 			_textRenderer = value;
 			updateSize();
+
+			_cursor->setVisible(_textRenderer != nullptr);
 		}
 	}
 
