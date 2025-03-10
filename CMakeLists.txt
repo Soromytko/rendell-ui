@@ -50,6 +50,8 @@ set(HEADER_FILES
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h
     src/Shaders/RectangleShader.h
+
+    src/Signal.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})

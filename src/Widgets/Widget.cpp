@@ -16,6 +16,8 @@ namespace rendell_ui
 
 	Widget::~Widget()
 	{
+		destroyed.emit();
+
 		if (WidgetRegistrator::hasInstance())
 		{
 			WidgetRegistrator::getInstance()->unregisterWidget(this);
@@ -35,8 +37,8 @@ namespace rendell_ui
 		{
 			_visible = value;
 			updateImplicitVisibleRecursively();
+			visibleChanged.emit(_visible);
 		}
-
 	}
 
 	bool Widget::getVisible() const
@@ -66,6 +68,8 @@ namespace rendell_ui
 		_parent = widget;
 
 		updateImplicitVisibleRecursively();
+
+		parentChanged.emit(_parent);
 	}
 
 	Widget* Widget::getParent() const

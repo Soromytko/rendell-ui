@@ -7,12 +7,17 @@
 #include "Transform2D.h"
 #include "../Window/window_input.h"
 #include "../defines.h"
+#include "../Signal.h"
 
 namespace rendell_ui
 {
 	class Widget : public IWidget
 	{
 	public:
+		Signal<void> destroyed;
+		Signal<void, bool> visibleChanged;
+		Signal<void, Widget*> parentChanged;
+
 		Widget(Widget* parent = nullptr);
 		virtual ~Widget();
 
