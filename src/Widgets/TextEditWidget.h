@@ -19,7 +19,7 @@ namespace rendell_ui
 		void setFontSize(glm::ivec2 value);
 
 	private:
-		void setupTextEditor();
+		void setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer);
 
 		void onFocused() override;
 		void onUnfocused() override;

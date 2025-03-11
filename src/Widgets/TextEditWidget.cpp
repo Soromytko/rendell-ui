@@ -71,15 +71,14 @@ namespace rendell_ui
 
 		if (_lines.size() > 0)
 		{
-			_textEditor->setTextRenderer(_lines[0]);
+			setupTextEditor(_lines[0]);
 			_textEditor->moveCursorToStart();
 			_currentRowIndex = 0;
 			_currentColumnIndex = 0;
-			setupTextEditor();
 		}
 		else
 		{
-			_textEditor->setTextRenderer(nullptr);
+			setupTextEditor(nullptr);
 		}
 	}
 
@@ -96,14 +95,21 @@ namespace rendell_ui
 		}
 	}
 
-	void TextEditWidget::setupTextEditor()
+	void TextEditWidget::setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer)
 	{
+		if (!textRenderer)
+		{
+			_textEditor = nullptr;
+			return;
+		}
+
 		float offset = 0.0f;
 		for (size_t row = 0; row < _currentRowIndex; row++)
 		{
 			rendell_text::TextRendererSharedPtr& line = _lines[row];
 			offset += static_cast<float>(line->getGeneralFontMetrices().height);
 		}
+		_textEditor->setTextRenderer(textRenderer);
 		_textEditor->setOffset(glm::vec2(0.0, -offset));
 		_textEditor->updateRecursively();
 	}
@@ -113,7 +119,7 @@ namespace rendell_ui
 		_textEditor->setVisible(true);
 		if (!_textEditor->getTextRenderer() && _lines.size() > 0)
 		{
-			_textEditor->setTextRenderer(_lines[0]);
+			setupTextEditor(_lines[0]);
 		}
 	}
 
@@ -145,8 +151,7 @@ namespace rendell_ui
 			else
 			{
 				_currentRowIndex = row;
-				_textEditor->setTextRenderer(_lines[row]);
-				setupTextEditor();
+				setupTextEditor(_lines[row]);
 				break;
 			}
 		}
@@ -189,9 +194,8 @@ namespace rendell_ui
 		_currentRowIndex++;
 		_lines.insert(_lines.begin() + _currentRowIndex, createTextRenderer(std::move(remaningText), _fontSize));
 		_textEditor->eraseAllAfterCursor();
-		_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+		setupTextEditor(_lines[_currentRowIndex]);
 		_textEditor->moveCursorToStart();
-		setupTextEditor();
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
@@ -215,10 +219,9 @@ namespace rendell_ui
 			std::wstring remaningText = _lines[_currentRowIndex]->getText();
 			_lines.erase(_lines.begin() + _currentRowIndex);
 			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToEnd();
 			_textEditor->insertAfterCursor(remaningText);
-			setupTextEditor();
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
@@ -243,8 +246,7 @@ namespace rendell_ui
 				{
 					_currentRowIndex--;
 				}
-				_textEditor->setTextRenderer(_lines[_currentRowIndex]);
-				setupTextEditor();
+				setupTextEditor(_lines[_currentRowIndex]);
 				_textEditor->moveCursorToNearest(_currentColumnIndex);
 			}
 			else if (_lines.size() == 1)
@@ -258,9 +260,8 @@ namespace rendell_ui
 		else if (!_textEditor->moveCursorToNextChar() && _currentRowIndex < _lines.size() - 1)
 		{
 			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToStart();
-			setupTextEditor();
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 		if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
@@ -268,10 +269,9 @@ namespace rendell_ui
 			std::wstring remaningText = _lines[_currentRowIndex]->getText();
 			_lines.erase(_lines.begin() + _currentRowIndex);
 			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToEnd();
 			_textEditor->insertAfterCursor(remaningText);
-			setupTextEditor();
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
@@ -286,9 +286,8 @@ namespace rendell_ui
 		else if (!_textEditor->moveCursorToNextChar() && _currentRowIndex < _lines.size() - 1)
 		{
 			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToStart();
-			setupTextEditor();
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
@@ -304,9 +303,8 @@ namespace rendell_ui
 		{
 			// Use zu to explicitly specify the type of the literal (C++23 and above).
 			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToEnd();
-			setupTextEditor();
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
@@ -316,9 +314,8 @@ namespace rendell_ui
 		if (_currentRowIndex < _lines.size() - 1)
 		{
 			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToNearest(_currentColumnIndex);
-			setupTextEditor();
 		}
 	}
 
@@ -327,9 +324,8 @@ namespace rendell_ui
 		if (_currentRowIndex > 0)
 		{
 			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			_textEditor->setTextRenderer(_lines[_currentRowIndex]);
+			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToNearest(_currentColumnIndex);
-			setupTextEditor();
 		}
 	}
 
