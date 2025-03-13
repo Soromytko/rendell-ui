@@ -28,6 +28,7 @@ set(SOURCE_FILES
     src/Shaders/RectangleShader.cpp
     src/String/StringBuilder.cpp
     src/String/StringBuilderChunk.cpp
+    src/String/StringExtension.cpp
 )
 
 set(HEADER_FILES
@@ -54,6 +55,7 @@ set(HEADER_FILES
     src/Shaders/RectangleShader.h
     src/String/StringBuilder.h
     src/String/StringBuilderChunk.h
+    src/String/StringExtension.h
 
     src/Signal.h
 )
