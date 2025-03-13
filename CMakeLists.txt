@@ -26,6 +26,8 @@ set(SOURCE_FILES
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
     src/Shaders/RectangleShader.cpp
+    src/String/StringBuilder.cpp
+    src/String/StringBuilderChunk.cpp
 )
 
 set(HEADER_FILES
@@ -50,6 +52,8 @@ set(HEADER_FILES
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h
     src/Shaders/RectangleShader.h
+    src/String/StringBuilder.h
+    src/String/StringBuilderChunk.h
 
     src/Signal.h
 )
