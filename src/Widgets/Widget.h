@@ -1,36 +1,64 @@
 #pragma once
 #include <memory>
-#include <set>
+#include <unordered_set>
 #include <rendell/rendell.h>
 #include "IWidget.h"
 #include "Anchor.h"
 #include "Transform2D.h"
+#include "WidgetRegistrator.h"
 #include "../Window/window_input.h"
 #include "../defines.h"
 #include "../Signal.h"
 
 namespace rendell_ui
 {
+	class Widget;
+
+	DECLARE_SHARED_PTR(Widget)
+	DECLARE_WEAK_PTR(Widget)
+
+	void widget_deleter(Widget* widgetPtr);
+	void release_widget(const WidgetSharedPtr& widget);
+	
+	template <typename WidgetType, typename... Args>
+	std::shared_ptr<WidgetType> createWidget(WidgetWeakPtr parent = {}, Args&&... args)
+	{
+		std::shared_ptr<WidgetType> result(new WidgetType(std::forward<Args>(args)...), widget_deleter);
+		result->setSelfWeakPtr(result);
+		result->setParent(parent);
+		WidgetRegistrator::getInstance()->registerWidget(result.get());
+		return result;
+	}
+
 	class Widget : public IWidget
 	{
+		FRIEND_WIDGET
 	public:
 		Signal<void> destroyed;
 		Signal<void, bool> visibleChanged;
-		Signal<void, Widget*> parentChanged;
+		Signal<void, const WidgetSharedPtr&> parentChanged;
 
-		Widget(Widget* parent = nullptr);
+	protected:
+		Widget();
+	public:
 		virtual ~Widget();
 
+	private:
+		void setSelfWeakPtr(WidgetWeakPtr value);
+
+	public:
 		void setVisible(bool value);
 		bool getVisible() const override;
 
 		bool getImplicitVisible() const override;
 
-		void setParent(Widget* widget);
-		Widget* getParent() const;
-		const std::set<Widget*>& getChildren() const;
+		void setParent(WidgetWeakPtr widget);
+		WidgetWeakPtr getParent() const;
+		const std::unordered_set<WidgetSharedPtr>& getChildren() const;
 
 		const Transform2D& getTransform() const;
+
+		void removeParent();
 
 		virtual void setColor(glm::vec4 value);
 		glm::vec4 getColor() const;
@@ -63,6 +91,7 @@ namespace rendell_ui
 
 	protected:
 		virtual void updateUniforms() const;
+		virtual void onSelfWeakPtrChanged() {}
 
 	public:
 		void updateRecursively();
@@ -71,11 +100,13 @@ namespace rendell_ui
 		void update();
 		void updateImplicitVisibleRecursively();
 
+		WidgetWeakPtr _selfWeakPtr;
+
 		bool _visible{ true };
 		bool _implicitVisible{ true };
 
-		Widget* _parent{ nullptr };
-		std::set<Widget*> _children{};
+		WidgetWeakPtr _parent{};
+		std::unordered_set<WidgetSharedPtr> _children{};
 
 		uint32_t _matrixUniformIndex{ 0 };
 		uint32_t _sizeUniformIndex{ 0 };
@@ -91,6 +122,6 @@ namespace rendell_ui
 
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(Widget)
+	DECLARE_WIDGET(Widget)
 
 }

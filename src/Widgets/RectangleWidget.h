@@ -5,8 +5,10 @@ namespace rendell_ui
 {
 	class RectangleWidget : public Widget
 	{
+		FRIEND_WIDGET
+	protected:
+		RectangleWidget();
 	public:
-		RectangleWidget(Widget* parent = nullptr);
 		virtual ~RectangleWidget();
 
 		virtual void draw() const override;
@@ -16,5 +18,6 @@ namespace rendell_ui
 
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(RectangleWidget)
+	DECLARE_WIDGET(RectangleWidget)
+
 }

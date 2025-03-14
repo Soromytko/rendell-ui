@@ -18,7 +18,7 @@ namespace rendell_ui
 	static uint32_t s_sizeUniformIndex{ 0 };
 	static uint32_t s_colorUniformIndex{ 0 };
 
-	RectangleWidget::RectangleWidget(Widget* parent) : Widget(parent)
+	RectangleWidget::RectangleWidget() : Widget()
 	{
 		_shaderProgram = ShaderStorage::getInstance()->rectangleShader->getShaderProgram();
 		if (!s_isUniformIndexObtained)

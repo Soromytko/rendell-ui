@@ -7,10 +7,11 @@ namespace rendell_ui
 {
 	class TextRendererEditor final : public Widget
 	{
+		FRIEND_WIDGET
 		friend class TextEditWidget;
 
-	protected:
-		TextRendererEditor(Widget* parent, rendell_text::TextRendererSharedPtr textRenderer = nullptr);
+	private:
+		TextRendererEditor(rendell_text::TextRendererSharedPtr textRenderer = nullptr);
 
 	public:
 		~TextRendererEditor() = default;
@@ -41,10 +42,13 @@ namespace rendell_ui
 		bool insertAfterCursor(const std::wstring& string);
 
 	private:
+		void onSelfWeakPtrChanged() override;
 		void recalculateCursorOffset();
 
-		Cursor* _cursor;
+		CursorSharedPtr _cursor;
 		rendell_text::TextRendererSharedPtr _textRenderer;
 		size_t _charIndex{ 0 };
 	};
+
+	DECLARE_WIDGET(TextRendererEditor)
 }

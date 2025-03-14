@@ -1,34 +1,35 @@
 #include "Widget.h"
 #include "../Viewport.h"
-#include "WidgetRegistrator.h"
 #include <algorithm>
 
 namespace rendell_ui
 {
 	static uint32_t s_instanceCount{ 0 };
 
-	Widget::Widget(Widget* parent) : IWidget()
+	void widget_deleter(Widget* widgetPtr)
 	{
-		setParent(parent);
+		if (WidgetRegistrator::hasInstance())
+		{
+			WidgetRegistrator::getInstance()->unregisterWidget(widgetPtr);
+		}
+		delete widgetPtr;
+	}
 
-		WidgetRegistrator::getInstance()->registerWidget(this);
+	void release_widget(const WidgetSharedPtr& widget)
+	{
+		// Remove this widget from parent's children
+		// to remove from parent's ownership.
+		widget->removeParent();
+	}
+
+	Widget::Widget() : IWidget()
+	{
+
 	}
 
 	Widget::~Widget()
 	{
 		destroyed.emit();
-
-		if (WidgetRegistrator::hasInstance())
-		{
-			WidgetRegistrator::getInstance()->unregisterWidget(this);
-		}
-
-		for (Widget* widget : _children)
-		{
-			delete widget;
-		}
-
-		setParent(nullptr);
 	}
 
 	void Widget::setVisible(bool value)
@@ -51,33 +52,43 @@ namespace rendell_ui
 		return _implicitVisible;
 	}
 
-	void Widget::setParent(Widget* widget)
+	void Widget::setParent(WidgetWeakPtr widget)
 	{
-		if (_parent == widget || widget == this)
+		WidgetSharedPtr lockedParent = _parent.lock();
+		WidgetSharedPtr lockedWidget = widget.lock();
+
+		if (lockedParent == lockedWidget || lockedWidget.get() == this)
 		{
 			return;
 		}
-		if (_parent)
+		if (lockedParent)
 		{
-			_parent->_children.erase(this);
+			lockedParent->_children.erase(_selfWeakPtr.lock());
 		}
-		if (widget)
+		if (lockedWidget)
 		{
-			widget->_children.insert(this);
+			lockedWidget->_children.insert(_selfWeakPtr.lock());
 		}
 		_parent = widget;
 
 		updateImplicitVisibleRecursively();
 
-		parentChanged.emit(_parent);
+		parentChanged.emit(_parent.lock());
 	}
 
-	Widget* Widget::getParent() const
+	void Widget::setSelfWeakPtr(WidgetWeakPtr value)
+	{
+		assert(value.lock().get() == this);
+		_selfWeakPtr = value;
+		onSelfWeakPtrChanged();
+	}
+
+	WidgetWeakPtr Widget::getParent() const
 	{
 		return _parent;
 	}
 
-	const std::set<Widget*>& Widget::getChildren() const
+	const std::unordered_set<WidgetSharedPtr>& Widget::getChildren() const
 	{
 		return _children;
 	}
@@ -85,6 +96,11 @@ namespace rendell_ui
 	const Transform2D& Widget::getTransform() const
 	{
 		return _transform;
+	}
+
+	void Widget::removeParent()
+	{
+		setParent({});
 	}
 
 	void Widget::setColor(glm::vec4 value)
@@ -172,7 +188,7 @@ namespace rendell_ui
 	void Widget::updateRecursively()
 	{
 		update();
-		for (Widget* widget : _children)
+		for (const WidgetSharedPtr& widget : _children)
 		{
 			widget->updateRecursively();
 		}
@@ -180,8 +196,11 @@ namespace rendell_ui
 
 	void Widget::update()
 	{
-		const glm::vec2 parentPosition = _parent ? _parent->_transform.getPosition() : glm::vec2(0.0f, 0.0f);
-		const glm::vec2 parentSize = _parent ? _parent->_size : (glm::vec2)Viewport::getCurrent()->getSize();
+		WidgetSharedPtr parent = _parent.lock();
+		const bool hasParent = parent != nullptr;
+
+		const glm::vec2 parentPosition = hasParent ? parent->_transform.getPosition() : glm::vec2(0.0f, 0.0f);
+		const glm::vec2 parentSize = hasParent ? parent->_size : (glm::vec2)Viewport::getCurrent()->getSize();
 		const glm::vec2 halfParentSize = parentSize * 0.5f;
 
 		switch (_anchor)
@@ -368,18 +387,20 @@ namespace rendell_ui
 
 	void Widget::updateImplicitVisibleRecursively()
 	{
+		const WidgetSharedPtr& parent = _parent.lock();
+
 		// Consider the absence of a parent as an implicit visibility.
-		const bool parentImplicitVisible = _parent ? _parent->_implicitVisible : true;
+		const bool parentImplicitVisible = parent != nullptr ? parent->_implicitVisible : true;
 
 		const bool newImplicitVisible = parentImplicitVisible && _visible;
 		if (_implicitVisible != newImplicitVisible)
 		{
 			_implicitVisible = newImplicitVisible;
-			for (Widget* child : _children)
+			for (const WidgetSharedPtr& child : _children)
 			{
 				child->updateImplicitVisibleRecursively();
 			}
 		}
 	}
-	
+
 }

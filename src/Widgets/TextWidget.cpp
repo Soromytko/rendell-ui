@@ -3,7 +3,7 @@
 
 namespace rendell_ui
 {
-	TextWidget::TextWidget(Widget* parent) : Widget(parent)
+	TextWidget::TextWidget() : Widget()
 	{
 		_textRenderer = rendell_text::makeTextRenderer();
 	}

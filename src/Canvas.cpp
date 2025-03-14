@@ -8,17 +8,17 @@ namespace rendell_ui
 
 	}
 
-	void Canvas::addWidget(WidgetSharedPtr widget)
+	void Canvas::addWidget(const WidgetSharedPtr& widget)
 	{
 		_widgets.insert(widget);
 	}
 
-	void Canvas::removeWidget(WidgetSharedPtr widget)
+	void Canvas::removeWidget(const WidgetSharedPtr& widget)
 	{
 		_widgets.erase(widget);
 	}
 
-	void Canvas::focusWidget(Widget* widget)
+	void Canvas::focusWidget(const WidgetSharedPtr& widget)
 	{
 		setFocusedWidget(widget);
 	}
@@ -59,13 +59,13 @@ namespace rendell_ui
 	void Canvas::onMouseButtonInputted(const MouseInput& mouseInput)
 	{
 		const glm::vec2 cursorPosition = glm::vec2(mouseInput.x, mouseInput.y);
-		
+
 		if (mouseInput.action == InputAction::pressed)
 		{
-			Widget* newFocusedWidget = nullptr;
+			WidgetSharedPtr newFocusedWidget = nullptr;
 			for (const WidgetSharedPtr& widget : _widgets)
 			{
-				Widget* currentFocusedWidget = focusWidgetRecursively(widget.get(), cursorPosition);
+				WidgetSharedPtr currentFocusedWidget = focusWidgetRecursively(widget, cursorPosition);
 				if (currentFocusedWidget)
 				{
 					newFocusedWidget = currentFocusedWidget;
@@ -99,7 +99,7 @@ namespace rendell_ui
 		}
 	}
 
-	void Canvas::setFocusedWidget(Widget* widget)
+	void Canvas::setFocusedWidget(const WidgetSharedPtr& widget)
 	{
 		if (_focusedWidget != widget)
 		{
@@ -120,16 +120,16 @@ namespace rendell_ui
 		}
 	}
 
-	Widget* Canvas::focusWidgetRecursively(Widget* widget, glm::vec2 cursor)
+	WidgetSharedPtr Canvas::focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor)
 	{
 		if (!widget->intersect(cursor))
 		{
 			return nullptr;
 		}
 
-		for (Widget* child : widget->getChildren())
+		for (const WidgetSharedPtr& child : widget->getChildren())
 		{
-			Widget* childFocusWidget = focusWidgetRecursively(child, cursor);
+			const WidgetSharedPtr& childFocusWidget = focusWidgetRecursively(child, cursor);
 			if (childFocusWidget)
 			{
 				return childFocusWidget;
@@ -139,5 +139,5 @@ namespace rendell_ui
 		return widget;
 	}
 
-	
+
 }

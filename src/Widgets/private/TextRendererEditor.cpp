@@ -5,10 +5,10 @@
 
 namespace rendell_ui
 {
-	TextRendererEditor::TextRendererEditor(Widget* parent, rendell_text::TextRendererSharedPtr textRenderer) :
-		Widget(parent)
+	TextRendererEditor::TextRendererEditor(rendell_text::TextRendererSharedPtr textRenderer) :
+		Widget()
 	{
-		_cursor = new Cursor(this);
+		_cursor = createCursor();
 		_cursor->setAnchor(Anchor::leftStretch);
 		_cursor->setThickness(CURSOR_THICKNESS);
 		_cursor->setVisible(false);
@@ -296,6 +296,11 @@ namespace rendell_ui
 	{
 		_textRenderer->insertText(_charIndex, string);
 		return true;
+	}
+
+	void TextRendererEditor::onSelfWeakPtrChanged()
+	{
+		_cursor->setParent(_selfWeakPtr);
 	}
 
 	void TextRendererEditor::recalculateCursorOffset()

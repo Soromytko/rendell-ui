@@ -9,8 +9,10 @@ namespace rendell_ui
 {
 	class TextEditWidget final : public Widget
 	{
+		FRIEND_WIDGET
+	private:
+		TextEditWidget();
 	public:
-		TextEditWidget(Widget* parent = nullptr);
 		~TextEditWidget() = default;
 
 		void draw() const override;
@@ -19,6 +21,8 @@ namespace rendell_ui
 		void setFontSize(glm::ivec2 value);
 
 	private:
+		void onSelfWeakPtrChanged() override;
+
 		void setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer);
 
 		void onFocused() override;
@@ -38,10 +42,12 @@ namespace rendell_ui
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextRendererSharedPtr> _lines{};
-		TextRendererEditor* _textEditor;
+		TextRendererEditorSharedPtr _textEditor;
 		size_t _currentRowIndex{ 0u };
 		size_t _currentColumnIndex{ 0u };
 	};
+
+	DECLARE_WIDGET(TextEditWidget)
 
 }
 

@@ -17,9 +17,9 @@ namespace rendell_ui
 		return result;
 	}
 
-	TextEditWidget::TextEditWidget(Widget* parent) : Widget(parent)
+	TextEditWidget::TextEditWidget() : Widget()
 	{
-		_textEditor = new TextRendererEditor(this);
+		_textEditor = createTextRendererEditor();
 		_textEditor->setVisible(false);
 		_textEditor->setAnchor(Anchor::leftTop);
 		_textEditor->updateSize();
@@ -76,6 +76,11 @@ namespace rendell_ui
 			}
 			_textEditor->updateSize(true);
 		}
+	}
+
+	void TextEditWidget::onSelfWeakPtrChanged()
+	{
+		_textEditor->setParent(_selfWeakPtr);
 	}
 
 	void TextEditWidget::setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer)

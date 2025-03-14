@@ -13,9 +13,9 @@ namespace rendell_ui
 		Canvas(ViewportSharedPtr viewport);
 		virtual ~Canvas() = default;
 
-		void addWidget(WidgetSharedPtr widget);
-		void removeWidget(WidgetSharedPtr widget);
-		void focusWidget(Widget* widget);
+		void addWidget(const WidgetSharedPtr& widget);
+		void removeWidget(const WidgetSharedPtr& widget);
+		void focusWidget(const WidgetSharedPtr& widget);
 
 		const std::set<WidgetSharedPtr>& getWidgets() const;
 		ViewportSharedPtr getViewport() const;
@@ -26,11 +26,11 @@ namespace rendell_ui
 		virtual void onCharInputted(unsigned char character) override;
 
 	private:
-		void setFocusedWidget(Widget* widget);
+		void setFocusedWidget(const WidgetSharedPtr& widget);
 		void updateWidgetRecursively();
-		Widget* focusWidgetRecursively(Widget* widget, glm::vec2 cursor);
+		WidgetSharedPtr focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor);
 
-		Widget* _focusedWidget{ nullptr };
+		WidgetSharedPtr _focusedWidget{ nullptr };
 
 		ViewportSharedPtr _viewport;
 		std::set<WidgetSharedPtr> _widgets;

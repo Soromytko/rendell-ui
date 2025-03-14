@@ -5,10 +5,10 @@ namespace rendell_ui
 {
 	class Cursor final : public RectangleWidget
 	{
+		FRIEND_WIDGET
 		friend class TextRendererEditor;
-
 	protected:
-		Cursor(Widget* parent = nullptr);
+		Cursor();
 
 	public:
 		~Cursor() = default;
@@ -28,5 +28,7 @@ namespace rendell_ui
 		double _blinkTimeout{ 0.5f };
 		mutable double _blinkTimer{ 0.0f };
 	};
+
+	DECLARE_WIDGET(Cursor)
 
 }

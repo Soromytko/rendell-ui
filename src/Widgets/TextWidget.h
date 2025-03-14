@@ -4,10 +4,12 @@
 
 namespace rendell_ui
 {
-	class TextWidget : public Widget
+	class TextWidget final : public Widget
 	{
+		FRIEND_WIDGET
+	private:
+		TextWidget();
 	public:
-		TextWidget(Widget* parent = nullptr);
 		~TextWidget() = default;
 
 		void setColor(glm::vec4 value) override;
@@ -26,4 +28,6 @@ namespace rendell_ui
 	private:
 		rendell_text::TextRendererSharedPtr _textRenderer{ nullptr };
 	};
+
+	DECLARE_WIDGET(TextWidget)
 }
