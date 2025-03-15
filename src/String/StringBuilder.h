@@ -17,6 +17,7 @@ namespace rendell_ui
 
 		void append(StringType&& data);
 		void append(const StringType& data);
+		void insert(size_t index, const StringType& value);
 		void removeAt(size_t index);
 		void remove(size_t indexFrom, size_t count = 1);
 

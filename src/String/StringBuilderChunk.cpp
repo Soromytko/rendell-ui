@@ -12,6 +12,11 @@ namespace rendell_ui
 		_data.resize(_size);
 	}
 
+	bool StringBuilderChunk::isFull() const
+	{
+		return getRemainingLength() > 0;
+	}
+
 	size_t StringBuilderChunk::getCurrentLength() const
 	{
 		return _currentLength;
@@ -30,6 +35,19 @@ namespace rendell_ui
 	StringType StringBuilderChunk::toString() const
 	{
 		return StringType(_data.begin(), _data.begin() + _currentLength);
+	}
+
+	StringType StringBuilderChunk::getSubData(size_t indexFrom) const
+	{
+		return getSubData(indexFrom, _currentLength - indexFrom);
+	}
+
+	StringType StringBuilderChunk::getSubData(size_t indexFrom, size_t count) const
+	{
+		assert(indexFrom < _currentLength);
+		assert(indexFrom + count <= _currentLength);
+
+		return StringType(_data.begin() + indexFrom, _data.begin() + indexFrom + count);
 	}
 
 	size_t StringBuilderChunk::append(const StringType& data, size_t startIndex)
@@ -74,6 +92,30 @@ namespace rendell_ui
 		}
 
 		return 0;
+	}
+
+	size_t StringBuilderChunk::insert(size_t index, const StringType& data, size_t dataOffsetIndex)
+	{
+		assert(index <= _currentLength);
+		assert(index < _size);
+
+		const size_t remainingLength = getRemainingLength();
+
+		if (remainingLength == 0)
+		{
+			return data.size();
+		}
+
+		const size_t shiftSize = remainingLength < data.size() ? remainingLength : data.size();
+		const size_t startInsertIndex = _currentLength;
+		for (size_t i = 0; i < shiftSize; i++)
+		{
+			_data[_currentLength + remainingLength - 1] = _data[index + i];
+			_data[index + i] = data[dataOffsetIndex + i];
+		}
+
+		_currentLength = _size;
+		return data.size() - shiftSize;
 	}
 
 	void StringBuilderChunk::removeAt(size_t index)

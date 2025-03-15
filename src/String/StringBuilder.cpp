@@ -67,6 +67,42 @@ namespace rendell_ui
 		append(std::move(chunkData));
 	}
 
+	void StringBuilder::insert(size_t index, const StringType& value)
+	{
+		size_t indexInChunk;
+		ChunkConstIter chunkIt = findChunkByItemIndex(index, &indexInChunk);
+		StringBuilderChunkSharedPtr chunk = *chunkIt;
+
+		if (chunk->getRemainingLength() >= value.size())
+		{
+			const size_t remainingDataLength = chunk->insert(indexInChunk, value);
+			assert(remainingDataLength == 0);
+			return;
+		}
+
+		const StringType& subData = chunk->getSubData(indexInChunk);
+		chunk->remove(indexInChunk, chunk->getCurrentLength());
+		size_t remainingDataLength = chunk->insert(indexInChunk, value);
+
+		while (remainingDataLength > 0)
+		{
+			const size_t dataOffsetIndex = value.size() - remainingDataLength;
+			StringBuilderChunkSharedPtr newChunk = makeStringBuilderChunk(_chunkSize);
+			remainingDataLength = newChunk->insert(0, value, dataOffsetIndex);
+
+			if (ChunkConstIter nextChunkIt = std::next(chunkIt); nextChunkIt != _chunks.end())
+			{
+				_chunks.insert(nextChunkIt, newChunk);
+			}
+			else
+			{
+				_chunks.push_back(newChunk);
+			}
+			chunkIt++;
+		}
+
+	}
+
 	void StringBuilder::removeAt(size_t index)
 	{
 		assert(index < _length);
@@ -137,7 +173,7 @@ namespace rendell_ui
 		for (auto it = _chunks.begin(); it != _chunks.end(); it++)
 		{
 			const size_t newCurrentIndex = currentIndex + (*it)->getCurrentLength();
-			if (newCurrentIndex >= itemIndex)
+			if (newCurrentIndex > itemIndex)
 			{
 				if (indexInChunk != nullptr)
 				{
