@@ -4,6 +4,8 @@
 #include <rendell_text.h>
 #include "Widget.h"
 #include "private/TextRendererEditor.h"
+#include "private/Cursor.h"
+#include "../String/StringBuilder.h"
 
 namespace rendell_ui
 {
@@ -13,7 +15,7 @@ namespace rendell_ui
 	private:
 		TextEditWidget();
 	public:
-		~TextEditWidget() = default;
+		~TextEditWidget();
 
 		void draw() const override;
 
@@ -25,7 +27,10 @@ namespace rendell_ui
 	private:
 		void onSelfWeakPtrChanged() override;
 
-		void setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer);
+		void onTextLayoutCleared();
+		void onTextLayoutRemoved(size_t index);
+		void onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
+		void onCaretChanged(uint32_t x, uint32_t y, uint32_t height);
 
 		void onFocused() override;
 		void onUnfocused() override;
@@ -42,15 +47,15 @@ namespace rendell_ui
 		void processKeyDown(InputModControl modControl);
 		void processKeyUp(InputModControl modControl);
 
-		std::wstring convertLinesToString() const;
+		uint32_t _textLayoutClearedConnectionId;
+		uint32_t _textLayoutRemovedConnectionId;
+		uint32_t _textLayoutAddedConnectionId;
+		uint32_t _caretChangedConnectionId;
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
-		std::vector<rendell_text::TextRendererSharedPtr> _lines{};
-		TextRendererEditorSharedPtr _textEditor;
-		size_t _currentRowIndex{ 0u };
-		size_t _currentColumnIndex{ 0u };
-		mutable std::wstring _cachedText{};
-		mutable bool _shouldCachedTextBeUpdated{ false };
+		TextEditor _textEditor{};
+		CursorSharedPtr _cursor{};
+		std::vector<rendell_text::TextRendererSharedPtr> _textRenderers{};
 	};
 
 	DECLARE_WIDGET(TextEditWidget)

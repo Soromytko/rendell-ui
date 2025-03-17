@@ -1,11 +1,13 @@
 #include "Cursor.h"
 #include "../../Time.h"
 
+#define CURSOR_THICKNESS 2.0f
+
 namespace rendell_ui
 {
 	Cursor::Cursor() : RectangleWidget()
 	{
-
+		setThickness(CURSOR_THICKNESS);
 	}
 
 	void Cursor::draw() const
@@ -30,27 +32,30 @@ namespace rendell_ui
 		_size.x = value;
 	}
 
+	void Cursor::setHeight(float value)
+	{
+		_size.y = value;
+	}
+
 	void Cursor::setVerticalOffset(float value)
 	{
 		_verticalOffset = value;
 		_offset.y = _verticalOffset;
 	}
 
-	void Cursor::moveTo(glm::vec2 value)
+	void Cursor::resetBlinkTimer()
 	{
-		_offset = value + glm::vec2(0.0f, _verticalOffset);
 		_blinkTimer = _blinkTimeout;
-		updateRecursively();
-	}
-
-	void Cursor::moveByDelta(glm::vec2 delta)
-	{
-		moveTo(_offset + delta - glm::vec2(0.0f, _verticalOffset));
 	}
 
 	float Cursor::getThickness() const
 	{
 		return _size.x;
+	}
+
+	float Cursor::getHeight() const
+	{
+		return _size.y;
 	}
 
 	float Cursor::getVerticalOffset() const

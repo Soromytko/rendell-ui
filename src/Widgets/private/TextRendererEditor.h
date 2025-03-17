@@ -1,54 +1,73 @@
 #pragma once
 #include <rendell_text.h>
-#include "../Widget.h"
-#include "Cursor.h"
+#include "../../Signal.h"
+#include "../../String/StringBuilder.h"
 
 namespace rendell_ui
 {
-	class TextRendererEditor final : public Widget
+	class TextEditor final
 	{
-		FRIEND_WIDGET
-		friend class TextEditWidget;
-
-	private:
-		TextRendererEditor(rendell_text::TextRendererSharedPtr textRenderer = nullptr);
+		struct Caret
+		{
+			size_t x{};
+			size_t y{};
+			size_t xCorrector{};
+			size_t offsetInString{};
+		};
 
 	public:
-		~TextRendererEditor() = default;
+		TextEditor();
+		~TextEditor() = default;
 
-		size_t getCursorCharIndex() const;
-		rendell_text::TextRendererSharedPtr getTextRenderer() const;
-		void setTextRenderer(rendell_text::TextRendererSharedPtr value);
-		void updateSize(bool shouldCursorOffsetBeRecalculated = false);
+		const std::wstring& getText() const;
+		size_t getCaretOffsetInString() const;
+		uint32_t getCursorVerticalOffset() const;
+		uint32_t getCursorHorizontalOffset() const;
+		uint32_t getCursorHeight() const;
 
-		bool moveCursorToPrevChar(uint32_t count = 1);
-		bool moveCursorToNextChar(uint32_t count = 1);
+		void setText(const std::wstring& value);
+		void setFontSize(glm::ivec2 value);
+
+		bool moveCursorToPrevChar(size_t count = 1);
+		bool moveCursorToNextChar(size_t count = 1);
+		bool moveCursorToPrevLine(size_t count = 1);
+		bool moveCursorToNextLine(size_t count = 1);
 		bool moveCursorToPrevWord();
 		bool moveCursorToNextWord();
-		bool moveCursorToPrevUntil(std::function<bool(wchar_t currentChar)> predicate);
-		bool moveCursorToNextUntil(std::function<bool(wchar_t currentChar)> predicate);
-		bool moveCursorToPrevUntil(const std::wstring& breakingCharacters);
-		bool moveCursorToNextUntil(const std::wstring& breakingCharacters);
 		bool moveCursorToStart();
 		bool moveCursorToEnd();
-		bool moveCursorToNearest(size_t charIndex);
-		void setupCursorByOffset(double offset);
+		void setupCursorByOffset(double x, double y);
 
-		bool eraseCursorChar();
+		bool eraseBeforeCursor(size_t count = 1);
+		bool eraseAfterCursor(size_t count = 1);
 		bool eraseWordBeforeCursor();
 		bool eraseWordAfterCursor();
-		bool eraseAllAfterCursor();
-		bool insertCursorChar(unsigned char character);
-		bool insertAfterCursor(const std::wstring& string);
+		bool eraseLineUnderCursor();
+		bool insertAfterCursor(const std::wstring& text);
+
+		Signal<void> textLayoutCleared;
+		Signal<void, size_t> textLayoutRemoved;
+		Signal<void, size_t, const rendell_text::TextLayoutSharedPtr&> textLayoutAdded;
+		Signal<void, uint32_t, uint32_t, uint32_t> cursorChanged;
 
 	private:
-		void onSelfWeakPtrChanged() override;
-		void recalculateCursorOffset();
+		std::wstring takeRemainingTextInLine(size_t caretX, size_t caretY, bool eraseFromTextLayout = false);
 
-		CursorSharedPtr _cursor;
-		rendell_text::TextRendererSharedPtr _textRenderer;
-		size_t _charIndex{ 0 };
+		void removeTextLayout(size_t index);
+		void addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
+		bool setCaret(size_t x, size_t y, bool setXCorrector = false);
+
+		size_t getCaretYByOffset(double offset) const;
+		size_t getCaretXByOffset(size_t caretY, double offset) const;
+
+		std::wstring convertLinesToString() const;
+
+		Caret _caret{};
+		StringBuilder _stringBuilder{};
+		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
+		std::vector<rendell_text::TextLayoutSharedPtr> _textLayouts;
+		mutable std::wstring _cachedText{};
+		mutable bool _shouldCachedTextBeUpdated{};
 	};
 
-	DECLARE_WIDGET(TextRendererEditor)
 }

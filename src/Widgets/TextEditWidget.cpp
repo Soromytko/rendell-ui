@@ -6,12 +6,10 @@
 
 namespace rendell_ui
 {
-	static rendell_text::TextRendererSharedPtr createTextRenderer(std::wstring&& text, glm::vec2 fontSize)
+	static rendell_text::TextRendererSharedPtr createTextRenderer(const rendell_text::TextLayoutSharedPtr& textLayout)
 	{
 		rendell_text::TextRendererSharedPtr result = rendell_text::makeTextRenderer();
-		result->setText(text);
-		result->setFontPath(FONT_PATH);
-		result->setFontSize(fontSize);
+		result->setTextLayout(textLayout);
 		result->setBackgroundColor(glm::vec4(31.0f / 255.0, 31.0f / 255.0, 31.0f / 255.0, 1.0f));
 		result->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		return result;
@@ -19,10 +17,18 @@ namespace rendell_ui
 
 	TextEditWidget::TextEditWidget() : Widget()
 	{
-		_textEditor = createTextRendererEditor();
-		_textEditor->setVisible(false);
-		_textEditor->setAnchor(Anchor::leftTop);
-		_textEditor->updateSize();
+		_textLayoutClearedConnectionId = _textEditor.textLayoutCleared.connect(this, &TextEditWidget::onTextLayoutCleared);
+		_textLayoutRemovedConnectionId = _textEditor.textLayoutRemoved.connect(this, &TextEditWidget::onTextLayoutRemoved);
+		_textLayoutAddedConnectionId = _textEditor.textLayoutAdded.connect(this, &TextEditWidget::onTextLayoutAdded);
+		_caretChangedConnectionId = _textEditor.cursorChanged.connect(this, &TextEditWidget::onCaretChanged);
+	}
+
+	TextEditWidget::~TextEditWidget()
+	{
+		_textEditor.textLayoutCleared.disconnect(_textLayoutClearedConnectionId);
+		_textEditor.textLayoutRemoved.disconnect(_textLayoutRemovedConnectionId);
+		_textEditor.textLayoutAdded.disconnect(_textLayoutAddedConnectionId);
+		_textEditor.cursorChanged.disconnect(_caretChangedConnectionId);
 	}
 
 	void TextEditWidget::draw() const
@@ -32,133 +38,78 @@ namespace rendell_ui
 		const glm::mat4& transformMat = _transform.getMatrix();
 		float height = _size.y * 0.5f - _fontSize.y;
 
-		for (const rendell_text::TextRendererSharedPtr& line : _lines)
+		for (const rendell_text::TextRendererSharedPtr& textRenderer : _textRenderers)
 		{
 			const glm::mat4 worldMat = glm::translate(transformMat, glm::vec3(-_size.x * 0.5f, height, 0.0f));
-			height -= line->getGeneralFontMetrices().height;
+			height -= textRenderer->getTextLayout()->getFontHeight();
 
-			line->setMatrix(projectMat * viewMat * worldMat);
-			line->draw();
+			textRenderer->setMatrix(projectMat * viewMat * worldMat);
+			textRenderer->draw();
 		}
 	}
 
 	const std::wstring& TextEditWidget::getText() const
 	{
-		if (_shouldCachedTextBeUpdated)
-		{
-			_cachedText = convertLinesToString();
-			_shouldCachedTextBeUpdated = false;
-		}
-		return _cachedText;
+		return _textEditor.getText();
 	}
 
 	void TextEditWidget::setText(const std::wstring& value)
 	{
-		_lines.clear();
-
-		std::vector<std::wstring> lines = StringExtension::split(value, L"\n");
-		for (std::wstring& line : lines)
-		{
-			_lines.push_back(createTextRenderer(std::move(line), _fontSize));
-		}
-
-		if (_lines.size() > 0)
-		{
-			setupTextEditor(_lines[0]);
-			_textEditor->moveCursorToStart();
-			_currentRowIndex = 0;
-			_currentColumnIndex = 0;
-		}
-		else
-		{
-			setupTextEditor(nullptr);
-		}
-
-		_cachedText = value;
-		_shouldCachedTextBeUpdated = false;
+		_textEditor.setText(value);
 	}
 
 	void TextEditWidget::setFontSize(glm::ivec2 value)
 	{
-		if (value != _fontSize)
-		{
-			_fontSize = value;
-			for (rendell_text::TextRendererSharedPtr& line : _lines)
-			{
-				line->setFontSize(_fontSize);
-			}
-			_textEditor->updateSize(true);
-		}
+		_textEditor.setFontSize(value);
 	}
 
 	void TextEditWidget::onSelfWeakPtrChanged()
 	{
-		_textEditor->setParent(_selfWeakPtr);
+		_cursor = createCursor(_selfWeakPtr);
+		_cursor->setVisible(false);
+		_cursor->setAnchor(Anchor::leftTop);
+		_cursor->setHeight(_textEditor.getCursorHeight());
 	}
 
-	void TextEditWidget::setupTextEditor(const rendell_text::TextRendererSharedPtr& textRenderer)
+	void TextEditWidget::onTextLayoutCleared()
 	{
-		if (!textRenderer)
-		{
-			_textEditor = nullptr;
-			return;
-		}
+		_textRenderers.clear();
+	}
 
-		float offset = 0.0f;
-		for (size_t row = 0; row < _currentRowIndex; row++)
-		{
-			rendell_text::TextRendererSharedPtr& line = _lines[row];
-			offset += static_cast<float>(line->getGeneralFontMetrices().height);
-		}
-		_textEditor->setTextRenderer(textRenderer);
-		_textEditor->setOffset(glm::vec2(0.0, -offset));
-		_textEditor->updateRecursively();
+	void TextEditWidget::onTextLayoutRemoved(size_t index)
+	{
+		_textRenderers.erase(_textRenderers.begin() + index);
+	}
+
+	void TextEditWidget::onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout)
+	{
+		rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
+		_textRenderers.insert(_textRenderers.begin() + index, textRenderer);
+	}
+
+	void TextEditWidget::onCaretChanged(uint32_t x, uint32_t y, uint32_t height)
+	{
+		_cursor->setOffset({ x, -static_cast<float>(y) });
+		_cursor->setHeight(height);
+		_cursor->resetBlinkTimer();
+		_cursor->updateRecursively();
 	}
 
 	void TextEditWidget::onFocused()
 	{
-		_textEditor->setVisible(true);
-		if (!_textEditor->getTextRenderer() && _lines.size() > 0)
-		{
-			setupTextEditor(_lines[0]);
-		}
+		_cursor->setVisible(true);
 	}
 
 	void TextEditWidget::onUnfocused()
 	{
-		_textEditor->setVisible(false);
+		_cursor->setVisible(false);
 	}
 
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
-		if (_lines.size() == 0)
-		{
-			return;
-		}
-
 		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) -
 			cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
-
-		double offset = _lines[0]->getGeneralFontMetrices().height * 0.5f;
-		double distance = abs(cursorPosition.y - _lines[0]->getGeneralFontMetrices().height * 0.5f);
-		for (size_t row = 0; row < _lines.size(); row++)
-		{
-			offset += _lines[row]->getGeneralFontMetrices().height;
-			double currentDistance = abs(cursorPosition.y - offset);
-			if (currentDistance < distance)
-			{
-				distance = currentDistance;
-			}
-			else
-			{
-				_currentRowIndex = row;
-				setupTextEditor(_lines[row]);
-				break;
-			}
-		}
-
-		_textEditor->setupCursorByOffset(cursorPosition.x);
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		_textEditor.setupCursorByOffset(cursorPosition.x, cursorPosition.y);
 	}
 
 	void TextEditWidget::onKeyInputted(const KeyboardInput& keyboardInput)
@@ -183,176 +134,81 @@ namespace rendell_ui
 
 	void TextEditWidget::onCharInputted(unsigned char character)
 	{
-		if (_textEditor->insertCursorChar(character))
-		{
-			_currentColumnIndex = _textEditor->getCursorCharIndex();
-			_shouldCachedTextBeUpdated = true;
-		}
+		const std::wstring string(1, static_cast<wchar_t>(character));
+		_textEditor.insertAfterCursor(string);
 	}
 
 	void TextEditWidget::processKeyEnter(InputModControl modControl)
 	{
-		std::wstring remaningText{};
-		remaningText.insert(0, _lines[_currentRowIndex]->getText(),
-			_currentColumnIndex, _lines[_currentRowIndex]->getText().length() - _currentColumnIndex);
-		_currentRowIndex++;
-		_lines.insert(_lines.begin() + _currentRowIndex, createTextRenderer(std::move(remaningText), _fontSize));
-		_textEditor->eraseAllAfterCursor();
-		setupTextEditor(_lines[_currentRowIndex]);
-		_textEditor->moveCursorToStart();
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
-		_shouldCachedTextBeUpdated = true;
+		_textEditor.insertAfterCursor(L"\n");
 	}
 
 	void TextEditWidget::processKeyTab(InputModControl modControl)
 	{
 		static const std::wstring tabString = L"    ";
-		_textEditor->insertAfterCursor(tabString);
-		_textEditor->moveCursorToNextChar(tabString.length());
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
-		_shouldCachedTextBeUpdated = true;
+		_textEditor.insertAfterCursor(tabString);
 	}
 
 	void TextEditWidget::processKeyBackspace(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
-			_textEditor->eraseWordBeforeCursor();
-			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			_textEditor.eraseWordBeforeCursor();
 		}
-		else if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
+		else
 		{
-			std::wstring remaningText = _lines[_currentRowIndex]->getText();
-			_lines.erase(_lines.begin() + _currentRowIndex);
-			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToEnd();
-			_textEditor->insertAfterCursor(remaningText);
+			_textEditor.eraseBeforeCursor();
 		}
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
-		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyDelete(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
-			if (!_textEditor->eraseWordAfterCursor() && _currentRowIndex + 1 < _lines.size())
-			{
-				_lines[_currentRowIndex]->setText(_lines[_currentRowIndex]->getText() + _lines[_currentRowIndex + 1]->getText());
-				_lines.erase(_lines.begin() + _currentRowIndex + 1);
-				_textEditor->eraseWordAfterCursor();
-			}
+			_textEditor.eraseWordAfterCursor();
 		}
 		else if (modControl.hasShiftMod())
 		{
-			if (_lines.size() > 1)
-			{
-				_lines.erase(_lines.begin() + _currentRowIndex);
-				if (_currentRowIndex == _lines.size())
-				{
-					_currentRowIndex--;
-				}
-				setupTextEditor(_lines[_currentRowIndex]);
-				_textEditor->moveCursorToNearest(_currentColumnIndex);
-			}
-			else if (_lines.size() == 1)
-			{
-				_lines[_currentRowIndex]->setText(L"");
-				_textEditor->moveCursorToStart();
-			}
-			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			_textEditor.eraseLineUnderCursor();
 		}
-		// TODO: Copy paste is here, refactoring is required.
-		else if (!_textEditor->moveCursorToNextChar() && _currentRowIndex < _lines.size() - 1)
+		else
 		{
-			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToStart();
+			_textEditor.eraseAfterCursor();
 		}
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
-		if (!_textEditor->eraseCursorChar() && _currentRowIndex > 0)
-		{
-			std::wstring remaningText = _lines[_currentRowIndex]->getText();
-			_lines.erase(_lines.begin() + _currentRowIndex);
-			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToEnd();
-			_textEditor->insertAfterCursor(remaningText);
-		}
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
-		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyRight(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
-			_textEditor->moveCursorToNextWord();
-			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			_textEditor.moveCursorToNextWord();
 		}
-		else if (!_textEditor->moveCursorToNextChar() && _currentRowIndex < _lines.size() - 1)
+		else
 		{
-			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToStart();
+			_textEditor.moveCursorToNextChar();
 		}
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
 	void TextEditWidget::processKeyLeft(InputModControl modControl)
 	{
 		if (modControl.hasCtrlMod())
 		{
-			_textEditor->moveCursorToPrevWord();
-			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			_textEditor.moveCursorToPrevWord();
 		}
-		else if (!_textEditor->moveCursorToPrevChar() && _currentRowIndex > 0)
+		else
 		{
-			// Use zu to explicitly specify the type of the literal (C++23 and above).
-			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToEnd();
+			_textEditor.moveCursorToPrevChar();
 		}
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
 	}
 
 	void TextEditWidget::processKeyDown(InputModControl modControl)
 	{
-		if (_currentRowIndex < _lines.size() - 1)
-		{
-			_currentRowIndex = std::clamp(_currentRowIndex + 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToNearest(_currentColumnIndex);
-		}
+		_textEditor.moveCursorToNextLine();
 	}
 
 	void TextEditWidget::processKeyUp(InputModControl modControl)
 	{
-		if (_currentRowIndex > 0)
-		{
-			_currentRowIndex = std::clamp(_currentRowIndex - 1, (size_t)0, _lines.size() - 1);
-			setupTextEditor(_lines[_currentRowIndex]);
-			_textEditor->moveCursorToNearest(_currentColumnIndex);
-		}
-	}
-
-	std::wstring TextEditWidget::convertLinesToString() const
-	{
-		size_t resultLength = 0;
-		for (const rendell_text::TextRendererSharedPtr& line : _lines)
-		{
-			resultLength += line->getText().length() + 1;
-		}
-
-		std::wstring result;
-		result.reserve(resultLength);
-		for (const rendell_text::TextRendererSharedPtr& line : _lines)
-		{
-			result += line->getText() + L"\n";
-		}
-
-		return result;
+		_textEditor.moveCursorToPrevLine();
 	}
 
 }

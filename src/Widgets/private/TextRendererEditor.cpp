@@ -1,92 +1,65 @@
 #include "TextRendererEditor.h"
+#include "../../String/StringExtension.h"
 #include <algorithm>
-
-#define CURSOR_THICKNESS 2.0f
 
 namespace rendell_ui
 {
-	TextRendererEditor::TextRendererEditor(rendell_text::TextRendererSharedPtr textRenderer) :
-		Widget()
+	static rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring&& text, glm::vec2 fontSize)
 	{
-		_cursor = createCursor();
-		_cursor->setAnchor(Anchor::leftStretch);
-		_cursor->setThickness(CURSOR_THICKNESS);
-		_cursor->setVisible(false);
-		setTextRenderer(textRenderer);
+		rendell_text::TextLayoutSharedPtr result = rendell_text::makeTextLayout();
+		result->setText(text);
+		result->setFontPath(FONT_PATH);
+		result->setFontSize(fontSize);
+		return result;
 	}
 
-	size_t TextRendererEditor::getCursorCharIndex() const
+	TextEditor::TextEditor()
 	{
-		return _charIndex;
+		const rendell_text::TextLayoutSharedPtr textLayout = createTextLayout(L" ", _fontSize);
+		addTextLayout(0, textLayout);
 	}
 
-	rendell_text::TextRendererSharedPtr TextRendererEditor::getTextRenderer() const
+	const std::wstring& TextEditor::getText() const
 	{
-		return _textRenderer;
-	}
-
-	void TextRendererEditor::setTextRenderer(rendell_text::TextRendererSharedPtr value)
-	{
-		if (_textRenderer != value)
+		if (_shouldCachedTextBeUpdated)
 		{
-			_textRenderer = value;
-			updateSize();
-
-			_cursor->setVisible(_textRenderer != nullptr);
+			_cachedText = convertLinesToString();
+			_shouldCachedTextBeUpdated = false;
 		}
+		return _cachedText;
 	}
 
-	void TextRendererEditor::updateSize(bool shouldCursorOffsetBeRecalculated)
+	void TextEditor::setText(const std::wstring& value)
 	{
-		glm::vec2 size = glm::vec2(0.0f, 0.0f);
-		float cursorVerticalOffset = 0.0f;
+		_textLayouts.clear();
+		textLayoutCleared.emit();
 
-		if (_textRenderer)
+		std::vector<std::wstring> lines = StringExtension::split(value, L"\n");
+		for (std::wstring& line : lines)
 		{
-			const rendell_text::GeneralFontMetrices& metrices = _textRenderer->getGeneralFontMetrices();
-			size.y = metrices.height;
-			// TODO: 0.5 is a magic experimental number.
-			cursorVerticalOffset = metrices.descender * 0.5f;
+			const rendell_text::TextLayoutSharedPtr& textLayout = createTextLayout(std::move(line), _fontSize);
+			addTextLayout(_textLayouts.size(), textLayout);
 		}
 
-		_cursor->setVerticalOffset(cursorVerticalOffset);
-		setSize(size);
-
-		if (shouldCursorOffsetBeRecalculated)
+		if (_textLayouts.size() == 0)
 		{
-			recalculateCursorOffset();
+			addTextLayout(0, createTextLayout(L"", _fontSize));
 		}
+
+		_cachedText = value;
+		_shouldCachedTextBeUpdated = false;
 	}
 
-	bool TextRendererEditor::moveCursorToPrevChar(uint32_t count)
+	void TextEditor::setFontSize(glm::ivec2 value)
 	{
-		for (uint32_t i = 0; i < count; i++)
+		if (_fontSize != value)
 		{
-			if (_charIndex <= 0)
+			_fontSize = value;
+			for (const rendell_text::TextLayoutSharedPtr& textLayout : _textLayouts)
 			{
-				return false;
+				textLayout->setFontSize(_fontSize);
 			}
-
-			_charIndex--;
-			_cursor->moveByDelta(-glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
 		}
-
-		return true;
-	}
-
-	bool TextRendererEditor::moveCursorToNextChar(uint32_t count)
-	{
-		for (uint32_t i = 0; i < count; i++)
-		{
-			if (_charIndex >= _textRenderer->getText().length())
-			{
-				return false;
-			}
-			_cursor->moveByDelta(glm::vec2(_textRenderer->getTextAdvance()[_charIndex], 0.0f));
-			_charIndex++;
-		}
-
-		return true;
 	}
 
 	static bool isSpaceCharPredicate(wchar_t currentChar)
@@ -94,224 +67,427 @@ namespace rendell_ui
 		return currentChar == L' ';
 	}
 
-	bool TextRendererEditor::moveCursorToPrevWord()
+	size_t TextEditor::getCaretOffsetInString() const
 	{
-		if (moveCursorToPrevUntil(L" ")) {
-			moveCursorToPrevUntil(isSpaceCharPredicate);
-			return true;
-		}
-		moveCursorToPrevUntil(isSpaceCharPredicate);
-
-		return false;
+		return _textLayouts[_caret.y]->getTextAdvance()[_caret.x];
 	}
 
-	bool TextRendererEditor::moveCursorToNextWord()
+	uint32_t TextEditor::getCursorVerticalOffset() const
 	{
-		if (moveCursorToNextUntil(L" ")) {
-			moveCursorToNextUntil(isSpaceCharPredicate);
-			return true;
-		}
-		moveCursorToNextUntil(isSpaceCharPredicate);
-
-		return false;
-	}
-
-	bool TextRendererEditor::moveCursorToPrevUntil(std::function<bool(wchar_t currentChar)> predicate)
-	{
-		const std::wstring& text = _textRenderer->getText();
-		const std::vector<uint32_t>& textAdvanced = _textRenderer->getTextAdvance();
-		uint32_t cursorDelta = 0;
-		for (uint32_t i = cursorDelta; i >= 0 && _charIndex > 0; i--)
+		uint32_t result = 0;
+		for (size_t i = 0; i < _caret.y; i++)
 		{
-			_charIndex--;
-			if (!predicate(text[_charIndex]))
+			result += _textLayouts[i]->getFontHeight();
+		}
+		return result - _textLayouts[_caret.y]->getGeneralFontMetrices().descender / 2;
+	}
+
+	uint32_t TextEditor::getCursorHorizontalOffset() const
+	{
+		if (_caret.x == 0)
+		{
+			return 0;
+		}
+
+		const rendell_text::TextLayoutSharedPtr& textLayout = _textLayouts[_caret.y];
+		if (const size_t textLength = textLayout->getTextLength(); _caret.x <= textLength)
+		{
+			return textLayout->getTextAdvance()[_caret.x - 1];
+		}
+		return 0;
+	}
+
+	uint32_t TextEditor::getCursorHeight() const
+	{
+		return _textLayouts[_caret.y]->getFontHeight();
+	}
+
+	bool TextEditor::moveCursorToPrevChar(size_t count)
+	{
+		if (count == 0)
+		{
+			return false;
+		}
+
+		size_t caretX = _caret.x;
+		size_t caretY = _caret.y;
+		size_t remainingStepCount = count;
+		while (remainingStepCount > 0)
+		{
+			if (remainingStepCount > caretX)
 			{
-				_charIndex++;
+				remainingStepCount -= caretX;
+				if (caretY > 0)
+				{
+					remainingStepCount--;
+					caretY--;
+					caretX = _textLayouts[caretY]->getTextLength();
+				}
+				else
+				{
+					caretX = 0;
+					break;
+				}
+			}
+			else
+			{
+				caretX -= remainingStepCount;
+				remainingStepCount = 0;
 				break;
 			}
-			cursorDelta += textAdvanced[_charIndex];
 		}
+		setCaret(caretX, caretY, true);
+		return true;
+	}
 
-		if (cursorDelta != 0)
+	bool TextEditor::moveCursorToNextChar(size_t count)
+	{
+		if (count == 0)
 		{
-			_cursor->moveByDelta(-glm::vec2(cursorDelta, 0.0f));
-			return true;
+			return false;
 		}
 
+		size_t caretX = _caret.x;
+		size_t caretY = _caret.y;
+		size_t remainingStepCount = count;
+		while (remainingStepCount > 0)
+		{
+			if (const size_t delta = _textLayouts[caretY]->getTextLength() - caretX; remainingStepCount > delta)
+			{
+				remainingStepCount -= delta;
+				if (caretY < _textLayouts.size() - 1)
+				{
+					remainingStepCount--;
+					caretY++;
+					caretX = 0;
+				}
+				else
+				{
+					caretX = _textLayouts[caretY]->getTextLength();
+					break;
+				}
+			}
+			else
+			{
+				caretX += remainingStepCount;
+				remainingStepCount = 0;
+				break;
+			}
+		}
+		return setCaret(caretX, caretY, true);
+	}
+
+	bool TextEditor::moveCursorToPrevLine(size_t count)
+	{
+		if (count == 0)
+		{
+			return false;
+		}
+
+		const size_t caretY = count <= _caret.y ? _caret.y - count : 0;
+		const size_t caretX = std::min(_caret.xCorrector, _textLayouts[caretY]->getTextLength());
+		return setCaret(caretX, caretY);;
+	}
+
+	bool TextEditor::moveCursorToNextLine(size_t count)
+	{
+		if (count == 0)
+		{
+			return false;
+		}
+
+		const size_t caretY = std::min(_caret.y + count, _textLayouts.size() - 1);
+		const size_t caretX = std::min(_caret.xCorrector, _textLayouts[caretY]->getTextLength());
+		return setCaret(caretX, caretY);
+	}
+
+	bool TextEditor::moveCursorToPrevWord()
+	{
+		// TODO
 		return false;
 	}
 
-	bool TextRendererEditor::moveCursorToNextUntil(std::function<bool(wchar_t currentChar)> predicate)
+	bool TextEditor::moveCursorToNextWord()
 	{
-		const std::wstring& text = _textRenderer->getText();
-		const std::vector<uint32_t>& textAdvanced = _textRenderer->getTextAdvance();
-		uint32_t cursorDelta = 0;
-		for (uint32_t i = _charIndex; i < text.length(); i++)
+		// TODO
+		return false;
+	}
+
+	bool TextEditor::moveCursorToStart()
+	{
+		setCaret(0, _caret.y, true);
+		return true;
+	}
+
+	bool TextEditor::moveCursorToEnd()
+	{
+		setCaret(_textLayouts[_caret.y]->getTextLength(), _caret.y, true);
+		return true;
+	}
+
+	void TextEditor::setupCursorByOffset(double x, double y)
+	{
+		const size_t caretY = getCaretYByOffset(y);
+		const size_t caretX = getCaretXByOffset(caretY, x);
+		setCaret(caretX, caretY, true);
+	}
+
+	bool TextEditor::eraseBeforeCursor(size_t count)
+	{
+		if (count == 0 || _caret.x == 0 && _caret.y == 0)
 		{
-			if (!predicate(text[_charIndex]))
+			return false;
+		}
+
+		size_t remainingCount = count;
+		if (_caret.x >= count)
+		{
+			_textLayouts[_caret.y]->eraseText(_caret.x - count, count);
+			setCaret(_caret.x - count, _caret.y, true);
+			_shouldCachedTextBeUpdated = true;
+			return true;
+		}
+		assert(_caret.y > 0);
+		remainingCount -= _caret.x;
+
+		const std::wstring& remainingText = takeRemainingTextInLine(_caret.x, _caret.y, false);
+		removeTextLayout(_caret.y);
+		remainingCount--;
+		size_t caretY = _caret.y - 1;
+		while (remainingCount > 0 && caretY > 0)
+		{
+			caretY--;
+			if (const size_t textLength = _textLayouts[caretY]->getTextLength(); remainingCount > textLength)
+			{
+				removeTextLayout(caretY);
+				remainingCount -= textLength;
+			}
+			else
 			{
 				break;
 			}
-			cursorDelta += textAdvanced[_charIndex];
-			_charIndex++;
+		}
+		const rendell_text::TextLayoutSharedPtr& currentTextLayout = _textLayouts[caretY];
+		currentTextLayout->eraseText(currentTextLayout->getTextLength() - remainingCount, remainingCount);
+		currentTextLayout->appendText(remainingText);
+		setCaret(_textLayouts[caretY]->getTextLength() - remainingText.length(), caretY, true);
+		_shouldCachedTextBeUpdated = true;
+
+		return true;
+	}
+
+	bool TextEditor::eraseAfterCursor(size_t count)
+	{
+		if (count == 0)
+		{
+			return false;
 		}
 
-		if (cursorDelta > 0)
+		size_t remainingCount = count;
+		const rendell_text::TextLayoutSharedPtr& currentTextLayout = _textLayouts[_caret.y];
+		if (const size_t textLength = currentTextLayout->getTextLength(); _caret.x + count < textLength)
 		{
-			_cursor->moveByDelta(glm::vec2(cursorDelta, 0.0f));
+			currentTextLayout->eraseText(_caret.x, count);
+			remainingCount -= count;
+		}
+		else if (_caret.x < textLength)
+		{
+			currentTextLayout->eraseText(_caret.x, count);
+			_shouldCachedTextBeUpdated = true;
 			return true;
 		}
 
+		while (remainingCount > 0 && _caret.y + 1 < _textLayouts.size())
+		{
+			const rendell_text::TextLayoutSharedPtr removedTextLayout = _textLayouts[_caret.y + 1];
+			removeTextLayout(_caret.y + 1);
+
+			remainingCount--;
+			if (const size_t textLength = removedTextLayout->getTextLength(); textLength < remainingCount)
+			{
+				remainingCount -= textLength;
+			}
+			else
+			{
+				if (removedTextLayout->getTextLength() > 0)
+				{
+					const std::wstring& remainingText = removedTextLayout->getSubText(remainingCount);
+					_textLayouts[_caret.y]->appendText(remainingText);
+				}
+				break;
+			}
+		}
+		_shouldCachedTextBeUpdated = true;
+
+		return true;
+	}
+
+	bool TextEditor::eraseWordBeforeCursor()
+	{
+		// TODO
 		return false;
 	}
 
-	bool TextRendererEditor::moveCursorToNextUntil(const std::wstring& breakingCharacters)
+	bool TextEditor::eraseWordAfterCursor()
 	{
-		return moveCursorToNextUntil([&breakingCharacters](wchar_t currentChar) -> bool
-			{
-				return breakingCharacters.find(currentChar) == std::wstring::npos;
-			});
+		// TODO
+		return false;
 	}
 
-	bool TextRendererEditor::moveCursorToPrevUntil(const std::wstring& breakingCharacters)
+	bool TextEditor::eraseLineUnderCursor()
 	{
-		return moveCursorToPrevUntil([&breakingCharacters](wchar_t currentChar) -> bool
-			{
-				return breakingCharacters.find(currentChar) == std::wstring::npos;
-			});
-	}
-
-	bool TextRendererEditor::moveCursorToStart()
-	{
-		_charIndex = 0;
-		_cursor->moveTo(glm::vec2(0.0f, 0.0f));
-		return true;
-	}
-
-	bool TextRendererEditor::moveCursorToEnd()
-	{
-		float offset = 0;
-		for (_charIndex = 0; _charIndex < _textRenderer->getText().length(); _charIndex++)
+		if (_textLayouts.size() == 1)
 		{
-			offset += _textRenderer->getTextAdvance()[_charIndex];
+			_textLayouts[0]->eraseText(0);
+			setCaret(0, 0);
+			_shouldCachedTextBeUpdated = true;
+			return true;
 		}
-		_cursor->moveTo(glm::vec2(offset, 0.0f));
+
+		removeTextLayout(_caret.y);
+		const size_t caretY = std::min(_caret.y, _textLayouts.size() - 1);
+		const size_t caretX = std::min(_caret.xCorrector, _textLayouts[caretY]->getTextLength());
+		setCaret(caretX, caretY);
+		_shouldCachedTextBeUpdated = true;
 		return true;
 	}
 
-	bool TextRendererEditor::moveCursorToNearest(size_t charIndex)
+	bool TextEditor::insertAfterCursor(const std::wstring& text)
 	{
-		float offset = 0;
-		for (_charIndex = 0; _charIndex != charIndex && _charIndex < _textRenderer->getText().length(); _charIndex++)
+		if (text.empty())
 		{
-			offset += _textRenderer->getTextAdvance()[_charIndex];
+			return false;
 		}
-		_cursor->moveTo(glm::vec2(offset, 0.0f));
 
+		std::vector<std::wstring> lines = StringExtension::split(text, L"\n");
+		_textLayouts[_caret.y]->insertText(lines[0], _caret.x);
+
+		if (lines.size() == 1)
+		{
+			setCaret(_caret.x + lines[0].length(), _caret.y);
+			_shouldCachedTextBeUpdated = true;
+			return true;
+		}
+
+		const std::wstring& remainingText = takeRemainingTextInLine(_caret.x + lines[0].length(), _caret.y, true);
+		for (size_t i = 1; i < lines.size(); i++)
+		{
+			const rendell_text::TextLayoutSharedPtr& newTextLayout = createTextLayout(std::move(lines[i]), _fontSize);
+			_caret.y++;
+			addTextLayout(_caret.y, newTextLayout);
+		}
+		setCaret(_textLayouts[_caret.y]->getTextLength(), _caret.y);
+		_textLayouts[_caret.y]->appendText(remainingText);
+		_shouldCachedTextBeUpdated = true;
 		return true;
 	}
 
-	void TextRendererEditor::setupCursorByOffset(double offset)
+	std::wstring TextEditor::takeRemainingTextInLine(size_t caretX, size_t caretY, bool eraseFromTextLayout)
 	{
-		const std::vector<uint32_t>& textAdvance = _textRenderer->getTextAdvance();
-
-		double accOffset = 0.0f;
-		double distance = abs(offset - accOffset);
-		for (int64_t i = 0; i < textAdvance.size(); i++)
+		const rendell_text::TextLayoutSharedPtr& textLayout = _textLayouts[caretY];
+		std::wstring result = textLayout->getTextLength() > caretX ? textLayout->getSubText(caretX) : L"";
+		if (eraseFromTextLayout)
 		{
-			accOffset += textAdvance[i];
-			double newDistance = abs(offset - accOffset);
+			textLayout->eraseText(caretX);
+		}
+		return result;
+	}
+
+	void TextEditor::removeTextLayout(size_t index)
+	{
+		_textLayouts.erase(_textLayouts.begin() + index);
+		textLayoutRemoved.emit(index);
+	}
+
+	void TextEditor::addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout)
+	{
+		_textLayouts.insert(_textLayouts.begin() + index, textLayout);
+		textLayoutAdded.emit(index, textLayout);
+	}
+
+	bool TextEditor::setCaret(size_t x, size_t y, bool setXCorrector)
+	{
+		if (setXCorrector)
+		{
+			_caret.xCorrector = x;
+		}
+
+		if (_caret.x != x || _caret.y != y)
+		{
+			_caret.x = x;
+			_caret.y = y;
+			cursorChanged.emit(getCursorHorizontalOffset(), getCursorVerticalOffset(), getCursorHeight());
+			return true;
+		}
+		return false;
+	}
+
+	size_t TextEditor::getCaretYByOffset(double offset) const
+	{
+		assert(_textLayouts.size() > 0);
+
+		size_t currentOffset = _textLayouts[0]->getFontHeight() / 2;
+		double distance = abs(offset - static_cast<double>(currentOffset));
+		for (size_t i = 0; i < _textLayouts.size(); i++)
+		{
+			currentOffset += _textLayouts[i]->getFontHeight();
+			double newDistance = abs(offset - static_cast<double>(currentOffset));
 			if (newDistance < distance)
 			{
 				distance = newDistance;
 			}
 			else
 			{
-				_cursor->moveTo(glm::vec2(accOffset - textAdvance[i], 0.0f));
-				_charIndex = i;
-				return;
+				return i;
 			}
 		}
 
-		moveCursorToEnd();
+		return _textLayouts.size() - 1;
 	}
 
-	bool TextRendererEditor::eraseCursorChar()
+	size_t TextEditor::getCaretXByOffset(size_t caretY, double offset) const
 	{
-		if (_charIndex > 0 && _charIndex <= _textRenderer->getText().length())
+		const std::vector<uint32_t>& textAdvance = _textLayouts[caretY]->getTextAdvance();
+		if (textAdvance.size() == 0)
 		{
-			const size_t currentCharIndex = _charIndex - 1;
-			moveCursorToPrevChar();
-			_textRenderer->eraseChars(currentCharIndex, 1);
-			return true;
+			return 0;
 		}
-		return false;
-	}
 
-	bool TextRendererEditor::eraseWordBeforeCursor()
-	{
-		const size_t endIndex = _charIndex;
-		if (moveCursorToPrevWord())
+		size_t currentOffset = textAdvance[0] / 2;
+		double distance = abs(offset - static_cast<double>(currentOffset));
+		for (size_t i = 0; i < textAdvance.size(); i++)
 		{
-			const size_t startIndex = _charIndex;
-			const size_t count = endIndex - startIndex;
-			_textRenderer->eraseChars(startIndex, count);
-			return true;
+			currentOffset = textAdvance[i];
+			double newDistance = abs(offset - static_cast<double>(currentOffset));
+			if (newDistance < distance)
+			{
+				distance = newDistance;
+			}
+			else
+			{
+				return i;
+			}
 		}
-		return false;
+
+		return textAdvance.size();
 	}
 
-	bool TextRendererEditor::eraseWordAfterCursor()
+	std::wstring TextEditor::convertLinesToString() const
 	{
-		const size_t startIndex = _charIndex;
-		if (moveCursorToNextWord())
+		size_t resultLength = 0;
+		for (const rendell_text::TextLayoutSharedPtr& textLayout : _textLayouts)
 		{
-			const size_t endIndex = _charIndex;
-			const size_t count = endIndex - startIndex;
-			moveCursorToPrevChar(count);
-			_textRenderer->eraseChars(startIndex, count);
-			return true;
+			resultLength += textLayout->getText().length() + 1;
 		}
-		return false;
-	}
 
-	bool TextRendererEditor::eraseAllAfterCursor()
-	{
-		_textRenderer->eraseChars(_charIndex, _textRenderer->getText().length() - _charIndex);
-		return true;
-	}
-
-	bool TextRendererEditor::insertCursorChar(unsigned char character)
-	{
-		if (_charIndex >= 0 && _charIndex <= _textRenderer->getText().length())
+		std::wstring result;
+		result.reserve(resultLength);
+		for (const rendell_text::TextLayoutSharedPtr& textLayout : _textLayouts)
 		{
-			_textRenderer->insertText(_charIndex, std::wstring{ character });
-			moveCursorToNextChar();
-			return true;
+			result += textLayout->getText() + L"\n";
 		}
-		return false;
-	}
 
-	bool TextRendererEditor::insertAfterCursor(const std::wstring& string)
-	{
-		_textRenderer->insertText(_charIndex, string);
-		return true;
-	}
-
-	void TextRendererEditor::onSelfWeakPtrChanged()
-	{
-		_cursor->setParent(_selfWeakPtr);
-	}
-
-	void TextRendererEditor::recalculateCursorOffset()
-	{
-		size_t currentCursor = _charIndex;
-		float offset = 0.0f;
-		for (_charIndex = 0; _charIndex < currentCursor; _charIndex++)
-		{
-			offset += _textRenderer->getTextAdvance()[_charIndex];
-		}
-		_cursor->moveTo(glm::vec2(offset, 0.0f));
+		return result;
 	}
 
 }

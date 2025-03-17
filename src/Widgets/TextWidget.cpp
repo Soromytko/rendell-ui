@@ -6,16 +6,17 @@ namespace rendell_ui
 	TextWidget::TextWidget() : Widget()
 	{
 		_textRenderer = rendell_text::makeTextRenderer();
+		_textRenderer->setTextLayout(rendell_text::makeTextLayout());
 	}
 
 	void TextWidget::setFontPath(const std::string& value)
 	{
-		_textRenderer->setFontPath(value);
+		_textRenderer->getTextLayout()->setFontPath(value);
 	}
 
 	void TextWidget::setFontSize(glm::ivec2 value)
 	{
-		_textRenderer->setFontSize(value);
+		_textRenderer->getTextLayout()->setFontSize(value);
 	}
 
 	void TextWidget::setBackgroundColor(glm::vec4 value)
@@ -25,22 +26,22 @@ namespace rendell_ui
 
 	void TextWidget::setText(const std::wstring& value)
 	{
-		_textRenderer->setText(value);
+		_textRenderer->getTextLayout()->setText(value);
 	}
 
 	const std::string& TextWidget::getFontPath() const
 	{
-		return _textRenderer->getFontPath().string();
+		return _textRenderer->getTextLayout()->getFontPath().string();
 	}
 
 	glm::ivec2 TextWidget::getFontSize() const
 	{
-		return _textRenderer->getFontSize();
+		return _textRenderer->getTextLayout()->getFontSize();
 	}
 
 	const std::wstring& TextWidget::getText() const
 	{
-		return _textRenderer->getText();
+		return _textRenderer->getTextLayout()->getText();
 	}
 
 	void TextWidget::setColor(glm::vec4 value)

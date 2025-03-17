@@ -6,8 +6,7 @@ namespace rendell_ui
 	class Cursor final : public RectangleWidget
 	{
 		FRIEND_WIDGET
-		friend class TextRendererEditor;
-	protected:
+	private:
 		Cursor();
 
 	public:
@@ -16,11 +15,12 @@ namespace rendell_ui
 		void draw() const override;
 
 		void setThickness(float value);
+		void setHeight(float value);
 		void setVerticalOffset(float value);
-		void moveTo(glm::vec2 value);
-		void moveByDelta(glm::vec2 delta);
+		void resetBlinkTimer();
 
 		float getThickness() const;
+		float getHeight() const;
 		float getVerticalOffset() const;
 
 	private:
