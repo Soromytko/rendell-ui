@@ -17,6 +17,8 @@ namespace rendell_ui
 
 		void draw() const override;
 
+		const std::wstring& getText() const;
+
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
 
@@ -40,11 +42,15 @@ namespace rendell_ui
 		void processKeyDown(InputModControl modControl);
 		void processKeyUp(InputModControl modControl);
 
+		std::wstring convertLinesToString() const;
+
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextRendererSharedPtr> _lines{};
 		TextRendererEditorSharedPtr _textEditor;
 		size_t _currentRowIndex{ 0u };
 		size_t _currentColumnIndex{ 0u };
+		mutable std::wstring _cachedText{};
+		mutable bool _shouldCachedTextBeUpdated{ false };
 	};
 
 	DECLARE_WIDGET(TextEditWidget)

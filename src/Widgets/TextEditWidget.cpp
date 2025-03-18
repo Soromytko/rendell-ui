@@ -42,6 +42,16 @@ namespace rendell_ui
 		}
 	}
 
+	const std::wstring& TextEditWidget::getText() const
+	{
+		if (_shouldCachedTextBeUpdated)
+		{
+			_cachedText = convertLinesToString();
+			_shouldCachedTextBeUpdated = false;
+		}
+		return _cachedText;
+	}
+
 	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_lines.clear();
@@ -63,6 +73,9 @@ namespace rendell_ui
 		{
 			setupTextEditor(nullptr);
 		}
+
+		_cachedText = value;
+		_shouldCachedTextBeUpdated = false;
 	}
 
 	void TextEditWidget::setFontSize(glm::ivec2 value)
@@ -170,8 +183,11 @@ namespace rendell_ui
 
 	void TextEditWidget::onCharInputted(unsigned char character)
 	{
-		_textEditor->insertCursorChar(character);
-		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		if (_textEditor->insertCursorChar(character))
+		{
+			_currentColumnIndex = _textEditor->getCursorCharIndex();
+			_shouldCachedTextBeUpdated = true;
+		}
 	}
 
 	void TextEditWidget::processKeyEnter(InputModControl modControl)
@@ -185,6 +201,7 @@ namespace rendell_ui
 		setupTextEditor(_lines[_currentRowIndex]);
 		_textEditor->moveCursorToStart();
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyTab(InputModControl modControl)
@@ -193,6 +210,7 @@ namespace rendell_ui
 		_textEditor->insertAfterCursor(tabString);
 		_textEditor->moveCursorToNextChar(tabString.length());
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyBackspace(InputModControl modControl)
@@ -212,6 +230,7 @@ namespace rendell_ui
 			_textEditor->insertAfterCursor(remaningText);
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyDelete(InputModControl modControl)
@@ -262,6 +281,7 @@ namespace rendell_ui
 			_textEditor->insertAfterCursor(remaningText);
 		}
 		_currentColumnIndex = _textEditor->getCursorCharIndex();
+		_shouldCachedTextBeUpdated = true;
 	}
 
 	void TextEditWidget::processKeyRight(InputModControl modControl)
@@ -315,6 +335,24 @@ namespace rendell_ui
 			setupTextEditor(_lines[_currentRowIndex]);
 			_textEditor->moveCursorToNearest(_currentColumnIndex);
 		}
+	}
+
+	std::wstring TextEditWidget::convertLinesToString() const
+	{
+		size_t resultLength = 0;
+		for (const rendell_text::TextRendererSharedPtr& line : _lines)
+		{
+			resultLength += line->getText().length() + 1;
+		}
+
+		std::wstring result;
+		result.reserve(resultLength);
+		for (const rendell_text::TextRendererSharedPtr& line : _lines)
+		{
+			result += line->getText() + L"\n";
+		}
+
+		return result;
 	}
 
 }
