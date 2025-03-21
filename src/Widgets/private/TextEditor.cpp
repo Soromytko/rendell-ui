@@ -336,7 +336,8 @@ namespace rendell_ui
 			{
 				if (removedTextLayout->getTextLength() > 0)
 				{
-					const std::wstring& remainingText = removedTextLayout->getSubText(remainingCount);
+					const std::wstring& remainingText = takeRemainingTextInLine(removedTextLayout, remainingCount);
+					//const std::wstring& remainingText = removedTextLayout->getSubText(remainingCount);
 					_textLayouts[_caret.y]->appendText(remainingText);
 				}
 				break;
@@ -405,15 +406,19 @@ namespace rendell_ui
 		return true;
 	}
 
-	std::wstring TextEditor::takeRemainingTextInLine(size_t caretX, size_t caretY, bool eraseFromTextLayout)
+	std::wstring TextEditor::takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout, size_t caretX, bool erase)
 	{
-		const rendell_text::TextLayoutSharedPtr& textLayout = _textLayouts[caretY];
 		std::wstring result = textLayout->getTextLength() > caretX ? textLayout->getSubText(caretX) : L"";
-		if (eraseFromTextLayout)
+		if (erase)
 		{
 			textLayout->eraseText(caretX);
 		}
 		return result;
+	}
+
+	std::wstring TextEditor::takeRemainingTextInLine(size_t caretX, size_t caretY, bool erase)
+	{
+		return takeRemainingTextInLine(_textLayouts[caretY], caretX, erase);
 	}
 
 	void TextEditor::removeTextLayout(size_t index)

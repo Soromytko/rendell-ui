@@ -54,7 +54,8 @@ namespace rendell_ui
 		Signal<void, uint32_t, uint32_t, uint32_t> cursorChanged;
 
 	private:
-		std::wstring takeRemainingTextInLine(size_t caretX, size_t caretY, bool eraseFromTextLayout = false);
+		std::wstring takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout, size_t caretX, bool erase = false);
+		std::wstring takeRemainingTextInLine(size_t caretX, size_t caretY, bool erase = false);
 
 		void removeTextLayout(size_t index);
 		void addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
