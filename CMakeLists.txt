@@ -18,6 +18,7 @@ set(SOURCE_FILES
     src/Widgets/RectangleWidget.cpp
     src/Widgets/TextWidget.cpp
     src/Widgets/TextEditWidget.cpp
+    src/Widgets/ButtonWidget.cpp
     src/Widgets/WidgetRegistrator.cpp
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
@@ -46,6 +47,7 @@ set(HEADER_FILES
     src/Widgets/RectangleWidget.h
     src/Widgets/TextWidget.h
     src/Widgets/TextEditWidget.h
+    src/Widgets/ButtonWidget.h
     src/Widgets/WidgetRegistrator.h
     src/Widgets/WidgetHandlePipeline.h
     src/Widgets/WidgetRenderPipeline.h

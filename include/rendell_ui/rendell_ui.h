@@ -6,6 +6,7 @@
 #include "../../src/Canvas.h"
 
 #include "../../src/Widgets/RectangleWidget.h"
+#include "../../src/Widgets/ButtonWidget.h"
 #include "../../src/Widgets/TextWidget.h"
 #include "../../src/Widgets/TextEditWidget.h"
 
