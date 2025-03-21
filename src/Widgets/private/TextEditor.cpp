@@ -1,9 +1,12 @@
 #include "TextEditor.h"
+#include "TextEditorWord.h"
 #include "../../String/StringExtension.h"
 #include <algorithm>
 
 namespace rendell_ui
 {
+	static uint32_t s_instanceCount{ 0 };
+
 	static rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring&& text, glm::vec2 fontSize)
 	{
 		rendell_text::TextLayoutSharedPtr result = rendell_text::makeTextLayout();
@@ -17,6 +20,20 @@ namespace rendell_ui
 	{
 		const rendell_text::TextLayoutSharedPtr textLayout = createTextLayout(L" ", _fontSize);
 		addTextLayout(0, textLayout);
+		_wordTypes =
+		{
+			makeDigitTextEditorWord(),
+			makeVerbalTextEditorWord(),
+			makeTextEditorWord(L" "),
+			makeTextEditorWord(L"="),
+			makeTextEditorWord(L"("),
+			makeTextEditorWord(L")"),
+			makeTextEditorWord(L"{"),
+			makeTextEditorWord(L"}"),
+			makeTextEditorWord(L"<"),
+			makeTextEditorWord(L">"),
+			makeTextEditorWord(L"~!@#$%^&*_-+;\"\\/,.:"),
+		};
 	}
 
 	const std::wstring& TextEditor::getText() const
@@ -62,6 +79,11 @@ namespace rendell_ui
 		}
 	}
 
+	void TextEditor::setWordTypes(const std::vector<TextEditorWordSharedPtr>& value)
+	{
+		_wordTypes = value;
+	}
+
 	static bool isSpaceCharPredicate(wchar_t currentChar)
 	{
 		return currentChar == L' ';
@@ -100,6 +122,11 @@ namespace rendell_ui
 	uint32_t TextEditor::getCursorHeight() const
 	{
 		return _textLayouts[_caret.y]->getFontHeight();
+	}
+
+	const std::vector<TextEditorWordSharedPtr>& TextEditor::getWordTypes() const
+	{
+		return _wordTypes;
 	}
 
 	bool TextEditor::moveCursorToPrevChar(size_t count)
@@ -203,14 +230,12 @@ namespace rendell_ui
 
 	bool TextEditor::moveCursorToPrevWord()
 	{
-		// TODO
-		return false;
+		return moveCursorToPrevChar(getPrevWordLength());
 	}
 
 	bool TextEditor::moveCursorToNextWord()
 	{
-		// TODO
-		return false;
+		return moveCursorToNextChar(getNextWordLength());
 	}
 
 	bool TextEditor::moveCursorToStart()
@@ -324,14 +349,12 @@ namespace rendell_ui
 
 	bool TextEditor::eraseWordBeforeCursor()
 	{
-		// TODO
-		return false;
+		return eraseBeforeCursor(getPrevWordLength());
 	}
 
 	bool TextEditor::eraseWordAfterCursor()
 	{
-		// TODO
-		return false;
+		return eraseAfterCursor(getNextWordLength());
 	}
 
 	bool TextEditor::eraseLineUnderCursor()
@@ -422,6 +445,64 @@ namespace rendell_ui
 		return false;
 	}
 
+	size_t TextEditor::getPrevWordLength() const
+	{
+		size_t result = 0;
+		size_t caretX = _caret.x;
+		size_t caretY = _caret.y;
+		if (caretX == 0 && caretY > 0)
+		{
+			caretY--;
+			caretX = _textLayouts[caretY]->getTextLength();
+			result++;
+		}
+
+		if (const std::wstring& text = _textLayouts[caretY]->getText(); text.length() > 0)
+		{
+			size_t i = caretX;
+			if (i > 0)
+			{
+				if (const TextEditorWordSharedPtr& word = findWord(text[i - 1]); word != nullptr)
+				{
+					while (i > 0 && word->isWordCharacter(text[i - 1]))
+					{
+						result++;
+						i--;
+					}
+				}
+			}
+		}
+		return result;
+
+	}
+
+	size_t TextEditor::getNextWordLength() const
+	{
+		size_t result = 0;
+		size_t caretX = _caret.x;
+		size_t caretY = _caret.y;
+		if (caretX == _textLayouts[caretY]->getTextLength() && caretY < _textLayouts.size() - 1)
+		{
+			caretY++;
+			caretX = 0;
+			result++;
+		}
+
+		if (const std::wstring& text = _textLayouts[caretY]->getText(); text.size() > 0)
+		{
+			size_t i = caretX;
+			if (const TextEditorWordSharedPtr& word = findWord(text[i]); word != nullptr)
+			{
+				while (i < text.length() && word->isWordCharacter(text[i]))
+				{
+					result++;
+					i++;
+				}
+			}
+		}
+		return result;
+	}
+
 	size_t TextEditor::getCaretYByOffset(double offset) const
 	{
 		assert(_textLayouts.size() > 0);
@@ -470,6 +551,18 @@ namespace rendell_ui
 		}
 
 		return textAdvance.size();
+	}
+
+	const TextEditorWordSharedPtr& TextEditor::findWord(wchar_t character) const
+	{
+		for (const TextEditorWordSharedPtr& word : _wordTypes)
+		{
+			if (word->isWordCharacter(character))
+			{
+				return word;
+			}
+		}
+		return nullptr;
 	}
 
 	std::wstring TextEditor::convertLinesToString() const

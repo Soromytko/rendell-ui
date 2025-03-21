@@ -22,6 +22,7 @@ set(SOURCE_FILES
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
     src/Widgets/private/TextEditor.cpp
+    src/Widgets/private/TextEditorWord.cpp
     src/Widgets/private/Cursor.cpp
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
@@ -50,6 +51,7 @@ set(HEADER_FILES
     src/Widgets/WidgetRenderPipeline.h
     src/Widgets/private/TextEditor.h
     src/Widgets/private/Cursor.h
+    src/Widgets/private/TextEditorWord.h
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h
     src/Shaders/RectangleShader.h

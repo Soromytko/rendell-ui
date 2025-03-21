@@ -1,5 +1,6 @@
 #pragma once
 #include <rendell_text.h>
+#include "TextEditorWord.h"
 #include "../../Signal.h"
 #include "../../String/StringBuilder.h"
 
@@ -24,9 +25,11 @@ namespace rendell_ui
 		uint32_t getCursorVerticalOffset() const;
 		uint32_t getCursorHorizontalOffset() const;
 		uint32_t getCursorHeight() const;
+		const std::vector<TextEditorWordSharedPtr>& getWordTypes() const;
 
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
+		void setWordTypes(const std::vector<TextEditorWordSharedPtr>& value);
 
 		bool moveCursorToPrevChar(size_t count = 1);
 		bool moveCursorToNextChar(size_t count = 1);
@@ -57,15 +60,19 @@ namespace rendell_ui
 		void addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
 		bool setCaret(size_t x, size_t y, bool setXCorrector = false);
 
+		size_t getPrevWordLength() const;
+		size_t getNextWordLength() const;
 		size_t getCaretYByOffset(double offset) const;
 		size_t getCaretXByOffset(size_t caretY, double offset) const;
 
+		const TextEditorWordSharedPtr& findWord(wchar_t character) const;
 		std::wstring convertLinesToString() const;
 
 		Caret _caret{};
 		StringBuilder _stringBuilder{};
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextLayoutSharedPtr> _textLayouts;
+		std::vector<TextEditorWordSharedPtr> _wordTypes;
 		mutable std::wstring _cachedText{};
 		mutable bool _shouldCachedTextBeUpdated{};
 	};

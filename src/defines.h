@@ -10,6 +10,7 @@ namespace rendell_ui
 
 #define DECLARE_SHARED_PTR_FACTORY(ClassName) \
 	DECLARE_SHARED_PTR(ClassName) \
+	DECLARE_WEAK_PTR(ClassName) \
 	template <typename... Args> \
     ClassName##SharedPtr make##ClassName(Args&&... args) { \
 		return std::make_shared<ClassName>(std::forward<Args>(args)...); \
