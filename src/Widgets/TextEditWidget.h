@@ -3,7 +3,7 @@
 #include <string>
 #include <rendell_text.h>
 #include "Widget.h"
-#include "private/TextRendererEditor.h"
+#include "private/TextEditor.h"
 #include "private/Cursor.h"
 #include "../String/StringBuilder.h"
 

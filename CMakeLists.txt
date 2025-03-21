@@ -21,7 +21,7 @@ set(SOURCE_FILES
     src/Widgets/WidgetRegistrator.cpp
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
-    src/Widgets/private/TextRendererEditor.cpp
+    src/Widgets/private/TextEditor.cpp
     src/Widgets/private/Cursor.cpp
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
@@ -48,7 +48,7 @@ set(HEADER_FILES
     src/Widgets/WidgetRegistrator.h
     src/Widgets/WidgetHandlePipeline.h
     src/Widgets/WidgetRenderPipeline.h
-    src/Widgets/private/TextRendererEditor.h
+    src/Widgets/private/TextEditor.h
     src/Widgets/private/Cursor.h
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h

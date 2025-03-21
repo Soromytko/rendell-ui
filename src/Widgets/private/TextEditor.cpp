@@ -1,4 +1,4 @@
-#include "TextRendererEditor.h"
+#include "TextEditor.h"
 #include "../../String/StringExtension.h"
 #include <algorithm>
 
