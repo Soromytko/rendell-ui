@@ -62,21 +62,21 @@ namespace rendell_ui
 
 		if (mouseInput.action == InputAction::pressed)
 		{
-			WidgetSharedPtr newFocusedWidget = nullptr;
+			WidgetSharedPtr currentWidget = nullptr;
 			for (const WidgetSharedPtr& widget : _widgets)
 			{
 				WidgetSharedPtr currentFocusedWidget = focusWidgetRecursively(widget, cursorPosition);
 				if (currentFocusedWidget)
 				{
-					newFocusedWidget = currentFocusedWidget;
+					currentWidget = currentFocusedWidget;
 					break;
 				}
 			}
-			setFocusedWidget(newFocusedWidget);
+			setFocusedWidget(currentWidget);
+			setCapturedWidget(currentWidget);
 			if (_focusedWidget)
 			{
 				_focusedWidget->onMouseDown(cursorPosition);
-
 			}
 		}
 		else if (mouseInput.action == InputAction::release)
@@ -86,7 +86,47 @@ namespace rendell_ui
 				if (_focusedWidget && _focusedWidget->intersect(cursorPosition))
 				{
 					_focusedWidget->onMouseUp(cursorPosition);
+					_focusedWidget->onMouseClick();
 				}
+				
+				// Handle mouse movement to update widgets currently under the cursor.
+				if (setCapturedWidget(nullptr))
+				{
+					onMouseMoved(mouseInput.x, mouseInput.y);
+				}
+			}
+		}
+	}
+
+	void Canvas::onMouseMoved(double x, double y)
+	{
+		const glm::dvec2 cursor{ x, y };
+		
+		// Emit onMouseExited events.
+		for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end();)
+		{
+			WidgetSharedPtr widget = *it;
+			if (!widget->intersect(cursor))
+			{
+				it = _mouseHoverWidgets.erase(it);
+				widget->onMouseExited();
+			}
+			else
+			{
+				it++;
+			}
+		}
+
+		// Process only the captured widget if it is valid.
+		if (_capturedWidget)
+		{
+			hoverMouseRecursively(_capturedWidget, cursor);
+		}
+		else
+		{
+			for (const WidgetSharedPtr& widget : _widgets)
+			{
+				hoverMouseRecursively(widget, cursor);
 			}
 		}
 	}
@@ -108,8 +148,29 @@ namespace rendell_ui
 				_focusedWidget->onUnfocused();
 			}
 			_focusedWidget = widget;
-			_focusedWidget->onFocused();
+			if (_focusedWidget)
+			{
+				_focusedWidget->onFocused();
+			}
 		}
+	}
+
+	bool Canvas::setCapturedWidget(const WidgetSharedPtr& widget)
+	{
+		if (_capturedWidget != widget)
+		{
+			if (_capturedWidget)
+			{
+				_capturedWidget->onFreed();
+			}
+			_capturedWidget = widget;
+			if (_capturedWidget)
+			{
+				_capturedWidget->onCaptured();
+			}
+			return true;
+		}
+		return false;
 	}
 
 	void Canvas::updateWidgetRecursively()
@@ -122,7 +183,7 @@ namespace rendell_ui
 
 	WidgetSharedPtr Canvas::focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor)
 	{
-		if (!widget->intersect(cursor))
+		if (widget->getVisible() && !widget->intersect(cursor))
 		{
 			return nullptr;
 		}
@@ -139,5 +200,29 @@ namespace rendell_ui
 		return widget;
 	}
 
+	bool Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)
+	{
+		if (widget->getVisible() && !widget->intersect(cursor))
+		{
+			return false;
+		}
+
+		if (_mouseHoverWidgets.find(widget) == _mouseHoverWidgets.end())
+		{
+			_mouseHoverWidgets.insert(widget);
+			widget->onMouseEntered();
+		}
+
+		widget->onMouseHovered(cursor);
+
+		for (const WidgetSharedPtr& child : widget->getChildren())
+		{
+			if (hoverMouseRecursively(child, cursor))
+			{
+				return true;
+			}
+		}
+		return true;
+	}
 
 }

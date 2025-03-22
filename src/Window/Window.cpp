@@ -80,7 +80,7 @@ namespace rendell_ui
 	{
 		double x, y;
 		glfwGetCursorPos(_glfwWindow, &x, &y);
-		return static_cast<glm::dvec2>(getSize()) * 0.5 - glm::dvec2(x, y);
+		return (static_cast<glm::dvec2>(getSize()) * 0.5 - glm::dvec2(x, y)) * glm::dvec2(-1.0, 1.0);
 	}
 
 	WindowEventHandlerSharedPtr Window::getEventHandler() const
@@ -113,6 +113,7 @@ namespace rendell_ui
 		glfwSetWindowRefreshCallback(_glfwWindow, refreshWindowCallback);
 		glfwSetKeyCallback(_glfwWindow, inputKeyCallback);
 		glfwSetMouseButtonCallback(_glfwWindow, inputMouseBottonCallback);
+		glfwSetCursorPosCallback(_glfwWindow, moveMouseCallback);
 		glfwSetCharCallback(_glfwWindow, inputCharCallback);
 	}
 

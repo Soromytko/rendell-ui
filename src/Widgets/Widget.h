@@ -85,7 +85,11 @@ namespace rendell_ui
 		virtual void onMouseClick() {};
 		virtual void onMouseDown(glm::dvec2 cursorPosition) {};
 		virtual void onMouseUp(glm::dvec2 cursorPosition) {};
-		virtual void onMouseOver(glm::dvec2 cursorPosition) {};
+		virtual void onMouseHovered(glm::dvec2 cursorPosition) {}
+		virtual void onMouseEntered() {}
+		virtual void onMouseExited() {}
+		virtual void onCaptured() {}
+		virtual void onFreed() {}
 		virtual void onKeyInputted(const KeyboardInput& keyboardInput) {};
 		virtual void onCharInputted(unsigned char character) {};
 

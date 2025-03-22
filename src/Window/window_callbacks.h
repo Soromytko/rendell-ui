@@ -13,4 +13,6 @@ namespace rendell_ui
 
 	void inputMouseBottonCallback(GLFWwindow* glfwWindow, int button, int action, int mods);
 
+	void moveMouseCallback(GLFWwindow* glfwWindow, double x, double y);
+
 }

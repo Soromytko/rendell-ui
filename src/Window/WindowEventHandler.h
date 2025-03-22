@@ -15,6 +15,7 @@ namespace rendell_ui
 		virtual void onResized(int width, int height) {};
 		virtual void onKeyInputted(const KeyboardInput& keyboardInput) {};
 		virtual void onMouseButtonInputted(const MouseInput& mouseInput) {};
+		virtual void onMouseMoved(double x, double y) {};
 		virtual void onCharInputted(unsigned char character) {};
 	};
 
