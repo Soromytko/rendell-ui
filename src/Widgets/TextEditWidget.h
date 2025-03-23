@@ -35,6 +35,7 @@ namespace rendell_ui
 		void onFocused() override;
 		void onUnfocused() override;
 		void onMouseDown(glm::dvec2 cursorPosition) override;
+		void onMouseScrolled(glm::dvec2 scroll) override;
 		void onKeyInputted(const KeyboardInput& keyboardInput) override;
 		void onCharInputted(unsigned char character) override;
 
@@ -47,15 +48,23 @@ namespace rendell_ui
 		void processKeyDown(InputModControl modControl);
 		void processKeyUp(InputModControl modControl);
 
+		bool updateScrollOffset(float value);
+		void optimizeRendering();
+
 		uint32_t _textLayoutClearedConnectionId;
 		uint32_t _textLayoutRemovedConnectionId;
 		uint32_t _textLayoutAddedConnectionId;
 		uint32_t _caretChangedConnectionId;
 
+		float _scrollOffset{ 0.0 };
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		TextEditor _textEditor{};
 		CursorSharedPtr _cursor{};
 		std::vector<rendell_text::TextRendererSharedPtr> _textRenderers{};
+
+		size_t _startRenderingIndex{ 0 };
+		float _startRenderingOffset{ 0.0f };
+		uint32_t _textHeight{0};
 	};
 
 	DECLARE_WIDGET(TextEditWidget)

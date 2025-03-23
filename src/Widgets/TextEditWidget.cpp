@@ -36,16 +36,21 @@ namespace rendell_ui
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();
 		const glm::mat4& viewMat = Viewport::getCurrent()->getViewMat();
 		const glm::mat4& transformMat = _transform.getMatrix();
-		float height = _size.y * 0.5f - _fontSize.y;
-
-		for (const rendell_text::TextRendererSharedPtr& textRenderer : _textRenderers)
+		
+		float currentOffset = _size.y * 0.5f + _startRenderingOffset;
+		for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++)
 		{
-			const glm::mat4 worldMat = glm::translate(transformMat, glm::vec3(-_size.x * 0.5f, height, 0.0f));
-			height -= textRenderer->getTextLayout()->getFontHeight();
-
+			const rendell_text::TextRendererSharedPtr& textRenderer = _textRenderers[i];
+			currentOffset -= textRenderer->getTextLayout()->getFontHeight();
+			if (currentOffset < -_size.y)
+			{
+				break;
+			}
+			const glm::mat4 worldMat = glm::translate(transformMat, glm::vec3(-_size.x * 0.5f, currentOffset, 0.0f));
 			textRenderer->setMatrix(projectMat * viewMat * worldMat);
 			textRenderer->draw();
 		}
+
 	}
 
 	const std::wstring& TextEditWidget::getText() const
@@ -74,25 +79,32 @@ namespace rendell_ui
 	void TextEditWidget::onTextLayoutCleared()
 	{
 		_textRenderers.clear();
+		_textHeight = 0;
 	}
 
 	void TextEditWidget::onTextLayoutRemoved(size_t index)
 	{
-		_textRenderers.erase(_textRenderers.begin() + index);
+		auto it = _textRenderers.begin() + index;
+		_textHeight -= it->operator->()->getTextLayout()->getFontHeight();
+		_textRenderers.erase(it);
 	}
 
 	void TextEditWidget::onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout)
 	{
 		rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
 		_textRenderers.insert(_textRenderers.begin() + index, textRenderer);
+		_textHeight += textLayout->getFontHeight();
 	}
 
 	void TextEditWidget::onCaretChanged(uint32_t x, uint32_t y, uint32_t height)
 	{
-		_cursor->setOffset({ x, -static_cast<float>(y) });
 		_cursor->setHeight(height);
-		_cursor->resetBlinkTimer();
-		_cursor->updateRecursively();
+		if (!updateScrollOffset(_scrollOffset))
+		{
+			_cursor->setOffset({ x, -static_cast<float>(y) + _scrollOffset });
+			_cursor->resetBlinkTimer();
+			_cursor->updateRecursively();
+		}
 	}
 
 	void TextEditWidget::onFocused()
@@ -108,8 +120,15 @@ namespace rendell_ui
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
 		const glm::dvec2 localPosition = cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
-		const glm::dvec2 shiftedPosition = (localPosition + glm::dvec2(_size.x, -_size.y) * 0.5) * glm::dvec2(1.0, -1.0);
-		_textEditor.setupCursorByOffset(shiftedPosition.x, shiftedPosition.y);
+		const double x = localPosition.x + _size.x * 0.5;
+		const double y = -(localPosition.y - _size.y * 0.5) + _scrollOffset;
+		_textEditor.setupCursorByOffset(x, y);
+	}
+
+	void TextEditWidget::onMouseScrolled(glm::dvec2 scroll)
+	{
+		const float scrollY = static_cast<float>(scroll.y) * 50.0f;
+		updateScrollOffset(_scrollOffset - scrollY);
 	}
 
 	void TextEditWidget::onKeyInputted(const KeyboardInput& keyboardInput)
@@ -209,6 +228,39 @@ namespace rendell_ui
 	void TextEditWidget::processKeyUp(InputModControl modControl)
 	{
 		_textEditor.moveCursorToPrevLine();
+	}
+
+	bool TextEditWidget::updateScrollOffset(float value)
+	{
+		const float maxScrollOffset = _textHeight > _size.y ? static_cast<float>(_textHeight) - _size.y: 0.0f;
+		const float newScrollOffset = std::clamp(value, 0.0f, maxScrollOffset);
+		if (_scrollOffset != newScrollOffset)
+		{
+			_scrollOffset = newScrollOffset;
+			const float cursorOffsetX = static_cast<float>(_textEditor.getCursorHorizontalOffset());
+			const float cursorOffsetY = -static_cast<float>(_textEditor.getCursorVerticalOffset()) + _scrollOffset;
+			_cursor->setOffset({ cursorOffsetX, cursorOffsetY });
+			_cursor->updateRecursively();
+			optimizeRendering();
+			return true;
+		}
+		return false;
+	}
+
+	void TextEditWidget::optimizeRendering()
+	{
+		const float baseOffset = _size.y * 0.5f;
+		float currentOffset = baseOffset + _scrollOffset;
+		for (size_t i = 0; i < _textRenderers.size(); i++)
+		{
+			_startRenderingOffset = currentOffset - baseOffset;
+			currentOffset -= _textRenderers[i]->getTextLayout()->getFontHeight();
+			if (currentOffset <= _size.y * 0.5f)
+			{
+				_startRenderingIndex = i;
+				return;
+			}
+		}
 	}
 
 }
