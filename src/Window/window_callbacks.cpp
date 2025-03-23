@@ -57,6 +57,12 @@ namespace rendell_ui
 		eventHandler->onMouseMoved(cursor.x, cursor.y);
 	}
 
+	void scrollMouseCallback(GLFWwindow* glfwWindow, double x, double y)
+	{
+		const WindowEventHandlerSharedPtr& eventHandler = GET_WINDOW(glfwWindow)->getEventHandler();
+		eventHandler->onMouseScrolled(x, y);
+	}
+
 	void inputCharCallback(GLFWwindow* glfwWindow, unsigned int codepoint)
 	{
 		WindowEventHandlerSharedPtr evnetHandler = GET_WINDOW(glfwWindow)->getEventHandler();

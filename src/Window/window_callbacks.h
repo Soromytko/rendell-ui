@@ -15,4 +15,6 @@ namespace rendell_ui
 
 	void moveMouseCallback(GLFWwindow* glfwWindow, double x, double y);
 
+	void scrollMouseCallback(GLFWwindow* glfwWindow, double x, double y);
+
 }

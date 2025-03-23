@@ -126,8 +126,21 @@ namespace rendell_ui
 		{
 			for (const WidgetSharedPtr& widget : _widgets)
 			{
-				hoverMouseRecursively(widget, cursor);
+				_hoveredWidget = hoverMouseRecursively(widget, cursor);
 			}
+		}
+	}
+
+	void Canvas::onMouseScrolled(double x, double y)
+	{
+		if (_capturedWidget)
+		{
+			return;
+		}
+
+		if (_hoveredWidget)
+		{
+			_hoveredWidget->onMouseScrolled({x, y});
 		}
 	}
 
@@ -200,11 +213,11 @@ namespace rendell_ui
 		return widget;
 	}
 
-	bool Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)
+	WidgetSharedPtr Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)
 	{
 		if (widget->getVisible() && !widget->intersect(cursor))
 		{
-			return false;
+			return nullptr;
 		}
 
 		if (_mouseHoverWidgets.find(widget) == _mouseHoverWidgets.end())
@@ -219,10 +232,10 @@ namespace rendell_ui
 		{
 			if (hoverMouseRecursively(child, cursor))
 			{
-				return true;
+				return child;
 			}
 		}
-		return true;
+		return widget;
 	}
 
 }
