@@ -107,9 +107,9 @@ namespace rendell_ui
 
 	void TextEditWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
-		cursorPosition = static_cast<glm::dvec2>(_size * 0.5f) -
-			cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
-		_textEditor.setupCursorByOffset(cursorPosition.x, cursorPosition.y);
+		const glm::dvec2 localPosition = cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
+		const glm::dvec2 shiftedPosition = (localPosition + glm::dvec2(_size.x, -_size.y) * 0.5) * glm::dvec2(1.0, -1.0);
+		_textEditor.setupCursorByOffset(shiftedPosition.x, shiftedPosition.y);
 	}
 
 	void TextEditWidget::onKeyInputted(const KeyboardInput& keyboardInput)
