@@ -47,10 +47,13 @@ namespace rendell_ui
 		bool eraseWordAfterCursor();
 		bool eraseLineUnderCursor();
 		bool insertAfterCursor(const std::wstring& text);
+		bool moveLineUnderCursorDown();
+		bool moveLineUnderCursorUp();
 
 		Signal<void> textLayoutCleared;
 		Signal<void, size_t> textLayoutRemoved;
 		Signal<void, size_t, const rendell_text::TextLayoutSharedPtr&> textLayoutAdded;
+		Signal<void, size_t, size_t> textLayoutSwapped;
 		Signal<void, uint32_t, uint32_t, uint32_t> cursorChanged;
 
 	private:
@@ -59,6 +62,7 @@ namespace rendell_ui
 
 		void removeTextLayout(size_t index);
 		void addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
+		void swipeLines(size_t firstIndex, size_t secondIndex);
 		bool setCaret(size_t x, size_t y, bool setXCorrector = false);
 
 		size_t getPrevWordLength() const;

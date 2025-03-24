@@ -408,6 +408,30 @@ namespace rendell_ui
 		return true;
 	}
 
+	bool TextEditor::moveLineUnderCursorDown()
+	{
+		if (_caret.y + 1 < _textLayouts.size())
+		{
+			swipeLines(_caret.y, _caret.y + 1);
+			setCaret(_caret.x, _caret.y + 1);
+			_shouldCachedTextBeUpdated = true;
+			return true;
+		}
+		return false;
+	}
+
+	bool TextEditor::moveLineUnderCursorUp()
+	{
+		if (_caret.y > 0)
+		{
+			swipeLines(_caret.y, _caret.y - 1);
+			setCaret(_caret.x, _caret.y - 1);
+			_shouldCachedTextBeUpdated = true;
+			return true;
+		}
+		return false;
+	}
+
 	std::wstring TextEditor::takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout, size_t caretX, bool erase)
 	{
 		std::wstring result = textLayout->getTextLength() > caretX ? textLayout->getSubText(caretX) : L"";
@@ -433,6 +457,12 @@ namespace rendell_ui
 	{
 		_textLayouts.insert(_textLayouts.begin() + index, textLayout);
 		textLayoutAdded.emit(index, textLayout);
+	}
+
+	void TextEditor::swipeLines(size_t firstIndex, size_t secondIndex)
+	{
+		std::swap(_textLayouts[firstIndex], _textLayouts[secondIndex]);
+		textLayoutSwapped.emit(firstIndex, secondIndex);
 	}
 
 	bool TextEditor::setCaret(size_t x, size_t y, bool setXCorrector)

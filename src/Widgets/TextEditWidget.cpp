@@ -20,6 +20,7 @@ namespace rendell_ui
 		_textLayoutClearedConnectionId = _textEditor.textLayoutCleared.connect(this, &TextEditWidget::onTextLayoutCleared);
 		_textLayoutRemovedConnectionId = _textEditor.textLayoutRemoved.connect(this, &TextEditWidget::onTextLayoutRemoved);
 		_textLayoutAddedConnectionId = _textEditor.textLayoutAdded.connect(this, &TextEditWidget::onTextLayoutAdded);
+		_textLayoutSwappedConnectionId = _textEditor.textLayoutSwapped.connect(this, &TextEditWidget::onTextLayoutSwapped);
 		_caretChangedConnectionId = _textEditor.cursorChanged.connect(this, &TextEditWidget::onCaretChanged);
 	}
 
@@ -28,6 +29,7 @@ namespace rendell_ui
 		_textEditor.textLayoutCleared.disconnect(_textLayoutClearedConnectionId);
 		_textEditor.textLayoutRemoved.disconnect(_textLayoutRemovedConnectionId);
 		_textEditor.textLayoutAdded.disconnect(_textLayoutAddedConnectionId);
+		_textEditor.textLayoutSwapped.disconnect(_textLayoutSwappedConnectionId);
 		_textEditor.cursorChanged.disconnect(_caretChangedConnectionId);
 	}
 
@@ -94,6 +96,11 @@ namespace rendell_ui
 		rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
 		_textRenderers.insert(_textRenderers.begin() + index, textRenderer);
 		_textHeight += textLayout->getFontHeight();
+	}
+
+	void TextEditWidget::onTextLayoutSwapped(size_t firstIndex, size_t secondIndex)
+	{
+		std::swap(_textRenderers[firstIndex], _textRenderers[secondIndex]);
 	}
 
 	void TextEditWidget::onCaretChanged(uint32_t x, uint32_t y, uint32_t height)
@@ -223,11 +230,21 @@ namespace rendell_ui
 
 	void TextEditWidget::processKeyDown(InputModControl modControl)
 	{
+		if (modControl.hasAltMod())
+		{
+			_textEditor.moveLineUnderCursorDown();
+			return;
+		}
 		_textEditor.moveCursorToNextLine();
 	}
 
 	void TextEditWidget::processKeyUp(InputModControl modControl)
 	{
+		if (modControl.hasAltMod())
+		{
+			_textEditor.moveLineUnderCursorUp();
+			return;
+		}
 		_textEditor.moveCursorToPrevLine();
 	}
 

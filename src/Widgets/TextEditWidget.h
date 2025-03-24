@@ -30,6 +30,7 @@ namespace rendell_ui
 		void onTextLayoutCleared();
 		void onTextLayoutRemoved(size_t index);
 		void onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout);
+		void onTextLayoutSwapped(size_t firstIndex, size_t secondIndex);
 		void onCaretChanged(uint32_t x, uint32_t y, uint32_t height);
 
 		void onFocused() override;
@@ -55,6 +56,7 @@ namespace rendell_ui
 		uint32_t _textLayoutClearedConnectionId;
 		uint32_t _textLayoutRemovedConnectionId;
 		uint32_t _textLayoutAddedConnectionId;
+		uint32_t _textLayoutSwappedConnectionId;
 		uint32_t _caretChangedConnectionId;
 
 		float _scrollOffset{ 0.0 };
