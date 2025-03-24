@@ -384,6 +384,7 @@ namespace rendell_ui
 		}
 
 		std::vector<std::wstring> lines = StringExtension::split(text, L"\n");
+		assert(!lines.empty());
 		_textLayouts[_caret.y]->insertText(lines[0], _caret.x);
 
 		if (lines.size() == 1)
@@ -393,15 +394,16 @@ namespace rendell_ui
 			return true;
 		}
 
+		size_t caretY = _caret.y;
 		const std::wstring& remainingText = takeRemainingTextInLine(_caret.x + lines[0].length(), _caret.y, true);
 		for (size_t i = 1; i < lines.size(); i++)
 		{
 			const rendell_text::TextLayoutSharedPtr& newTextLayout = createTextLayout(std::move(lines[i]), _fontSize);
-			_caret.y++;
-			addTextLayout(_caret.y, newTextLayout);
+			caretY++;
+			addTextLayout(caretY, newTextLayout);
 		}
-		setCaret(_textLayouts[_caret.y]->getTextLength(), _caret.y);
-		_textLayouts[_caret.y]->appendText(remainingText);
+		setCaret(_textLayouts[caretY]->getTextLength(), caretY);
+		_textLayouts[caretY]->appendText(remainingText);
 		_shouldCachedTextBeUpdated = true;
 		return true;
 	}
