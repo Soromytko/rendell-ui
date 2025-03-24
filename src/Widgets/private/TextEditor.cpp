@@ -308,6 +308,8 @@ namespace rendell_ui
 			return false;
 		}
 
+		_caret.xCorrector = _caret.x;
+
 		size_t remainingCount = count;
 		const rendell_text::TextLayoutSharedPtr& currentTextLayout = _textLayouts[_caret.y];
 		if (const size_t textLength = currentTextLayout->getTextLength(); _caret.x + count < textLength)
@@ -389,7 +391,7 @@ namespace rendell_ui
 
 		if (lines.size() == 1)
 		{
-			setCaret(_caret.x + lines[0].length(), _caret.y);
+			setCaret(_caret.x + lines[0].length(), _caret.y, true);
 			_shouldCachedTextBeUpdated = true;
 			return true;
 		}
@@ -402,7 +404,7 @@ namespace rendell_ui
 			caretY++;
 			addTextLayout(caretY, newTextLayout);
 		}
-		setCaret(_textLayouts[caretY]->getTextLength(), caretY);
+		setCaret(_textLayouts[caretY]->getTextLength(), caretY, true);
 		_textLayouts[caretY]->appendText(remainingText);
 		_shouldCachedTextBeUpdated = true;
 		return true;
@@ -413,7 +415,7 @@ namespace rendell_ui
 		if (_caret.y + 1 < _textLayouts.size())
 		{
 			swipeLines(_caret.y, _caret.y + 1);
-			setCaret(_caret.x, _caret.y + 1);
+			setCaret(_caret.x, _caret.y + 1, true);
 			_shouldCachedTextBeUpdated = true;
 			return true;
 		}
@@ -425,7 +427,7 @@ namespace rendell_ui
 		if (_caret.y > 0)
 		{
 			swipeLines(_caret.y, _caret.y - 1);
-			setCaret(_caret.x, _caret.y - 1);
+			setCaret(_caret.x, _caret.y - 1, true);
 			_shouldCachedTextBeUpdated = true;
 			return true;
 		}
