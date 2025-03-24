@@ -140,6 +140,7 @@ namespace rendell_ui
 
 		switch (keyboardInput.key)
 		{
+		case InputKey::X: processKeyX(keyboardInput.modControl); break;
 		case InputKey::enter: processKeyEnter(keyboardInput.modControl); return;
 		case InputKey::tab: processKeyTab(keyboardInput.modControl); return;
 		case InputKey::backspace: processKeyBackspace(keyboardInput.modControl); return;
@@ -228,6 +229,14 @@ namespace rendell_ui
 	void TextEditWidget::processKeyUp(InputModControl modControl)
 	{
 		_textEditor.moveCursorToPrevLine();
+	}
+
+	void TextEditWidget::processKeyX(InputModControl modControl)
+	{
+		if (modControl.hasCtrlMod())
+		{
+			_textEditor.eraseLineUnderCursor();
+		}
 	}
 
 	bool TextEditWidget::updateScrollOffset(float value)

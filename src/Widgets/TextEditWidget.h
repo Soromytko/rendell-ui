@@ -47,6 +47,7 @@ namespace rendell_ui
 		void processKeyLeft(InputModControl modControl);
 		void processKeyDown(InputModControl modControl);
 		void processKeyUp(InputModControl modControl);
+		void processKeyX(InputModControl modControl);
 
 		bool updateScrollOffset(float value);
 		void optimizeRendering();
