@@ -101,7 +101,7 @@ namespace rendell_ui
 		{
 			result += _textLayouts[i]->getFontHeight();
 		}
-		return result -_textLayouts[_caret.y]->getGeneralFontMetrices().descender;
+		return result - _textLayouts[_caret.y]->getDescender();
 	}
 
 	uint32_t TextEditor::getCursorHorizontalOffset() const
