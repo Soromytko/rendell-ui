@@ -54,6 +54,7 @@ namespace rendell_ui
 		case GLFW_KEY_DOWN: return InputKey::down;
 		case GLFW_KEY_UP: return InputKey::up;
 		}
+		return InputKey::none;
 	}
 
 	InputMouseButton convertGlfwMouseButtonToInputMouseButton(int button)
