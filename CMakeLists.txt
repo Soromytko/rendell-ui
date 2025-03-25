@@ -67,7 +67,7 @@ target_include_directories(${BINARY_NAME} PUBLIC include)
 
 target_compile_definitions(${BINARY_NAME}
     PRIVATE
-        "FONT_PATH=\"${RENDELL_UI_FONT_PATH}\"">
+        "FONT_ROOT_DIRECTORY=\"${RENDELL_UI_FONT_ROOT_DIRECTORY}\""
 )
 
 # GLFW

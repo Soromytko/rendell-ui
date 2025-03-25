@@ -9,9 +9,10 @@ namespace rendell_ui
 
 	static rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring&& text, glm::vec2 fontSize)
 	{
+		const std::filesystem::path fontPath = std::filesystem::path(FONT_ROOT_DIRECTORY) / "mononoki/mononoki-Regular.ttf";
 		rendell_text::TextLayoutSharedPtr result = rendell_text::makeTextLayout();
 		result->setText(text);
-		result->setFontPath(FONT_PATH);
+		result->setFontPath(fontPath);
 		result->setFontSize(fontSize);
 		return result;
 	}

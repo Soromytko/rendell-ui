@@ -24,7 +24,7 @@ namespace rendell_ui
 	protected:
 		ChunkConstIter findChunkByItemIndex(size_t itemIndex, size_t* indexInChunk = nullptr) const;
 		bool mergeChunks(ChunkConstIter chunkIt1, ChunkConstIter chunkIt2);
-		bool mergeChunks(ChunkConstIter chunkIt, size_t neighbor—ount = 1);
+		bool mergeChunks(ChunkConstIter chunkIt, size_t neighborCount = 1);
 
 		size_t _length{ 0 };
 		size_t _chunkSize;

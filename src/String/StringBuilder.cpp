@@ -204,15 +204,15 @@ namespace rendell_ui
 		return false;
 	}
 
-	bool StringBuilder::mergeChunks(ChunkConstIter chunkIt, size_t neighbor—ount)
+	bool StringBuilder::mergeChunks(ChunkConstIter chunkIt, size_t neighborCount)
 	{
-		if (neighbor—ount < 1)
+		if (neighborCount < 1)
 		{
 			return false;
 		}
 
 		bool result = false;
-		size_t currentCount = neighbor—ount;
+		size_t currentCount = neighborCount;
 		ChunkConstIter it1 = chunkIt;
 		for (size_t i = 0; i < currentCount;)
 		{

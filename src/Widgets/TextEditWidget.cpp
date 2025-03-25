@@ -93,7 +93,7 @@ namespace rendell_ui
 
 	void TextEditWidget::onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout)
 	{
-		rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
+		const rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
 		_textRenderers.insert(_textRenderers.begin() + index, textRenderer);
 		_textHeight += textLayout->getFontHeight();
 	}
