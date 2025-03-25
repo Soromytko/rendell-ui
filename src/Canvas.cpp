@@ -65,12 +65,7 @@ namespace rendell_ui
 			WidgetSharedPtr currentWidget = nullptr;
 			for (const WidgetSharedPtr& widget : _widgets)
 			{
-				WidgetSharedPtr currentFocusedWidget = focusWidgetRecursively(widget, cursorPosition);
-				if (currentFocusedWidget)
-				{
-					currentWidget = currentFocusedWidget;
-					break;
-				}
+				currentWidget = focusWidgetRecursively(widget, cursorPosition);
 			}
 			setFocusedWidget(currentWidget);
 			setCapturedWidget(currentWidget);
@@ -196,7 +191,7 @@ namespace rendell_ui
 
 	WidgetSharedPtr Canvas::focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor)
 	{
-		if (widget->getVisible() && !widget->intersect(cursor))
+		if (!widget->getVisible() || !widget->intersect(cursor))
 		{
 			return nullptr;
 		}
