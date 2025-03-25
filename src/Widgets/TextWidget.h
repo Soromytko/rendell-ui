@@ -20,7 +20,7 @@ namespace rendell_ui
 		void setBackgroundColor(glm::vec4 value);
 		void setText(const std::wstring& value);
 
-		const std::string& getFontPath() const;
+		const std::filesystem::path& getFontPath() const;
 		glm::ivec2 getFontSize() const;
 		//const glm::vec4& getBackgroundColor() const;
 		const std::wstring& getText() const;

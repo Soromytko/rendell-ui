@@ -20,6 +20,7 @@ namespace rendell_ui
 
 	enum class InputMouseButton
 	{
+		none,
 		leftButton,
 		middleButton,
 		rightButton,
@@ -27,6 +28,7 @@ namespace rendell_ui
 
 	enum class InputAction
 	{
+		none,
 		pressed,
 		release,
 		repeat,

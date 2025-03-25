@@ -70,7 +70,7 @@ namespace rendell_ui
 		size_t getCaretYByOffset(double offset) const;
 		size_t getCaretXByOffset(size_t caretY, double offset) const;
 
-		const TextEditorWordSharedPtr& findWord(wchar_t character) const;
+		TextEditorWordSharedPtr findWord(wchar_t character) const;
 		std::wstring convertLinesToString() const;
 
 		Caret _caret{};

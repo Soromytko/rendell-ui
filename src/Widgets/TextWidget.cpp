@@ -29,9 +29,9 @@ namespace rendell_ui
 		_textRenderer->getTextLayout()->setText(value);
 	}
 
-	const std::string& TextWidget::getFontPath() const
+	const std::filesystem::path& TextWidget::getFontPath() const
 	{
-		return _textRenderer->getTextLayout()->getFontPath().string();
+		return _textRenderer->getTextLayout()->getFontPath();
 	}
 
 	glm::ivec2 TextWidget::getFontSize() const

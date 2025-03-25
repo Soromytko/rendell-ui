@@ -75,7 +75,7 @@ namespace rendell_ui
 		_cursor = createCursor(_selfWeakPtr);
 		_cursor->setVisible(false);
 		_cursor->setAnchor(Anchor::leftTop);
-		_cursor->setHeight(_textEditor.getCursorHeight());
+		_cursor->setHeight(static_cast<float>(_textEditor.getCursorHeight()));
 	}
 
 	void TextEditWidget::onTextLayoutCleared()
@@ -105,10 +105,10 @@ namespace rendell_ui
 
 	void TextEditWidget::onCaretChanged(uint32_t x, uint32_t y, uint32_t height)
 	{
-		_cursor->setHeight(height);
+		_cursor->setHeight(static_cast<float>(height));
 		if (!updateScrollOffset(_scrollOffset))
 		{
-			_cursor->setOffset({ x, -static_cast<float>(y) + _scrollOffset });
+			_cursor->setOffset({ static_cast<float>(x), -static_cast<float>(y) + _scrollOffset });
 			_cursor->resetBlinkTimer();
 			_cursor->updateRecursively();
 		}

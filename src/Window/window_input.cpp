@@ -65,6 +65,7 @@ namespace rendell_ui
 		case GLFW_MOUSE_BUTTON_MIDDLE: return InputMouseButton::middleButton;
 		case GLFW_MOUSE_BUTTON_RIGHT: return InputMouseButton::rightButton;
 		}
+		return InputMouseButton::none;
 	}
 
 	InputAction convertGlfwActionToInputAction(int action)
@@ -75,6 +76,7 @@ namespace rendell_ui
 		case GLFW_RELEASE: return InputAction::release;
 		case GLFW_REPEAT: return InputAction::repeat;
 		}
+		return InputAction::none;
 	}
 
 	InputModControl::InputModControl(int mods) : _mods(mods)

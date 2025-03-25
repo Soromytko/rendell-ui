@@ -593,7 +593,7 @@ namespace rendell_ui
 		return textAdvance.size();
 	}
 
-	const TextEditorWordSharedPtr& TextEditor::findWord(wchar_t character) const
+	TextEditorWordSharedPtr TextEditor::findWord(wchar_t character) const
 	{
 		for (const TextEditorWordSharedPtr& word : _wordTypes)
 		{
