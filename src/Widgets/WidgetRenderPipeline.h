@@ -21,5 +21,5 @@ namespace rendell_ui
 		std::vector<IWidget*> _widgets{};
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(WidgetRenderPipeline)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(WidgetRenderPipeline)
 }

@@ -38,6 +38,6 @@ namespace rendell_ui
 		StringType _data;
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(StringBuilderChunk)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(StringBuilderChunk)
 
 }

@@ -17,5 +17,5 @@ namespace rendell_ui
 		virtual void remove(IWidget* value) = 0;
 	};
 
-	DECLARE_SHARED_PTR(IWidgetCollection)
+	RENDELL_UI_DECLARE_SHARED_PTR(IWidgetCollection)
 }

@@ -5,7 +5,7 @@ namespace rendell_ui
 {
 	class Cursor final : public RectangleWidget
 	{
-		FRIEND_WIDGET
+		RENDELL_UI_FRIEND_WIDGET
 	private:
 		Cursor();
 
@@ -29,6 +29,6 @@ namespace rendell_ui
 		mutable double _blinkTimer{ 0.0f };
 	};
 
-	DECLARE_WIDGET(Cursor)
+	RENDELL_UI_DECLARE_WIDGET(Cursor)
 
 }

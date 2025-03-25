@@ -6,7 +6,7 @@ namespace rendell_ui
 {
 	class TextWidget final : public Widget
 	{
-		FRIEND_WIDGET
+		RENDELL_UI_FRIEND_WIDGET
 	private:
 		TextWidget();
 	public:
@@ -29,5 +29,5 @@ namespace rendell_ui
 		rendell_text::TextRendererSharedPtr _textRenderer{ nullptr };
 	};
 
-	DECLARE_WIDGET(TextWidget)
+	RENDELL_UI_DECLARE_WIDGET(TextWidget)
 }

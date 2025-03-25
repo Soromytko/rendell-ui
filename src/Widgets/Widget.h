@@ -14,8 +14,8 @@ namespace rendell_ui
 {
 	class Widget;
 
-	DECLARE_SHARED_PTR(Widget)
-	DECLARE_WEAK_PTR(Widget)
+	RENDELL_UI_DECLARE_SHARED_PTR(Widget)
+	RENDELL_UI_DECLARE_WEAK_PTR(Widget)
 
 	void widget_deleter(Widget* widgetPtr);
 	void release_widget(const WidgetSharedPtr& widget);
@@ -32,7 +32,7 @@ namespace rendell_ui
 
 	class Widget : public IWidget
 	{
-		FRIEND_WIDGET
+		RENDELL_UI_FRIEND_WIDGET
 	public:
 		Signal<void> destroyed;
 		Signal<void, bool> visibleChanged;
@@ -127,6 +127,6 @@ namespace rendell_ui
 
 	};
 
-	DECLARE_WIDGET(Widget)
+	RENDELL_UI_DECLARE_WIDGET(Widget)
 
 }

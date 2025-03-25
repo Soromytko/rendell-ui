@@ -37,5 +37,5 @@ namespace rendell_ui
 
 	};
 	
-	DECLARE_SHARED_PTR_FACTORY(Window)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Window)
 }

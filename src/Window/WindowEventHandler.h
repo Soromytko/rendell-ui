@@ -20,6 +20,6 @@ namespace rendell_ui
 		virtual void onCharInputted(unsigned char character) {};
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(WindowEventHandler)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(WindowEventHandler)
 
 }

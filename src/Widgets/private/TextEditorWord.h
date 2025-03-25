@@ -19,21 +19,21 @@ namespace rendell_ui
 		std::wstring _characters;
 
 	};
-	DECLARE_SHARED_PTR_FACTORY(TextEditorWord)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(TextEditorWord)
 
 	class DigitTextEditorWord final : public TextEditorWord
 	{
 	public:
 		bool isWordCharacter(wchar_t character) const override;
 	};
-	DECLARE_SHARED_PTR_FACTORY(DigitTextEditorWord)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(DigitTextEditorWord)
 
 	class VerbalTextEditorWord final : public TextEditorWord
 	{
 	public:
 		bool isWordCharacter(wchar_t character) const override;
 	};
-	DECLARE_SHARED_PTR_FACTORY(VerbalTextEditorWord)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(VerbalTextEditorWord)
 
 
 }

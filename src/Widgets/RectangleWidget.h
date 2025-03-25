@@ -5,7 +5,7 @@ namespace rendell_ui
 {
 	class RectangleWidget : public Widget
 	{
-		FRIEND_WIDGET
+		RENDELL_UI_FRIEND_WIDGET
 	protected:
 		RectangleWidget();
 	public:
@@ -18,6 +18,6 @@ namespace rendell_ui
 
 	};
 
-	DECLARE_WIDGET(RectangleWidget)
+	RENDELL_UI_DECLARE_WIDGET(RectangleWidget)
 
 }

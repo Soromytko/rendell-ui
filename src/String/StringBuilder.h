@@ -32,6 +32,6 @@ namespace rendell_ui
 
 	};
 
-	DECLARE_SHARED_PTR_FACTORY(StringBuilder)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(StringBuilder)
 
 }

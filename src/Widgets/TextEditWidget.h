@@ -11,7 +11,7 @@ namespace rendell_ui
 {
 	class TextEditWidget final : public Widget
 	{
-		FRIEND_WIDGET
+		RENDELL_UI_FRIEND_WIDGET
 	private:
 		TextEditWidget();
 	public:
@@ -70,7 +70,7 @@ namespace rendell_ui
 		uint32_t _textHeight{0};
 	};
 
-	DECLARE_WIDGET(TextEditWidget)
+	RENDELL_UI_DECLARE_WIDGET(TextEditWidget)
 
 }
 

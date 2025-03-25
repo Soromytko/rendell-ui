@@ -7,7 +7,7 @@ namespace rendell_ui
 {
 	class Viewport;
 	
-	DECLARE_SHARED_PTR_FACTORY(Viewport)
+	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Viewport)
 
 	class Viewport final
 	{
