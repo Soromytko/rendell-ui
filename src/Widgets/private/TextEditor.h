@@ -65,6 +65,7 @@ namespace rendell_ui
 		void swipeLines(size_t firstIndex, size_t secondIndex);
 		bool setCaret(size_t x, size_t y, bool setXCorrector = false);
 
+		bool isSameWord(const TextEditorWordSharedPtr& word, wchar_t character) const;
 		size_t getPrevWordLength() const;
 		size_t getNextWordLength() const;
 		size_t getCaretYByOffset(double offset) const;

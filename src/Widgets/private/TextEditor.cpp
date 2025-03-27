@@ -25,7 +25,7 @@ namespace rendell_ui
 		{
 			makeDigitTextEditorWord(),
 			makeVerbalTextEditorWord(),
-			makeTextEditorWord(L" "),
+			makeTextEditorWord(L" \t"),
 			makeTextEditorWord(L"="),
 			makeTextEditorWord(L"("),
 			makeTextEditorWord(L")"),
@@ -485,6 +485,22 @@ namespace rendell_ui
 		return false;
 	}
 
+	bool TextEditor::isSameWord(const TextEditorWordSharedPtr& word, wchar_t character) const
+	{
+		if (word)
+		{
+			if (word->isWordCharacter(character))
+			{
+				return true;
+			}
+		}
+		else if (findWord(character) == nullptr)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	size_t TextEditor::getPrevWordLength() const
 	{
 		size_t result = 0;
@@ -502,14 +518,12 @@ namespace rendell_ui
 			size_t i = caretX;
 			if (i > 0)
 			{
-				if (const TextEditorWordSharedPtr& word = findWord(text[i - 1]); word != nullptr)
+				const TextEditorWordSharedPtr& word = findWord(text[i - 1]);
+				do
 				{
-					while (i > 0 && word->isWordCharacter(text[i - 1]))
-					{
-						result++;
-						i--;
-					}
-				}
+					result++;
+					i--;
+				} while (i > 0 && isSameWord(word, text[i - 1]));
 			}
 		}
 		return result;
@@ -531,14 +545,12 @@ namespace rendell_ui
 		if (const std::wstring& text = _textLayouts[caretY]->getText(); text.size() > 0)
 		{
 			size_t i = caretX;
-			if (const TextEditorWordSharedPtr& word = findWord(text[i]); word != nullptr)
+			const TextEditorWordSharedPtr& word = findWord(text[i]);
+			do
 			{
-				while (i < text.length() && word->isWordCharacter(text[i]))
-				{
-					result++;
-					i++;
-				}
-			}
+				result++;
+				i++;
+			} while (i < text.length() && isSameWord(word, text[i]));
 		}
 		return result;
 	}
