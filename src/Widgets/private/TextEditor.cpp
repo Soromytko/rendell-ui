@@ -282,11 +282,11 @@ namespace rendell_ui
 		size_t caretY = _caret.y - 1;
 		while (remainingCount > 0 && caretY > 0)
 		{
-			caretY--;
 			if (const size_t textLength = _textLayouts[caretY]->getTextLength(); remainingCount > textLength)
 			{
 				removeTextLayout(caretY);
 				remainingCount -= textLength;
+				caretY--;
 			}
 			else
 			{
