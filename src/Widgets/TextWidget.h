@@ -26,7 +26,15 @@ namespace rendell_ui
 		const std::wstring& getText() const;
 
 	private:
-		rendell_text::TextRendererSharedPtr _textRenderer{ nullptr };
+		void updateText();
+		rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring&& text) const;
+		rendell_text::TextRendererSharedPtr createTextRenderer(std::wstring&& text) const;
+
+		glm::vec4 _backgroundColor = glm::vec4(31.0f / 255.0, 31.0f / 255.0, 31.0f / 255.0, 1.0f);
+		glm::ivec2 _fontSize{24, 24};
+		std::filesystem::path _fontPath{};
+		std::vector<rendell_text::TextRendererSharedPtr> _lines{};
+		std::wstring _text{};
 	};
 
 	RENDELL_UI_DECLARE_WIDGET(TextWidget)
