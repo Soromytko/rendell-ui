@@ -1,4 +1,4 @@
-#include "TextEditorWord.h"
+#include <rendell_ui/Widgets/private/TextEditorWord.h>
 
 namespace rendell_ui
 {

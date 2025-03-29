@@ -1,5 +1,5 @@
-#include "Widget.h"
-#include "../Viewport.h"
+#include <rendell_ui/Widgets/Widget.h>
+#include <rendell_ui/Viewport.h>
 #include <algorithm>
 
 namespace rendell_ui

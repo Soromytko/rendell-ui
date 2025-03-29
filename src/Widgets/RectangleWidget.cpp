@@ -1,7 +1,7 @@
-#include "RectangleWidget.h"
+#include <rendell_ui/Widgets/RectangleWidget.h>
 #include <cassert>
 #include <array>
-#include "../Viewport.h"
+#include <rendell_ui/Viewport.h>
 #include "../Shaders/ShaderStorage.h"
 
 namespace rendell_ui

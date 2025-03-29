@@ -1,8 +1,7 @@
 #pragma once
-#include <rendell_text.h>
+#include <rendell_text/rendell_text.h>
 #include <rendell_ui/Signal.h>
 #include "TextEditorWord.h"
-#include "../../String/StringBuilder.h"
 
 namespace rendell_ui
 {
@@ -75,7 +74,6 @@ namespace rendell_ui
 		std::wstring convertLinesToString() const;
 
 		Caret _caret{};
-		StringBuilder _stringBuilder{};
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		std::vector<rendell_text::TextLayoutSharedPtr> _textLayouts;
 		std::vector<TextEditorWordSharedPtr> _wordTypes;

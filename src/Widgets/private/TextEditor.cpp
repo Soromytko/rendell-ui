@@ -1,5 +1,5 @@
-#include "TextEditor.h"
-#include "TextEditorWord.h"
+#include <rendell_ui/Widgets/private/TextEditor.h>
+#include <rendell_ui/Widgets/private/TextEditorWord.h>
 #include "../../String/StringExtension.h"
 #include <algorithm>
 

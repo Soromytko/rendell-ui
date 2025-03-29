@@ -36,26 +36,32 @@ set(HEADER_FILES
     include/rendell_ui/rendell_ui.h
     include/rendell_ui/defines.h
     include/rendell_ui/Signal.h
+    include/rendell_ui/initialization.h
+    include/rendell_ui/Canvas.h
+    include/rendell_ui/Viewport.h
 
-    src/initialization.h
-    src/Window/Window.h
-    src/Window/WindowEventHandler.h
-    src/Window/window_input.h
+    #Window
+    include/rendell_ui/Window/Window.h
+    include/rendell_ui/Window/WindowEventHandler.h
+    include/rendell_ui/Window/window_input.h
+
+    #Widgets
+    include/rendell_ui/Widgets/Anchor.h
+    include/rendell_ui/Widgets/IWidget.h
+    include/rendell_ui/Widgets/Widget.h
+    include/rendell_ui/Widgets/RectangleWidget.h
+    include/rendell_ui/Widgets/TextWidget.h
+    include/rendell_ui/Widgets/TextEditWidget.h
+    include/rendell_ui/Widgets/private/Cursor.h
+    include/rendell_ui/Widgets/private/TextEditor.h
+    include/rendell_ui/Widgets/private/TextEditorWord.h
+
     src/Window/window_callbacks.h
-    src/Viewport.h
     src/Time.h
-    src/Canvas.h
-    src/Widgets/Widget.h
     src/Widgets/Transform2D.h
-    src/Widgets/RectangleWidget.h
-    src/Widgets/TextWidget.h
-    src/Widgets/TextEditWidget.h
     src/Widgets/WidgetRegistrator.h
     src/Widgets/WidgetHandlePipeline.h
     src/Widgets/WidgetRenderPipeline.h
-    src/Widgets/private/TextEditor.h
-    src/Widgets/private/Cursor.h
-    src/Widgets/private/TextEditorWord.h
     src/Shaders/Shader.h
     src/Shaders/ShaderStorage.h
     src/Shaders/RectangleShader.h

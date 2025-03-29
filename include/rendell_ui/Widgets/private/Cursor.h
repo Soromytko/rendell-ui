@@ -1,5 +1,5 @@
 #pragma once
-#include "../RectangleWidget.h"
+#include <rendell_ui/Widgets/RectangleWidget.h>
 
 namespace rendell_ui
 {

@@ -1,4 +1,4 @@
-#include "Canvas.h"
+#include <rendell_ui/Canvas.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace rendell_ui

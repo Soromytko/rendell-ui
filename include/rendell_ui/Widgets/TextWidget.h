@@ -1,5 +1,5 @@
 #pragma once
-#include <rendell_text.h>
+#include <rendell_text/rendell_text.h>
 #include "Widget.h"
 
 namespace rendell_ui

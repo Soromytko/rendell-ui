@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "IWidget.h"
+#include <rendell_ui/Widgets/IWidget.h>
 #include "IWidgetCollection.h"
 
 namespace rendell_ui

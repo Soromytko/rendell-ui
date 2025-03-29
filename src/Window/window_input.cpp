@@ -1,4 +1,4 @@
-#include "window_input.h"
+#include <rendell_ui/Window/window_input.h>
 #include <GLFW/glfw3.h>
 
 namespace rendell_ui

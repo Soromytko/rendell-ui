@@ -1,5 +1,5 @@
 #include "window_callbacks.h"
-#include "Window.h"
+#include <rendell_ui/Window/Window.h>
 
 #define GET_WINDOW(glfwWindow) static_cast<Window*>(glfwGetWindowUserPointer(glfwWindow))
 

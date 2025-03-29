@@ -1,11 +1,10 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <rendell_text.h>
+#include <rendell_text/rendell_text.h>
 #include "Widget.h"
 #include "private/TextEditor.h"
 #include "private/Cursor.h"
-#include "../String/StringBuilder.h"
 
 namespace rendell_ui
 {

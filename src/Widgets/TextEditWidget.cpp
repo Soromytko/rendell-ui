@@ -1,8 +1,8 @@
-#include "TextEditWidget.h"
-#include "../Viewport.h"
-#include "../String/StringExtension.h"
-#include "private/Cursor.h"
+#include <rendell_ui/Widgets/TextEditWidget.h>
+#include <rendell_ui/Widgets/private/Cursor.h>
+#include <rendell_ui/Viewport.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "../String/StringExtension.h"
 
 namespace rendell_ui
 {

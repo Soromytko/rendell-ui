@@ -1,4 +1,4 @@
-#include "Cursor.h"
+#include <rendell_ui/Widgets/private/Cursor.h>
 #include "../../Time.h"
 
 #define CURSOR_THICKNESS 2.0f

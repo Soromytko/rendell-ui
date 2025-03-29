@@ -1,11 +1,13 @@
 #pragma once
-#include "../../src/initialization.h"
-#include "../../src/Window/Window.h"
-#include "../../src/Window/window_input.h"
-#include "../../src/Viewport.h"
-#include "../../src/Canvas.h"
+#include "defines.h"
+#include "initialization.h"
+#include "Viewport.h"
+#include "Canvas.h"
 
-#include "../../src/Widgets/RectangleWidget.h"
-#include "../../src/Widgets/TextWidget.h"
-#include "../../src/Widgets/TextEditWidget.h"
+#include "Window/Window.h"
+#include "Window/window_input.h"
+
+#include "Widgets/RectangleWidget.h"
+#include "Widgets/TextWidget.h"
+#include "Widgets/TextEditWidget.h"
 

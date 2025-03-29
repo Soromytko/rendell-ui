@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <rendell_ui/defines.h>
-#include "IWidget.h"
+#include <rendell_ui/Widgets/IWidget.h>
 
 namespace rendell_ui
 {

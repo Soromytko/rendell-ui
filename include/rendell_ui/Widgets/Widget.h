@@ -4,11 +4,11 @@
 #include <rendell/rendell.h>
 #include <rendell_ui/defines.h>
 #include <rendell_ui/Signal.h>
-#include "IWidget.h"
-#include "Anchor.h"
-#include "Transform2D.h"
-#include "WidgetRegistrator.h"
-#include "../Window/window_input.h"
+#include <rendell_ui/Widgets/IWidget.h>
+#include <rendell_ui/Widgets/Anchor.h>
+#include <rendell_ui/Window/window_input.h>
+#include "../src/Widgets/WidgetRegistrator.h"
+#include "../src/Widgets/Transform2D.h"
 
 namespace rendell_ui
 {
