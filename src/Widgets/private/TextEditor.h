@@ -1,7 +1,7 @@
 #pragma once
 #include <rendell_text.h>
+#include <rendell_ui/Signal.h>
 #include "TextEditorWord.h"
-#include "../../Signal.h"
 #include "../../String/StringBuilder.h"
 
 namespace rendell_ui

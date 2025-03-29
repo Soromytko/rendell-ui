@@ -2,13 +2,13 @@
 #include <memory>
 #include <unordered_set>
 #include <rendell/rendell.h>
+#include <rendell_ui/defines.h>
+#include <rendell_ui/Signal.h>
 #include "IWidget.h"
 #include "Anchor.h"
 #include "Transform2D.h"
 #include "WidgetRegistrator.h"
 #include "../Window/window_input.h"
-#include "../defines.h"
-#include "../Signal.h"
 
 namespace rendell_ui
 {

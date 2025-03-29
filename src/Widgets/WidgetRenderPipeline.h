@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <rendell_ui/defines.h>
 #include "IWidgetCollection.h"
-#include "../defines.h"
 
 namespace rendell_ui
 {

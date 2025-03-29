@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <glm/glm.hpp>
-#include "defines.h"
+#include <rendell_ui/defines.h>
 
 namespace rendell_ui
 {

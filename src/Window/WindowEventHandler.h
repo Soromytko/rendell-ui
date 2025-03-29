@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
+#include <rendell_ui/defines.h>
 #include "window_input.h"
-#include "../defines.h"
 
 namespace rendell_ui
 {

@@ -1,5 +1,7 @@
 #pragma once
 
+#define RENDELL_UI_NAMESPACE rendell_ui
+
 #define RENDELL_UI_DECLARE_SHARED_PTR(ClassName) \
 	typedef std::shared_ptr<ClassName> ClassName##SharedPtr;
 
@@ -18,11 +20,11 @@
 	RENDELL_UI_DECLARE_SHARED_PTR(WidgetClassName) \
 	RENDELL_UI_DECLARE_WEAK_PTR(WidgetClassName) \
 	template<typename... Args> \
-	WidgetClassName##SharedPtr create##WidgetClassName(WidgetWeakPtr parent = {}, Args&&... args) \
+	WidgetClassName##SharedPtr create##WidgetClassName(RENDELL_UI_NAMESPACE::WidgetWeakPtr parent = {}, Args&&... args) \
 	{ \
 		return createWidget<WidgetClassName>(parent, std::forward<Args>(args)...); \
 	}
 
 #define RENDELL_UI_FRIEND_WIDGET \
 	template <typename WidgetType, typename... Args> \
-	friend std::shared_ptr<WidgetType> createWidget(WidgetWeakPtr parent, Args&&... args);
+	friend std::shared_ptr<WidgetType> createWidget(RENDELL_UI_NAMESPACE::WidgetWeakPtr parent, Args&&... args);

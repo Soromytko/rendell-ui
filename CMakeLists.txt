@@ -33,6 +33,10 @@ set(SOURCE_FILES
 )
 
 set(HEADER_FILES
+    include/rendell_ui/rendell_ui.h
+    include/rendell_ui/defines.h
+    include/rendell_ui/Signal.h
+
     src/initialization.h
     src/Window/Window.h
     src/Window/WindowEventHandler.h
@@ -58,10 +62,9 @@ set(HEADER_FILES
     src/String/StringBuilder.h
     src/String/StringBuilderChunk.h
     src/String/StringExtension.h
-
-    src/Signal.h
 )
 
+include_directories(include)
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(${BINARY_NAME} PUBLIC include)
 

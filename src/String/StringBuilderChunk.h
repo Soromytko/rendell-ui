@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
-#include "../defines.h"
+#include <rendell_ui/defines.h>
 
 namespace rendell_ui
 {
