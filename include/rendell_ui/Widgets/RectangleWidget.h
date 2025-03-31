@@ -5,10 +5,8 @@ namespace rendell_ui
 {
 	class RectangleWidget : public Widget
 	{
-		RENDELL_UI_FRIEND_WIDGET
-	protected:
-		RectangleWidget();
 	public:
+		RectangleWidget();
 		virtual ~RectangleWidget();
 
 		virtual void draw() const override;

@@ -22,9 +22,5 @@
 	template<typename... Args> \
 	WidgetClassName##SharedPtr create##WidgetClassName(RENDELL_UI_NAMESPACE::WidgetWeakPtr parent = {}, Args&&... args) \
 	{ \
-		return createWidget<WidgetClassName>(parent, std::forward<Args>(args)...); \
+		return RENDELL_UI_NAMESPACE::createWidget<WidgetClassName>(parent, std::forward<Args>(args)...); \
 	}
-
-#define RENDELL_UI_FRIEND_WIDGET \
-	template <typename WidgetType, typename... Args> \
-	friend std::shared_ptr<WidgetType> createWidget(RENDELL_UI_NAMESPACE::WidgetWeakPtr parent, Args&&... args);

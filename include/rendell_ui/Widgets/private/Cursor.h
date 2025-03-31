@@ -5,11 +5,8 @@ namespace rendell_ui
 {
 	class Cursor final : public RectangleWidget
 	{
-		RENDELL_UI_FRIEND_WIDGET
-	private:
-		Cursor();
-
 	public:
+		Cursor();
 		~Cursor() = default;
 
 		void draw() const override;

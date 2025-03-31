@@ -19,20 +19,19 @@ namespace rendell_ui
 
 	void widget_deleter(Widget* widgetPtr);
 	void release_widget(const WidgetSharedPtr& widget);
-	
+	void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent);
+
 	template <typename WidgetType, typename... Args>
 	std::shared_ptr<WidgetType> createWidget(WidgetWeakPtr parent = {}, Args&&... args)
 	{
 		std::shared_ptr<WidgetType> result(new WidgetType(std::forward<Args>(args)...), widget_deleter);
-		result->setSelfWeakPtr(result);
-		result->setParent(parent);
-		WidgetRegistrator::getInstance()->registerWidget(result.get());
+		initWidget(result, parent);
 		return result;
 	}
 
 	class Widget : public IWidget
 	{
-		RENDELL_UI_FRIEND_WIDGET
+		friend void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent);
 	public:
 		Signal<void> destroyed;
 		Signal<void, bool> visibleChanged;

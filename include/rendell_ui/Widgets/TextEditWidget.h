@@ -10,10 +10,8 @@ namespace rendell_ui
 {
 	class TextEditWidget final : public Widget
 	{
-		RENDELL_UI_FRIEND_WIDGET
-	private:
-		TextEditWidget();
 	public:
+		TextEditWidget();
 		~TextEditWidget();
 
 		void draw() const override;

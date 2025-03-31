@@ -6,10 +6,8 @@ namespace rendell_ui
 {
 	class TextWidget final : public Widget
 	{
-		RENDELL_UI_FRIEND_WIDGET
-	private:
-		TextWidget();
 	public:
+		TextWidget();
 		~TextWidget() = default;
 
 		void setColor(glm::vec4 value) override;
