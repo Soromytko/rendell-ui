@@ -39,6 +39,16 @@ public:
 		return registerConnection(_connections.size() - 1);
 	}
 
+	uint32_t connect(Signal<ReturnType, Args...>& signal)
+	{
+		_connections.emplace_back([&signal](Args... args) -> ReturnType
+			{
+				return signal.emit(args...);
+			});
+
+		return registerConnection(_connections.size() - 1);
+	}
+
 	bool disconnect(uint32_t connectionId)
 	{
 		auto it = _map.find(connectionId);
