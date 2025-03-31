@@ -49,6 +49,7 @@ namespace rendell_ui
 		bool moveLineUnderCursorDown();
 		bool moveLineUnderCursorUp();
 
+		Signal<void> textChanged;
 		Signal<void> textLayoutCleared;
 		Signal<void, size_t> textLayoutRemoved;
 		Signal<void, size_t, const rendell_text::TextLayoutSharedPtr&> textLayoutAdded;
@@ -56,6 +57,8 @@ namespace rendell_ui
 		Signal<void, uint32_t, uint32_t, uint32_t> cursorChanged;
 
 	private:
+		void setShouldCachedTextBeUpdated(bool value);
+
 		std::wstring takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout, size_t caretX, bool erase = false);
 		std::wstring takeRemainingTextInLine(size_t caretX, size_t caretY, bool erase = false);
 

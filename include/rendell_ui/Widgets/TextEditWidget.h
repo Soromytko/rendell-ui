@@ -21,6 +21,8 @@ namespace rendell_ui
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
 
+		Signal<void> textChanged;
+
 	private:
 		void onSelfWeakPtrChanged() override;
 
@@ -55,6 +57,7 @@ namespace rendell_ui
 		uint32_t _textLayoutAddedConnectionId;
 		uint32_t _textLayoutSwappedConnectionId;
 		uint32_t _caretChangedConnectionId;
+		uint32_t _textChangedConnectionId;
 
 		float _scrollOffset{ 0.0 };
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };

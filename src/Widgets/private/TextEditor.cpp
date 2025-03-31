@@ -66,6 +66,7 @@ namespace rendell_ui
 
 		_cachedText = value;
 		_shouldCachedTextBeUpdated = false;
+		textChanged.emit();
 	}
 
 	void TextEditor::setFontSize(glm::ivec2 value)
@@ -270,7 +271,7 @@ namespace rendell_ui
 		{
 			_textLayouts[_caret.y]->eraseText(_caret.x - count, count);
 			setCaret(_caret.x - count, _caret.y, true);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 		assert(_caret.y > 0);
@@ -297,7 +298,7 @@ namespace rendell_ui
 		currentTextLayout->eraseText(currentTextLayout->getTextLength() - remainingCount, remainingCount);
 		currentTextLayout->appendText(remainingText);
 		setCaret(_textLayouts[caretY]->getTextLength() - remainingText.length(), caretY, true);
-		_shouldCachedTextBeUpdated = true;
+		setShouldCachedTextBeUpdated(true);
 
 		return true;
 	}
@@ -321,7 +322,7 @@ namespace rendell_ui
 		else if (_caret.x < textLength)
 		{
 			currentTextLayout->eraseText(_caret.x, count);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 
@@ -346,7 +347,7 @@ namespace rendell_ui
 				break;
 			}
 		}
-		_shouldCachedTextBeUpdated = true;
+		setShouldCachedTextBeUpdated(true);
 
 		return true;
 	}
@@ -367,7 +368,7 @@ namespace rendell_ui
 		{
 			_textLayouts[0]->eraseText(0);
 			setCaret(0, 0);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 
@@ -375,7 +376,7 @@ namespace rendell_ui
 		const size_t caretY = std::min(_caret.y, _textLayouts.size() - 1);
 		const size_t caretX = std::min(_caret.xCorrector, _textLayouts[caretY]->getTextLength());
 		setCaret(caretX, caretY);
-		_shouldCachedTextBeUpdated = true;
+		setShouldCachedTextBeUpdated(true);
 		return true;
 	}
 
@@ -393,7 +394,7 @@ namespace rendell_ui
 		if (lines.size() == 1)
 		{
 			setCaret(_caret.x + lines[0].length(), _caret.y, true);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 
@@ -407,7 +408,7 @@ namespace rendell_ui
 		}
 		setCaret(_textLayouts[caretY]->getTextLength(), caretY, true);
 		_textLayouts[caretY]->appendText(remainingText);
-		_shouldCachedTextBeUpdated = true;
+		setShouldCachedTextBeUpdated(true);
 		return true;
 	}
 
@@ -417,7 +418,7 @@ namespace rendell_ui
 		{
 			swipeLines(_caret.y, _caret.y + 1);
 			setCaret(_caret.x, _caret.y + 1, true);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 		return false;
@@ -429,10 +430,19 @@ namespace rendell_ui
 		{
 			swipeLines(_caret.y, _caret.y - 1);
 			setCaret(_caret.x, _caret.y - 1, true);
-			_shouldCachedTextBeUpdated = true;
+			setShouldCachedTextBeUpdated(true);
 			return true;
 		}
 		return false;
+	}
+
+	void TextEditor::setShouldCachedTextBeUpdated(bool value)
+	{
+		_shouldCachedTextBeUpdated = value;
+		if (_shouldCachedTextBeUpdated)
+		{
+			textChanged.emit();
+		}
 	}
 
 	std::wstring TextEditor::takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout, size_t caretX, bool erase)

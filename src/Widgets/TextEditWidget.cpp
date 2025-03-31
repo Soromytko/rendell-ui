@@ -22,6 +22,7 @@ namespace rendell_ui
 		_textLayoutAddedConnectionId = _textEditor.textLayoutAdded.connect(this, &TextEditWidget::onTextLayoutAdded);
 		_textLayoutSwappedConnectionId = _textEditor.textLayoutSwapped.connect(this, &TextEditWidget::onTextLayoutSwapped);
 		_caretChangedConnectionId = _textEditor.cursorChanged.connect(this, &TextEditWidget::onCaretChanged);
+		_textChangedConnectionId = _textEditor.textChanged.connect(textChanged);
 	}
 
 	TextEditWidget::~TextEditWidget()
@@ -31,6 +32,7 @@ namespace rendell_ui
 		_textEditor.textLayoutAdded.disconnect(_textLayoutAddedConnectionId);
 		_textEditor.textLayoutSwapped.disconnect(_textLayoutSwappedConnectionId);
 		_textEditor.cursorChanged.disconnect(_caretChangedConnectionId);
+		_textEditor.cursorChanged.disconnect(_textChangedConnectionId);
 	}
 
 	void TextEditWidget::draw() const
