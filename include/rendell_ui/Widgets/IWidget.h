@@ -15,6 +15,7 @@ namespace rendell_ui
 
 		virtual bool getVisible() const = 0;
 		virtual bool getImplicitVisible() const = 0;
+		virtual bool getInteract() const = 0;
 
 		virtual void updateRecursively() = 0;
 		virtual void draw() const = 0;

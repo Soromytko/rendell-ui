@@ -54,6 +54,16 @@ namespace rendell_ui
 		return _visible;
 	}
 
+	void Widget::setInteract(bool value)
+	{
+		_interact = value;
+	}
+
+	bool Widget::getInteract() const
+	{
+		return _interact;
+	}
+
 	bool Widget::getImplicitVisible() const
 	{
 		return _implicitVisible;

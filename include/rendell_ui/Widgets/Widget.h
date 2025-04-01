@@ -49,6 +49,9 @@ namespace rendell_ui
 		void setVisible(bool value);
 		bool getVisible() const override;
 
+		void setInteract(bool value);
+		bool getInteract() const override;
+
 		bool getImplicitVisible() const override;
 
 		void setParent(WidgetWeakPtr widget);
@@ -111,6 +114,7 @@ namespace rendell_ui
 
 		bool _visible{ true };
 		bool _implicitVisible{ true };
+		bool _interact{ true };
 
 		WidgetWeakPtr _parent{};
 		std::unordered_set<WidgetSharedPtr> _children{};

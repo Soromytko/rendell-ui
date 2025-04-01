@@ -78,7 +78,7 @@ namespace rendell_ui
 					_focusedWidget->onMouseUp(cursorPosition);
 					_focusedWidget->onMouseClick();
 				}
-				
+
 				// Handle mouse movement to update widgets currently under the cursor.
 				if (setCapturedWidget(nullptr))
 				{
@@ -91,7 +91,7 @@ namespace rendell_ui
 	void Canvas::onMouseMoved(double x, double y)
 	{
 		const glm::dvec2 cursor{ x, y };
-		
+
 		// Emit onMouseExited events.
 		for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end();)
 		{
@@ -130,7 +130,7 @@ namespace rendell_ui
 
 		if (_hoveredWidget)
 		{
-			_hoveredWidget->onMouseScrolled({x, y});
+			_hoveredWidget->onMouseScrolled({ x, y });
 		}
 	}
 
@@ -184,28 +184,9 @@ namespace rendell_ui
 		}
 	}
 
-	WidgetSharedPtr Canvas::focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor)
-	{
-		if (!widget->getVisible() || !widget->intersect(cursor))
-		{
-			return nullptr;
-		}
-
-		for (const WidgetSharedPtr& child : widget->getChildren())
-		{
-			const WidgetSharedPtr& childFocusWidget = focusWidgetRecursively(child, cursor);
-			if (childFocusWidget)
-			{
-				return childFocusWidget;
-			}
-		}
-
-		return widget;
-	}
-
 	WidgetSharedPtr Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)
 	{
-		if (!widget->getVisible() || !widget->intersect(cursor))
+		if (!widget->getVisible() || !widget->getInteract() || !widget->intersect(cursor))
 		{
 			return nullptr;
 		}
@@ -220,7 +201,7 @@ namespace rendell_ui
 
 		for (const WidgetSharedPtr& child : widget->getChildren())
 		{
-			if (const WidgetSharedPtr &childHoverWidget = hoverMouseRecursively(child, cursor))
+			if (const WidgetSharedPtr& childHoverWidget = hoverMouseRecursively(child, cursor))
 			{
 				return childHoverWidget;
 			}
