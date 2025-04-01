@@ -110,6 +110,16 @@ namespace rendell_ui
 		setParent({});
 	}
 
+	void Widget::setName(const std::string& name)
+	{
+		_name = name;
+	}
+
+	const std::string& Widget::getName() const
+	{
+		return _name;
+	}
+
 	void Widget::setColor(glm::vec4 value)
 	{
 		_color = value;

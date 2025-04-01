@@ -20,6 +20,7 @@ namespace rendell_ui
 
 	RectangleWidget::RectangleWidget() : Widget()
 	{
+		setName("RectangleWidget");
 		_shaderProgram = ShaderStorage::getInstance()->rectangleShader->getShaderProgram();
 		if (!s_isUniformIndexObtained)
 		{

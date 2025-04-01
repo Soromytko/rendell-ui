@@ -7,6 +7,7 @@ namespace rendell_ui
 {
 	TextWidget::TextWidget() : Widget()
 	{
+		setName("TextWidget");
 		_fontPath = std::filesystem::path(FONT_ROOT_DIRECTORY) / "mononoki/mononoki-Regular.ttf";
 	}
 

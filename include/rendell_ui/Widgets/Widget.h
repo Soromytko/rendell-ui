@@ -59,6 +59,9 @@ namespace rendell_ui
 
 		void removeParent();
 
+		void setName(const std::string& name);
+		const std::string& getName() const override;
+
 		virtual void setColor(glm::vec4 value);
 		glm::vec4 getColor() const;
 
@@ -111,6 +114,8 @@ namespace rendell_ui
 
 		WidgetWeakPtr _parent{};
 		std::unordered_set<WidgetSharedPtr> _children{};
+
+		std::string _name{ "Widget" };
 
 		uint32_t _matrixUniformIndex{ 0 };
 		uint32_t _sizeUniformIndex{ 0 };

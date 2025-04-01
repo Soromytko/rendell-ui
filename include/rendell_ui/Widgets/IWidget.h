@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 namespace rendell_ui
 {
@@ -9,6 +10,8 @@ namespace rendell_ui
 
 	public:
 		virtual ~IWidget() = default;
+
+		virtual const std::string& getName() const = 0;
 
 		virtual bool getVisible() const = 0;
 		virtual bool getImplicitVisible() const = 0;
