@@ -152,8 +152,12 @@ namespace rendell_ui
 
 	void Widget::setSize(glm::vec2 value)
 	{
-		_size = value;
-		updateRecursively();
+		if (_size != value)
+		{
+			_size = value;
+			sizeChanged.emit(_size);
+			updateRecursively();
+		}
 	}
 
 	glm::vec2 Widget::getSize() const
@@ -163,8 +167,12 @@ namespace rendell_ui
 
 	void Widget::setMargins(Margins value)
 	{
-		_margins = value;
-		updateRecursively();
+		if (_margins != value)
+		{
+			_margins = value;
+			marginsChanged.emit(_margins);
+			updateRecursively();
+		}
 	}
 
 	void Widget::setMargins(float left, float right, float bottom, float top)
@@ -179,7 +187,12 @@ namespace rendell_ui
 
 	void Widget::setAnchor(Anchor value)
 	{
-		_anchor = value;
+		if (_anchor != value)
+		{
+			_anchor = value;
+			anchorChanged.emit(_anchor);
+			updateRecursively();
+		}
 	}
 
 	Anchor Widget::getAnchor() const
@@ -334,6 +347,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.x = parentSize.x - _margins.left - _margins.right;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::horizontalStretch:
@@ -344,6 +358,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.x = parentSize.x - _margins.left - _margins.right;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::bottomStretch:
@@ -356,6 +371,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.x = parentSize.x - _margins.left - _margins.right;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::leftStretch:
@@ -368,6 +384,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::verticalStretch:
@@ -378,6 +395,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::rightStretch:
@@ -390,6 +408,7 @@ namespace rendell_ui
 				_offset
 			);
 			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			sizeChanged.emit(_size);
 			break;
 		}
 		case Anchor::centerStretch:
@@ -401,6 +420,7 @@ namespace rendell_ui
 			);
 			_size.x = parentSize.x - _margins.left - _margins.right;
 			_size.y = parentSize.y - _margins.bottom - _margins.top;
+			sizeChanged.emit(_size);
 			break;
 		}
 		default:

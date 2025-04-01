@@ -35,7 +35,11 @@ namespace rendell_ui
 	public:
 		Signal<void> destroyed;
 		Signal<void, bool> visibleChanged;
+		Signal<void, bool> interactChanged;
 		Signal<void, const WidgetSharedPtr&> parentChanged;
+		Signal<void, glm::vec2> sizeChanged;
+		Signal<void, Margins> marginsChanged;
+		Signal<void, Anchor> anchorChanged;
 
 	protected:
 		Widget();
