@@ -62,6 +62,11 @@ namespace rendell_ui
 		return _textEditor.getText();
 	}
 
+	size_t TextEditWidget::getLineCount() const
+	{
+		return _textRenderers.size();
+	}
+
 	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_textEditor.setText(value);

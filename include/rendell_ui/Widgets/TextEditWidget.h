@@ -17,6 +17,7 @@ namespace rendell_ui
 		void draw() const override;
 
 		const std::wstring& getText() const;
+		size_t getLineCount() const;
 
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
