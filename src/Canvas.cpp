@@ -62,13 +62,8 @@ namespace rendell_ui
 
 		if (mouseInput.action == InputAction::pressed)
 		{
-			WidgetSharedPtr currentWidget = nullptr;
-			for (const WidgetSharedPtr& widget : _widgets)
-			{
-				currentWidget = focusWidgetRecursively(widget, cursorPosition);
-			}
-			setFocusedWidget(currentWidget);
-			setCapturedWidget(currentWidget);
+			setFocusedWidget(_hoveredWidget);
+			setCapturedWidget(_hoveredWidget);
 			if (_focusedWidget)
 			{
 				_focusedWidget->onMouseDown(cursorPosition);
@@ -210,7 +205,7 @@ namespace rendell_ui
 
 	WidgetSharedPtr Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)
 	{
-		if (widget->getVisible() && !widget->intersect(cursor))
+		if (!widget->getVisible() || !widget->intersect(cursor))
 		{
 			return nullptr;
 		}
@@ -225,9 +220,9 @@ namespace rendell_ui
 
 		for (const WidgetSharedPtr& child : widget->getChildren())
 		{
-			if (hoverMouseRecursively(child, cursor))
+			if (const WidgetSharedPtr &childHoverWidget = hoverMouseRecursively(child, cursor))
 			{
-				return child;
+				return childHoverWidget;
 			}
 		}
 		return widget;
