@@ -100,6 +100,7 @@ namespace rendell_ui
 		virtual void onMouseScrolled(glm::dvec2 scroll) {}
 		virtual void onCaptured() {}
 		virtual void onFreed() {}
+		virtual void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) {}
 		virtual void onKeyInputted(const KeyboardInput& keyboardInput) {};
 		virtual void onCharInputted(unsigned char character) {};
 

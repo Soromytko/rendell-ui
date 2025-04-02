@@ -39,6 +39,8 @@ namespace rendell_ui
 		WidgetSharedPtr _capturedWidget{ nullptr };
 		WidgetSharedPtr _hoveredWidget{ nullptr };
 
+		glm::dvec2 _dragStartPoint{};
+
 		ViewportSharedPtr _viewport;
 		std::set<WidgetSharedPtr> _widgets;
 		std::unordered_set<WidgetSharedPtr> _mouseHoverWidgets;

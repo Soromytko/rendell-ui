@@ -68,6 +68,7 @@ namespace rendell_ui
 			{
 				_focusedWidget->onMouseDown(cursorPosition);
 			}
+			_dragStartPoint = { mouseInput.x, mouseInput.y };
 		}
 		else if (mouseInput.action == InputAction::release)
 		{
@@ -91,6 +92,11 @@ namespace rendell_ui
 	void Canvas::onMouseMoved(double x, double y)
 	{
 		const glm::dvec2 cursor{ x, y };
+
+		if (_capturedWidget)
+		{
+			_capturedWidget->onDragged(_dragStartPoint, cursor);
+		}
 
 		// Emit onMouseExited events.
 		for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end();)
