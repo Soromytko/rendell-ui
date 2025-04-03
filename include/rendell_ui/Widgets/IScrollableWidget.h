@@ -1,4 +1,5 @@
 #pragma once
+#include <rendell_ui/defines.h>
 
 namespace rendell_ui
 {
