@@ -21,6 +21,7 @@ set(SOURCE_FILES
     src/Widgets/WidgetRegistrator.cpp
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
+    src/Widgets/ScrollbarWidget.cpp
     src/Widgets/private/TextEditor.cpp
     src/Widgets/private/TextEditorWord.cpp
     src/Widgets/private/Cursor.cpp
@@ -52,6 +53,8 @@ set(HEADER_FILES
     include/rendell_ui/Widgets/RectangleWidget.h
     include/rendell_ui/Widgets/TextWidget.h
     include/rendell_ui/Widgets/TextEditWidget.h
+    include/rendell_ui/Widgets/IScrollableWidget.h
+    include/rendell_ui/Widgets/ScrollbarWidget.h
     include/rendell_ui/Widgets/private/Cursor.h
     include/rendell_ui/Widgets/private/TextEditor.h
     include/rendell_ui/Widgets/private/TextEditorWord.h

@@ -24,6 +24,10 @@ namespace rendell_ui
 		_textLayoutSwappedConnectionId = _textEditor.textLayoutSwapped.connect(this, &TextEditWidget::onTextLayoutSwapped);
 		_caretChangedConnectionId = _textEditor.cursorChanged.connect(this, &TextEditWidget::onCaretChanged);
 		_textChangedConnectionId = _textEditor.textChanged.connect(textChanged);
+
+		_scrollbarWidget = createScrollbarWidget();
+		WidgetRegistrator::getInstance()->unregisterWidget(_scrollbarWidget.get());
+		_scrollbarWidget->setAnchor(Anchor::rightStretch);
 	}
 
 	TextEditWidget::~TextEditWidget()
@@ -41,7 +45,7 @@ namespace rendell_ui
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();
 		const glm::mat4& viewMat = Viewport::getCurrent()->getViewMat();
 		const glm::mat4& transformMat = _transform.getMatrix();
-		
+
 		float currentOffset = _size.y * 0.5f + _startRenderingOffset;
 		for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++)
 		{
@@ -56,6 +60,29 @@ namespace rendell_ui
 			textRenderer->draw();
 		}
 
+		if (_scrollbarWidget->getVisible())
+		{
+			_scrollbarWidget->draw();
+		}
+	}
+
+	float TextEditWidget::getScrollProgress() const
+	{
+		return _scrollOffset / (static_cast<float>(_textHeight) - _size.y);
+	}
+
+	float TextEditWidget::getScrollRatio() const
+	{
+		return _size.y / static_cast<float>(_textHeight);
+	}
+
+	void TextEditWidget::setScrollProgress(float value)
+	{
+		if (_scrollProgress != value)
+		{
+			_scrollProgress = value;
+			updateScrollOffset((_textHeight - _size.y) * _scrollProgress);
+		}
 	}
 
 	const std::wstring& TextEditWidget::getText() const
@@ -68,6 +95,11 @@ namespace rendell_ui
 		return _textRenderers.size();
 	}
 
+	bool TextEditWidget::getScrollEnabled() const
+	{
+		return _scrollEnabled;
+	}
+
 	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_textEditor.setText(value);
@@ -78,18 +110,38 @@ namespace rendell_ui
 		_textEditor.setFontSize(value);
 	}
 
+	void TextEditWidget::setScrollEnabled(bool value)
+	{
+		_scrollEnabled = value;
+		_scrollbarWidget->setVisible(_scrollEnabled);
+	}
+
 	void TextEditWidget::onSelfWeakPtrChanged()
 	{
 		_cursor = createCursor(_selfWeakPtr);
 		_cursor->setVisible(false);
 		_cursor->setAnchor(Anchor::leftTop);
 		_cursor->setHeight(static_cast<float>(_textEditor.getCursorHeight()));
+
+		_scrollbarWidget->setParent(_selfWeakPtr);
+		IScrollableWidgetSharedPtr scrollable = std::dynamic_pointer_cast<IScrollableWidget>(_selfWeakPtr.lock());
+		_scrollbarWidget->setScrollable(scrollable);
+	}
+
+	void TextEditWidget::onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint)
+	{
+		if (_scrollEnabled && _scrollbarWidget->intersect(startPoint))
+		{
+			_scrollbarWidget->onDragged(startPoint, endPoint);
+			return;
+		}
 	}
 
 	void TextEditWidget::onTextLayoutCleared()
 	{
 		_textRenderers.clear();
 		_textHeight = 0;
+		_scrollbarWidget->updateProgress();
 	}
 
 	void TextEditWidget::onTextLayoutRemoved(size_t index)
@@ -97,6 +149,7 @@ namespace rendell_ui
 		auto it = _textRenderers.begin() + index;
 		_textHeight -= it->operator->()->getTextLayout()->getFontHeight();
 		_textRenderers.erase(it);
+		_scrollbarWidget->updateProgress();
 	}
 
 	void TextEditWidget::onTextLayoutAdded(size_t index, const rendell_text::TextLayoutSharedPtr& textLayout)
@@ -104,6 +157,7 @@ namespace rendell_ui
 		const rendell_text::TextRendererSharedPtr& textRenderer = createTextRenderer(textLayout);
 		_textRenderers.insert(_textRenderers.begin() + index, textRenderer);
 		_textHeight += textLayout->getFontHeight();
+		_scrollbarWidget->updateProgress();
 	}
 
 	void TextEditWidget::onTextLayoutSwapped(size_t firstIndex, size_t secondIndex)
@@ -143,7 +197,10 @@ namespace rendell_ui
 	void TextEditWidget::onMouseScrolled(glm::dvec2 scroll)
 	{
 		const float scrollY = static_cast<float>(scroll.y) * 50.0f;
-		updateScrollOffset(_scrollOffset - scrollY);
+		if (updateScrollOffset(_scrollOffset - scrollY))
+		{
+			_scrollbarWidget->updateProgress();
+		}
 	}
 
 	void TextEditWidget::onKeyInputted(const KeyboardInput& keyboardInput)
@@ -266,7 +323,7 @@ namespace rendell_ui
 
 	bool TextEditWidget::updateScrollOffset(float value)
 	{
-		const float maxScrollOffset = _textHeight > _size.y ? static_cast<float>(_textHeight) - _size.y: 0.0f;
+		const float maxScrollOffset = _textHeight > _size.y ? static_cast<float>(_textHeight) - _size.y : 0.0f;
 		const float newScrollOffset = std::clamp(value, 0.0f, maxScrollOffset);
 		if (_scrollOffset != newScrollOffset)
 		{
@@ -276,6 +333,7 @@ namespace rendell_ui
 			_cursor->setOffset({ cursorOffsetX, cursorOffsetY });
 			_cursor->updateRecursively();
 			optimizeRendering();
+			_scrollProgress = _scrollOffset / (_textHeight - _size.y);
 			return true;
 		}
 		return false;
