@@ -59,6 +59,11 @@ namespace rendell_ui
 			textRenderer->draw();
 		}
 
+		if (_cursor->getVisible())
+		{
+			_cursor->draw();
+		}
+
 		if (_scrollbarWidget->getVisible())
 		{
 			_scrollbarWidget->draw();
@@ -117,7 +122,7 @@ namespace rendell_ui
 
 	void TextEditWidget::onSelfWeakPtrChanged()
 	{
-		_cursor = createCursor(_selfWeakPtr);
+		_cursor = createUnregisteredCursor(_selfWeakPtr);
 		_cursor->setVisible(false);
 		_cursor->setAnchor(Anchor::leftTop);
 		_cursor->setHeight(static_cast<float>(_textEditor.getCursorHeight()));
