@@ -25,8 +25,7 @@ namespace rendell_ui
 		_caretChangedConnectionId = _textEditor.cursorChanged.connect(this, &TextEditWidget::onCaretChanged);
 		_textChangedConnectionId = _textEditor.textChanged.connect(textChanged);
 
-		_scrollbarWidget = createScrollbarWidget();
-		WidgetRegistrator::getInstance()->unregisterWidget(_scrollbarWidget.get());
+		_scrollbarWidget = createUnregisteredScrollbarWidget();
 		_scrollbarWidget->setAnchor(Anchor::rightStretch);
 	}
 

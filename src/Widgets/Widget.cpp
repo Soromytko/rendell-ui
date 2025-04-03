@@ -22,11 +22,14 @@ namespace rendell_ui
 		widget->removeParent();
 	}
 
-	void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent)
+	void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent, bool registered)
 	{
 		widget->setSelfWeakPtr(widget);
 		widget->setParent(parent);
-		WidgetRegistrator::getInstance()->registerWidget(widget.get());
+		if (registered)
+		{
+			WidgetRegistrator::getInstance()->registerWidget(widget.get());
+		}
 	}
 
 	Widget::Widget() : IWidget()

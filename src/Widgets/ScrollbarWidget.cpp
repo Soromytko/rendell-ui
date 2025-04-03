@@ -9,14 +9,12 @@ namespace rendell_ui
 	{
 		setSize({ DEFAULT_WIDTH, 0.0f });
 
-		_backgroundRectangleWidget = createRectangleWidget();
-		WidgetRegistrator::getInstance()->unregisterWidget(_backgroundRectangleWidget.get());
+		_backgroundRectangleWidget = createUnregisteredRectangleWidget();
 		_backgroundRectangleWidget->setInteract(false);
 		_backgroundRectangleWidget->setAnchor(Anchor::centerStretch);
 		_backgroundRectangleWidget->setColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
-		_handleRectangleWidget = createRectangleWidget(_backgroundRectangleWidget);
-		WidgetRegistrator::getInstance()->unregisterWidget(_handleRectangleWidget.get());
+		_handleRectangleWidget = createUnregisteredRectangleWidget(_backgroundRectangleWidget);
 		_handleRectangleWidget->setInteract(false);
 		_handleRectangleWidget->setAnchor(Anchor::topStretch);
 		_handleRectangleWidget->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });

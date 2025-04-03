@@ -19,19 +19,19 @@ namespace rendell_ui
 
 	void widget_deleter(Widget* widgetPtr);
 	void release_widget(const WidgetSharedPtr& widget);
-	void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent);
+	void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent, bool registered = true);
 
 	template <typename WidgetType, typename... Args>
-	std::shared_ptr<WidgetType> createWidget(WidgetWeakPtr parent = {}, Args&&... args)
+	std::shared_ptr<WidgetType> createWidget(WidgetWeakPtr parent = {}, bool registered = true, Args&&... args)
 	{
 		std::shared_ptr<WidgetType> result(new WidgetType(std::forward<Args>(args)...), widget_deleter);
-		initWidget(result, parent);
+		initWidget(result, parent, registered);
 		return result;
 	}
 
 	class Widget : public IWidget
 	{
-		friend void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent);
+		friend void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent, bool registered);
 	public:
 		Signal<void> destroyed;
 		Signal<void, bool> visibleChanged;
