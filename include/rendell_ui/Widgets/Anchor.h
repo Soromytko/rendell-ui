@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <tuple>
+#include <cmath>
 
 namespace rendell_ui
 {
@@ -37,6 +38,16 @@ namespace rendell_ui
 
 	inline bool operator==(const Margins& lhs, const Margins& rhs)
 	{
-		return std::tie(lhs.left, lhs.right, lhs.bottom, lhs.top) == std::tie(rhs.left, rhs.right, rhs.bottom, rhs.top);
+		constexpr float epsilon = 1e-6f;
+
+		return (std::abs(lhs.left - rhs.left) < epsilon) &&
+			(std::abs(lhs.right - rhs.right) < epsilon) &&
+			(std::abs(lhs.bottom - rhs.bottom) < epsilon) &&
+			(std::abs(lhs.top - rhs.top) < epsilon);
+	}
+
+	inline bool operator!=(const Margins& lhs, const Margins& rhs)
+	{
+		return !(lhs == rhs);
 	}
 }
