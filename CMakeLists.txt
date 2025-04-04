@@ -25,6 +25,7 @@ set(SOURCE_FILES
     src/Widgets/ScrollbarWidget.cpp
     src/Widgets/private/TextEditor.cpp
     src/Widgets/private/TextEditorWord.cpp
+    src/Widgets/private/TextDrawer.cpp
     src/Widgets/private/Cursor.cpp
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
@@ -60,6 +61,7 @@ set(HEADER_FILES
     include/rendell_ui/Widgets/private/Cursor.h
     include/rendell_ui/Widgets/private/TextEditor.h
     include/rendell_ui/Widgets/private/TextEditorWord.h
+    include/rendell_ui/Widgets/private/TextDrawer.h
 
     src/Window/window_callbacks.h
     src/Time.h

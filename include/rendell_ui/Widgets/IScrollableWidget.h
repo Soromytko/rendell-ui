@@ -13,7 +13,7 @@ namespace rendell_ui
 		virtual float getScrollProgress() const = 0;
 		virtual float getScrollRatio() const = 0;
 
-		virtual void setScrollProgress(float value) = 0;
+		virtual bool setScrollProgress(float value) = 0;
 	};
 
 	RENDELL_UI_DECLARE_SHARED_PTR(IScrollableWidget)

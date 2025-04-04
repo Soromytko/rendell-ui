@@ -7,6 +7,7 @@
 #include "ScrollbarWidget.h"
 #include "private/TextEditor.h"
 #include "private/Cursor.h"
+#include "private/TextDrawer.h"
 
 namespace rendell_ui
 {
@@ -21,7 +22,7 @@ namespace rendell_ui
 		// IScrollableWidget
 		float getScrollProgress() const override;
 		float getScrollRatio() const override;
-		void setScrollProgress(float value) override;
+		bool setScrollProgress(float value) override;
 
 		const std::wstring& getText() const;
 		size_t getLineCount() const;
@@ -32,10 +33,12 @@ namespace rendell_ui
 		void setScrollEnabled(bool value);
 
 		Signal<void> textChanged;
+		Signal<void, float> scrollProgressChanged;
 
 	private:
 		void onSelfWeakPtrChanged() override;
 		void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) override;
+		void onSizeChanged() override;
 
 		void onTextLayoutCleared();
 		void onTextLayoutRemoved(size_t index);
@@ -60,8 +63,7 @@ namespace rendell_ui
 		void processKeyUp(InputModControl modControl);
 		void processKeyX(InputModControl modControl);
 
-		bool updateScrollOffset(float value);
-		void optimizeRendering();
+		void updateCursorPosition();
 
 		uint32_t _textLayoutClearedConnectionId;
 		uint32_t _textLayoutRemovedConnectionId;
@@ -70,20 +72,13 @@ namespace rendell_ui
 		uint32_t _caretChangedConnectionId;
 		uint32_t _textChangedConnectionId;
 
-		float _scrollProgress{ 0.0f };
-		float _scrollLength{ 0.0f };
-		float _scrollOffset{ 0.0 };
 		bool _scrollEnabled{ true };
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
 		TextEditor _textEditor{};
+		TextDrawer _textDrawer{};
 		CursorSharedPtr _cursor{};
 		ScrollbarWidgetSharedPtr _scrollbarWidget{};
-		std::vector<rendell_text::TextRendererSharedPtr> _textRenderers{};
-
-		size_t _startRenderingIndex{ 0 };
-		float _startRenderingOffset{ 0.0f };
-		uint32_t _textHeight{0};
 	};
 
 	RENDELL_UI_DECLARE_WIDGET(TextEditWidget)
