@@ -102,7 +102,6 @@ namespace rendell_ui
 		const float offset = -(_size.y - handleHeight) * _progress;
 		_handleRectangleWidget->setSize({ _size.x, handleHeight });
 		_handleRectangleWidget->setOffset({ 0.0f, offset });
-		_handleRectangleWidget->updateRecursively();
 		_isHidden = handleHeight >= _size.y;
 	}
 

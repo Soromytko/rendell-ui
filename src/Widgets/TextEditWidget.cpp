@@ -176,7 +176,6 @@ namespace rendell_ui
 		{
 			_cursor->setOffset({ static_cast<float>(x), -static_cast<float>(y) + _scrollOffset });
 			_cursor->resetBlinkTimer();
-			_cursor->updateRecursively();
 		}
 	}
 
@@ -335,7 +334,6 @@ namespace rendell_ui
 			const float cursorOffsetX = static_cast<float>(_textEditor.getCursorHorizontalOffset());
 			const float cursorOffsetY = -static_cast<float>(_textEditor.getCursorVerticalOffset()) + _scrollOffset;
 			_cursor->setOffset({ cursorOffsetX, cursorOffsetY });
-			_cursor->updateRecursively();
 			optimizeRendering();
 			_scrollProgress = _scrollOffset / (_textHeight - _size.y);
 			return true;

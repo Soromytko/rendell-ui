@@ -13,6 +13,7 @@ set(SOURCE_FILES
     src/Viewport.cpp
     src/Time.cpp
     src/Canvas.cpp
+    src/Widgets/AnchorableWidget.cpp
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
     src/Widgets/RectangleWidget.cpp
@@ -49,6 +50,7 @@ set(HEADER_FILES
     #Widgets
     include/rendell_ui/Widgets/Anchor.h
     include/rendell_ui/Widgets/IWidget.h
+    include/rendell_ui/Widgets/AnchorableWidget.h
     include/rendell_ui/Widgets/Widget.h
     include/rendell_ui/Widgets/RectangleWidget.h
     include/rendell_ui/Widgets/TextWidget.h

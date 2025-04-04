@@ -4,7 +4,7 @@
 #include <rendell/rendell.h>
 #include <rendell_ui/defines.h>
 #include <rendell_ui/Signal.h>
-#include <rendell_ui/Widgets/IWidget.h>
+#include <rendell_ui/Widgets/AnchorableWidget.h>
 #include <rendell_ui/Widgets/Anchor.h>
 #include <rendell_ui/Window/window_input.h>
 #include "../src/Widgets/WidgetRegistrator.h"
@@ -29,22 +29,19 @@ namespace rendell_ui
 		return result;
 	}
 
-	class Widget : public IWidget
+	class Widget : public AnchorableWidget, public IWidget
 	{
 		friend void initWidget(WidgetSharedPtr widget, WidgetWeakPtr parent, bool registered);
+
 	public:
-		Signal<void> destroyed;
-		Signal<void, bool> visibleChanged;
-		Signal<void, bool> interactChanged;
-		Signal<void, const WidgetSharedPtr&> parentChanged;
-		Signal<void, glm::vec2> sizeChanged;
-		Signal<void, Margins> marginsChanged;
-		Signal<void, Anchor> anchorChanged;
+		Widget();
+		virtual ~Widget();
 
 	protected:
-		Widget();
-	public:
-		virtual ~Widget();
+		// AnchorableWidget
+		void onMarkupUpdated() override;
+		glm::vec2 getRootPosition() const override;
+		glm::vec2 getRootSize() const override;
 
 	private:
 		void setSelfWeakPtr(WidgetWeakPtr value);
@@ -72,21 +69,8 @@ namespace rendell_ui
 		virtual void setColor(glm::vec4 value);
 		glm::vec4 getColor() const;
 
-		void setOffset(glm::vec2 value);
-		glm::vec2 getOffset() const;
-
-		void setSize(glm::vec2 value);
-		glm::vec2 getSize() const;
-
-		void setMargins(Margins value);
-		void setMargins(float left, float right, float bottom, float top);
-		Margins getMargins() const;
-
-		void setAnchor(Anchor value);
-		Anchor getAnchor() const;
-
-		bool intersect(glm::vec2 point) const;
-
+		// IWidget
+		void updateRecursively() override;
 		virtual void draw() const override {};
 
 		virtual void onFocused() {};
@@ -104,15 +88,24 @@ namespace rendell_ui
 		virtual void onKeyInputted(const KeyboardInput& keyboardInput) {};
 		virtual void onCharInputted(unsigned char character) {};
 
+		Signal<void> destroyed;
+		Signal<void, bool> visibleChanged;
+		Signal<void, bool> interactChanged;
+		Signal<void, const WidgetSharedPtr&> parentChanged;
+		Signal<void, glm::vec4> colorChanged;
+		Signal<void, const std::string&> nameChanged;
+
 	protected:
 		virtual void updateUniforms() const;
+
 		virtual void onSelfWeakPtrChanged() {}
+		virtual void onParentChanged() {}
+		virtual void onVisibleChanged() {}
+		virtual void onImplicitVisibleChanged() {}
+		virtual void onInteractChanged() {}
+		virtual void onColorChanged() {}
+		virtual void onNameChanged() {}
 
-	public:
-		void updateRecursively();
-
-	protected:
-		void update();
 		void updateImplicitVisibleRecursively();
 
 		WidgetWeakPtr _selfWeakPtr;
@@ -130,12 +123,7 @@ namespace rendell_ui
 		uint32_t _sizeUniformIndex{ 0 };
 		uint32_t _colorUniformIndex{ 0 };
 
-		Transform2D _transform{};
 		glm::vec4 _color{ 1.0f, 1.0f, 1.0f, 1.0f };
-		glm::vec2 _offset{ 0.0f, 0.0f };
-		glm::vec2 _size{ 100.0f, 100.0f };
-		Margins _margins{ 0.0f, 0.0f, 0.0f, 0.0f };
-		Anchor _anchor{ Anchor::center };
 		rendell::ShaderProgramSharedPtr _shaderProgram{ nullptr };
 
 	};
