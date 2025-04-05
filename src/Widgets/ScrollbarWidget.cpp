@@ -80,7 +80,6 @@ namespace rendell_ui
 	void ScrollbarWidget::onSelfWeakPtrChanged()
 	{
 		_backgroundRectangleWidget->setParent(_selfWeakPtr);
-		_backgroundRectangleWidget->updateRecursively();
 	}
 
 	void ScrollbarWidget::processMouseInput(glm::dvec2 cursorPosition)
