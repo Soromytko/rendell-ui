@@ -94,6 +94,11 @@ namespace rendell_ui
 		return _scrollEnabled;
 	}
 
+	float TextEditWidget::getScrollSensitivity() const
+	{
+		return _scrollSensitivity;
+	}
+
 	void TextEditWidget::setText(const std::wstring& value)
 	{
 		_textEditor.setText(value);
@@ -108,6 +113,11 @@ namespace rendell_ui
 	{
 		_scrollEnabled = value;
 		_scrollbarWidget->setVisible(_scrollEnabled);
+	}
+
+	void TextEditWidget::setScrollSensitivity(float value)
+	{
+		_scrollSensitivity = value;
 	}
 
 	void TextEditWidget::onSelfWeakPtrChanged()
@@ -187,8 +197,9 @@ namespace rendell_ui
 
 	void TextEditWidget::onMouseScrolled(glm::dvec2 scroll)
 	{
-		const float scrollProgresssDelta = -static_cast<float>(scroll.y) * getScrollRatio() * 0.1f;// *50.0f;
-		if (setScrollProgress(getScrollProgress() + scrollProgresssDelta))
+		const float newScrollProgresss = (_textDrawer.getScroll() - scroll.y * _scrollSensitivity) /
+			(_textDrawer.getTextHeight() - _textDrawer.getSize().y);
+		if (setScrollProgress(newScrollProgresss))
 		{
 			_scrollbarWidget->updateProgress();
 		}

@@ -27,10 +27,12 @@ namespace rendell_ui
 		const std::wstring& getText() const;
 		size_t getLineCount() const;
 		bool getScrollEnabled() const;
+		float getScrollSensitivity() const;
 
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
 		void setScrollEnabled(bool value);
+		void setScrollSensitivity(float value);
 
 		Signal<void> textChanged;
 		Signal<void, float> scrollProgressChanged;
@@ -75,6 +77,7 @@ namespace rendell_ui
 		bool _scrollEnabled{ true };
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
+		float _scrollSensitivity{ 80.0f };
 		TextEditor _textEditor{};
 		TextDrawer _textDrawer{};
 		CursorSharedPtr _cursor{};
