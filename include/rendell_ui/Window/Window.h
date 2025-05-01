@@ -21,6 +21,7 @@ namespace rendell_ui
 
 		void setEventHandler(WindowEventHandlerSharedPtr eventHandler);
 
+		void* getNativeWindowHandle() const;
 		glm::ivec2 getSize() const;
 		glm::dvec2 getCursorPosition() const;
 		WindowEventHandlerSharedPtr getEventHandler() const;
@@ -36,6 +37,6 @@ namespace rendell_ui
 		static int _windowCount;
 
 	};
-	
+
 	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Window)
 }

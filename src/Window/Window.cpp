@@ -1,6 +1,17 @@
 #include <rendell_ui/Window/Window.h>
 #include "window_callbacks.h"
 
+#if defined(_WIN32)
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3native.h>
+#elif defined(__linux__)
+#define GLFW_EXPOSE_NATIVE_X11
+#include <GLFW/glfw3native.h>
+#elif defined(__APPLE__)
+#define GLFW_EXPOSE_NATIVE_COCOA
+#include <GLFW/glfw3native.h>
+#endif
+
 namespace rendell_ui
 {
 	static WindowEventHandlerSharedPtr s_eventHandlerStub;
@@ -67,6 +78,21 @@ namespace rendell_ui
 	void Window::setEventHandler(WindowEventHandlerSharedPtr eventHandler)
 	{
 		_eventHandler = eventHandler;
+	}
+
+	static void* get_native_window_handle(GLFWwindow* window)
+	{
+#if defined(_WIN32)
+		return (void*)glfwGetWin32Window(window);
+#elif defined(__linux__)
+		return (void*)(uintptr_t)glfwGetX11Window(window);
+#endif
+		return nullptr;
+	}
+
+	void* Window::getNativeWindowHandle() const
+	{
+		return get_native_window_handle(_glfwWindow);
 	}
 
 	glm::ivec2 Window::getSize() const
