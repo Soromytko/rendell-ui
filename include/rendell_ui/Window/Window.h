@@ -13,7 +13,6 @@ namespace rendell_ui
 		virtual ~Window();
 
 		bool isOpen();
-		void makeContextCurrent();
 		void swapBuffers();
 		void processEvents();
 		static bool isInitialized();

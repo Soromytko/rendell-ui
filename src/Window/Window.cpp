@@ -50,11 +50,6 @@ namespace rendell_ui
 		return !glfwWindowShouldClose(_glfwWindow);
 	}
 
-	void Window::makeContextCurrent()
-	{
-		glfwMakeContextCurrent(_glfwWindow);
-	}
-
 	void Window::swapBuffers()
 	{
 		glfwSwapBuffers(_glfwWindow);
