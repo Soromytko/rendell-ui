@@ -21,6 +21,7 @@ namespace rendell_ui
 		void setEventHandler(WindowEventHandlerSharedPtr eventHandler);
 
 		void* getNativeWindowHandle() const;
+		void* getX11Display() const;
 		glm::ivec2 getSize() const;
 		glm::dvec2 getCursorPosition() const;
 		WindowEventHandlerSharedPtr getEventHandler() const;

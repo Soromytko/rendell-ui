@@ -90,6 +90,14 @@ namespace rendell_ui
 		return get_native_window_handle(_glfwWindow);
 	}
 
+	void* Window::getX11Display() const
+	{
+#if defined(__linux__)
+		return (void*)glfwGetX11Display();
+#endif
+		return nullptr;
+	}
+
 	glm::ivec2 Window::getSize() const
 	{
 		int width, height;
