@@ -113,6 +113,9 @@ namespace rendell_ui
 	{
 		if (!_glfwInitialized)
 		{
+#if defined(__linux__)
+			glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#endif
 			_glfwInitialized = glfwInit();
 		}
 		return _glfwInitialized;
