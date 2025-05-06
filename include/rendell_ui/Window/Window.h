@@ -13,7 +13,6 @@ namespace rendell_ui
 		virtual ~Window();
 
 		bool isOpen();
-		void swapBuffers();
 		void processEvents();
 		static bool isInitialized();
 		static int getWindowCount();
