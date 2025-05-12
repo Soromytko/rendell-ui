@@ -14,9 +14,12 @@ namespace rendell_ui
 
 		//Widget
 		void draw() const override;
-		void onMouseDown(glm::dvec2 cursorPosition) override;
+	private:
+		void onCaptured(glm::dvec2 cursorPosition) override;
 		void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) override;
+		void onMouseScrolled(glm::dvec2 scroll) override;
 
+	public:
 		float getProgress() const;
 		IScrollableWidgetWeakPtr getScrollable() const;
 
@@ -28,7 +31,8 @@ namespace rendell_ui
 		// Widget
 		void onSelfWeakPtrChanged() override;
 
-		void processMouseInput(glm::dvec2 cursorPosition);
+		void startDragging();
+		void processDragging(glm::dvec2 offset);
 		void updateHandle();
 		float calculateHandleHeight();
 
@@ -38,6 +42,7 @@ namespace rendell_ui
 		float _progress{ 0.0f };
 		bool _isHidden{ false };
 		glm::dvec2 _lastDragLength{ 0.0f, 0.0f };
+		glm::dvec2 _startDraggingHandleOffset{};
 		IScrollableWidgetWeakPtr _scrollable{};
 	};
 

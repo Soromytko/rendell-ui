@@ -30,7 +30,7 @@ namespace rendell_ui
 
 	private:
 		void setFocusedWidget(const WidgetSharedPtr& widget);
-		bool setCapturedWidget(const WidgetSharedPtr& widget);
+		bool setCapturedWidget(const WidgetSharedPtr& widget, glm::dvec2 cursorPosition = {});
 		void updateWidgetRecursively();
 		WidgetSharedPtr focusWidgetRecursively(const WidgetSharedPtr& widget, glm::vec2 cursor);
 		WidgetSharedPtr hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor);

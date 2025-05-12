@@ -21,14 +21,17 @@ namespace rendell_ui
 	bool TextDrawer::setScrollProgress(float value)
 	{
 		const float newScrollProgress = _textHeight < _size.y ? 0 : std::clamp(value, 0.0f, 1.0f);
-		if (_scrollProgress != newScrollProgress)
+		if (_scrollProgress != newScrollProgress || true)
 		{
 			_scrollProgress = newScrollProgress;
-			_scroll = (static_cast<float>(_textHeight) - _size.y) * newScrollProgress;
-			optimizeRendering();
+			updateScroll();
 			return true;
 		}
 		return false;
+	}
+
+	void TextDrawer::onProcessMouseScrolled(glm::dvec2 scroll)
+	{
 	}
 
 	uint32_t TextDrawer::getTextHeight() const
@@ -73,6 +76,7 @@ namespace rendell_ui
 		if (_size != value)
 		{
 			_size = value;
+			updateScroll();
 		}
 	}
 
@@ -102,6 +106,13 @@ namespace rendell_ui
 	void TextDrawer::swapLines(size_t firstIndex, size_t secondIndex)
 	{
 		std::swap(_textRenderers[firstIndex], _textRenderers[secondIndex]);
+	}
+
+	void TextDrawer::updateScroll()
+	{
+		_scroll = (static_cast<float>(_textHeight) - _size.y) * _scrollProgress;
+		_scroll = std::max(0.0f, _scroll);
+		optimizeRendering();
 	}
 
 	void TextDrawer::optimizeRendering()

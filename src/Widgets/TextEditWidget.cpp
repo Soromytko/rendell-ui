@@ -79,6 +79,11 @@ namespace rendell_ui
 		return false;
 	}
 
+	void TextEditWidget::onProcessMouseScrolled(glm::dvec2 scroll)
+	{
+		onMouseScrolled(scroll);
+	}
+
 	const std::wstring& TextEditWidget::getText() const
 	{
 		return _textEditor.getText();
@@ -130,15 +135,6 @@ namespace rendell_ui
 		_scrollbarWidget->setParent(_selfWeakPtr);
 		IScrollableWidgetSharedPtr scrollable = std::dynamic_pointer_cast<IScrollableWidget>(_selfWeakPtr.lock());
 		_scrollbarWidget->setScrollable(scrollable);
-	}
-
-	void TextEditWidget::onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint)
-	{
-		if (_scrollEnabled && _scrollbarWidget->intersect(startPoint))
-		{
-			_scrollbarWidget->onDragged(startPoint, endPoint);
-			return;
-		}
 	}
 
 	void TextEditWidget::onSizeChanged()

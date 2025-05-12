@@ -12,9 +12,10 @@ namespace rendell_ui
 		~TextDrawer() = default;
 
 		// IScrollableWidget
-		float getScrollProgress() const;
-		float getScrollRatio() const;
-		bool setScrollProgress(float value);
+		float getScrollProgress() const override;
+		float getScrollRatio() const override;
+		bool setScrollProgress(float value) override;
+		void onProcessMouseScrolled(glm::dvec2 scroll) override;
 
 		uint32_t getTextHeight() const;
 		glm::vec2 getSize() const;
@@ -30,6 +31,7 @@ namespace rendell_ui
 		void swapLines(size_t firstIndex, size_t secondIndex);
 
 	private:
+		void updateScroll();
 		void optimizeRendering();
 
 		size_t _startRenderingIndex{ 0 };

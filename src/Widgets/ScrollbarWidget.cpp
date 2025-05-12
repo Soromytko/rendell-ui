@@ -32,14 +32,34 @@ namespace rendell_ui
 		_handleRectangleWidget->draw();
 	}
 
-	void ScrollbarWidget::onMouseDown(glm::dvec2 cursorPosition)
+	void ScrollbarWidget::onCaptured(glm::dvec2 cursorPosition)
 	{
-		processMouseInput(cursorPosition);
+		if (!_handleRectangleWidget->intersect(cursorPosition))
+		{
+			const glm::dvec2 localPosition = cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
+			const glm::dvec2 offsetLocalPosition = -(localPosition + glm::dvec2(0.5f, -0.5f) * static_cast<glm::dvec2>(_size));
+			const glm::vec2 halfHandleSize = _handleRectangleWidget->getSize() * 0.5f;
+			const float progress = (offsetLocalPosition.y - halfHandleSize.y) / (_size.y - halfHandleSize.y * 2);
+			setProgress(progress);
+			if (auto locked = _scrollable.lock())
+			{
+				locked->setScrollProgress(_progress);
+			}
+		}
+		startDragging();
 	}
 
 	void ScrollbarWidget::onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint)
 	{
-		processMouseInput(endPoint);
+		processDragging(startPoint - endPoint);
+	}
+
+	void ScrollbarWidget::onMouseScrolled(glm::dvec2 scroll)
+	{
+		if (auto locked = _scrollable.lock())
+		{
+			locked->onProcessMouseScrolled(scroll);
+		}
 	}
 
 	float ScrollbarWidget::getProgress() const
@@ -82,12 +102,17 @@ namespace rendell_ui
 		_backgroundRectangleWidget->setParent(_selfWeakPtr);
 	}
 
-	void ScrollbarWidget::processMouseInput(glm::dvec2 cursorPosition)
+	void ScrollbarWidget::startDragging()
 	{
-		const glm::dvec2 localPosition = cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
-		const glm::dvec2 offsetLocalPosition = -(localPosition + glm::dvec2(0.5f, -0.5f) * static_cast<glm::dvec2>(_size));
-		const glm::vec2 halfHandleSize = _handleRectangleWidget->getSize() * 0.5f;
-		const float progress = (offsetLocalPosition.y - halfHandleSize.y) / (_size.y - halfHandleSize.y * 2);
+		_startDraggingHandleOffset = _handleRectangleWidget->getOffset();
+	}
+
+	void ScrollbarWidget::processDragging(glm::dvec2 dragOffset)
+	{
+		float offset = (_startDraggingHandleOffset.y - dragOffset.y);
+		offset = std::clamp(offset, -_size.y + _handleRectangleWidget->getSize().y, 0.0f);
+		const float progress = std::abs(offset / (_size.y - _handleRectangleWidget->getSize().y));
+
 		setProgress(progress);
 		if (auto locked = _scrollable.lock())
 		{

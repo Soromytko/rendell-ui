@@ -14,6 +14,7 @@ namespace rendell_ui
 		virtual float getScrollRatio() const = 0;
 
 		virtual bool setScrollProgress(float value) = 0;
+		virtual void onProcessMouseScrolled(glm::dvec2 scroll) = 0;
 	};
 
 	RENDELL_UI_DECLARE_SHARED_PTR(IScrollableWidget)

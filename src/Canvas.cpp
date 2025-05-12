@@ -63,7 +63,7 @@ namespace rendell_ui
 		if (mouseInput.action == InputAction::pressed)
 		{
 			setFocusedWidget(_hoveredWidget);
-			setCapturedWidget(_hoveredWidget);
+			setCapturedWidget(_hoveredWidget, cursorPosition);
 			if (_focusedWidget)
 			{
 				_focusedWidget->onMouseDown(cursorPosition);
@@ -164,18 +164,18 @@ namespace rendell_ui
 		}
 	}
 
-	bool Canvas::setCapturedWidget(const WidgetSharedPtr& widget)
+	bool Canvas::setCapturedWidget(const WidgetSharedPtr& widget, glm::dvec2 cursorPosition)
 	{
 		if (_capturedWidget != widget)
 		{
 			if (_capturedWidget)
 			{
-				_capturedWidget->onFreed();
+				_capturedWidget->onFreed(cursorPosition);
 			}
 			_capturedWidget = widget;
 			if (_capturedWidget)
 			{
-				_capturedWidget->onCaptured();
+				_capturedWidget->onCaptured(cursorPosition);
 			}
 			return true;
 		}

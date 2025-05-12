@@ -23,6 +23,7 @@ namespace rendell_ui
 		float getScrollProgress() const override;
 		float getScrollRatio() const override;
 		bool setScrollProgress(float value) override;
+		void onProcessMouseScrolled(glm::dvec2 scroll) override;
 
 		const std::wstring& getText() const;
 		size_t getLineCount() const;
@@ -39,7 +40,6 @@ namespace rendell_ui
 
 	private:
 		void onSelfWeakPtrChanged() override;
-		void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) override;
 		void onSizeChanged() override;
 
 		void onTextLayoutCleared();
@@ -48,6 +48,7 @@ namespace rendell_ui
 		void onTextLayoutSwapped(size_t firstIndex, size_t secondIndex);
 		void onCaretChanged(uint32_t x, uint32_t y, uint32_t height);
 
+		//Widget
 		void onFocused() override;
 		void onUnfocused() override;
 		void onMouseDown(glm::dvec2 cursorPosition) override;
