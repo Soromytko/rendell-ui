@@ -108,7 +108,8 @@ namespace rendell_ui
 				parentPosition -
 				glm::vec2(halfParentSize.x, 0.0f) +
 				glm::vec2(_margins.left, 0.0f) +
-				_size * glm::vec2(0.5f, 0.0f)
+				_size * glm::vec2(0.5f, 0.0f) +
+				_offset
 			);
 			break;
 		}
