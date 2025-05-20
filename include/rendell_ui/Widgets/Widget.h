@@ -75,8 +75,8 @@ namespace rendell_ui
 		void updateRecursively() override;
 		virtual void draw() const override {};
 
-		virtual void onFocused() {};
-		virtual void onUnfocused() {};
+		virtual void onFocused();
+		virtual void onUnfocused();
 		virtual void onMouseClick() {};
 		virtual void onMouseDown(glm::dvec2 cursorPosition) {};
 		virtual void onMouseUp(glm::dvec2 cursorPosition) {};
@@ -91,6 +91,8 @@ namespace rendell_ui
 		virtual void onCharInputted(unsigned char character) {};
 
 		Signal<void> destroyed;
+		Signal<void> focused;
+		Signal<void> unfocused;
 		Signal<void, bool> visibleChanged;
 		Signal<void, bool> interactChanged;
 		Signal<void, const WidgetSharedPtr&> parentChanged;

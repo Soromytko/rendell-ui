@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #define RENDELL_UI_NAMESPACE rendell_ui
 

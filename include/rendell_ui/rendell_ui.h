@@ -11,4 +11,7 @@
 #include "Widgets/ButtonWidget.h"
 #include "Widgets/TextWidget.h"
 #include "Widgets/TextEditWidget.h"
+#include "Widgets/TabBarWidget.h"
+#include "Widgets/TabButtonWidget.h"
+#include "Widgets/PageViewerWidget.h"
 

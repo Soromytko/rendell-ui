@@ -210,6 +210,16 @@ namespace rendell_ui
 		updateMarkup();
 	}
 
+	void Widget::onFocused()
+	{
+		focused.emit();
+	}
+
+	void Widget::onUnfocused()
+	{
+		unfocused.emit();
+	}
+
 	void Widget::updateUniforms() const
 	{
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();

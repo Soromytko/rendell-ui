@@ -13,6 +13,7 @@ set(SOURCE_FILES
     src/Viewport.cpp
     src/Time.cpp
     src/Canvas.cpp
+    src/StringListModel.cpp
     src/Widgets/AnchorableWidget.cpp
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
@@ -20,6 +21,9 @@ set(SOURCE_FILES
     src/Widgets/ButtonWidget.cpp
     src/Widgets/TextWidget.cpp
     src/Widgets/TextEditWidget.cpp
+    src/Widgets/TabBarWidget.cpp
+    src/Widgets/TabButtonWidget.cpp
+    src/Widgets/PageViewerWidget.cpp
     src/Widgets/WidgetRegistrator.cpp
     src/Widgets/WidgetHandlePipeline.cpp
     src/Widgets/WidgetRenderPipeline.cpp
@@ -43,6 +47,7 @@ set(HEADER_FILES
     include/rendell_ui/initialization.h
     include/rendell_ui/Canvas.h
     include/rendell_ui/Viewport.h
+    include/rendell_ui/StringListModel.h
 
     #Window
     include/rendell_ui/Window/Window.h
@@ -60,6 +65,9 @@ set(HEADER_FILES
     include/rendell_ui/Widgets/TextEditWidget.h
     include/rendell_ui/Widgets/IScrollableWidget.h
     include/rendell_ui/Widgets/ScrollbarWidget.h
+    include/rendell_ui/Widgets/TabBarWidget.h
+    include/rendell_ui/Widgets/TabButtonWidget.h
+    include/rendell_ui/Widgets/PageViewerWidget.h
     include/rendell_ui/Widgets/private/Cursor.h
     include/rendell_ui/Widgets/private/TextEditor.h
     include/rendell_ui/Widgets/private/TextEditorWord.h
