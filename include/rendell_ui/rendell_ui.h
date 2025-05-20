@@ -8,6 +8,7 @@
 #include "Window/window_input.h"
 
 #include "Widgets/RectangleWidget.h"
+#include "Widgets/ButtonWidget.h"
 #include "Widgets/TextWidget.h"
 #include "Widgets/TextEditWidget.h"
 

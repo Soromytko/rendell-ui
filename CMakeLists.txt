@@ -17,6 +17,7 @@ set(SOURCE_FILES
     src/Widgets/Widget.cpp
     src/Widgets/Transform2D.cpp
     src/Widgets/RectangleWidget.cpp
+    src/Widgets/ButtonWidget.cpp
     src/Widgets/TextWidget.cpp
     src/Widgets/TextEditWidget.cpp
     src/Widgets/WidgetRegistrator.cpp
@@ -54,6 +55,7 @@ set(HEADER_FILES
     include/rendell_ui/Widgets/AnchorableWidget.h
     include/rendell_ui/Widgets/Widget.h
     include/rendell_ui/Widgets/RectangleWidget.h
+    include/rendell_ui/Widgets/ButtonWidget.h
     include/rendell_ui/Widgets/TextWidget.h
     include/rendell_ui/Widgets/TextEditWidget.h
     include/rendell_ui/Widgets/IScrollableWidget.h
