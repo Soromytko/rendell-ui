@@ -45,6 +45,8 @@ namespace rendell_ui
 
 	private:
 		void setSelfWeakPtr(WidgetWeakPtr value);
+		void addChild(WidgetSharedPtr child);
+		void removeChild(WidgetSharedPtr child);
 
 	public:
 		void setVisible(bool value);
@@ -92,6 +94,7 @@ namespace rendell_ui
 		Signal<void, bool> visibleChanged;
 		Signal<void, bool> interactChanged;
 		Signal<void, const WidgetSharedPtr&> parentChanged;
+		Signal<void> childrenChanged;
 		Signal<void, glm::vec4> colorChanged;
 		Signal<void, const std::string&> nameChanged;
 
@@ -100,6 +103,7 @@ namespace rendell_ui
 
 		virtual void onSelfWeakPtrChanged() {}
 		virtual void onParentChanged() {}
+		virtual void onChildrenChanged() {}
 		virtual void onVisibleChanged() {}
 		virtual void onImplicitVisibleChanged() {}
 		virtual void onInteractChanged() {}

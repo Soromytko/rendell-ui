@@ -114,11 +114,11 @@ namespace rendell_ui
 		}
 		if (lockedParent)
 		{
-			lockedParent->_children.erase(_selfWeakPtr.lock());
+			lockedParent->removeChild(_selfWeakPtr.lock());
 		}
 		if (lockedWidget)
 		{
-			lockedWidget->_children.insert(_selfWeakPtr.lock());
+			lockedWidget->addChild(_selfWeakPtr.lock());
 		}
 		_parent = widget;
 		onParentChanged();
@@ -133,6 +133,26 @@ namespace rendell_ui
 		assert(value.lock().get() == this);
 		_selfWeakPtr = value;
 		onSelfWeakPtrChanged();
+	}
+
+	void Widget::addChild(WidgetSharedPtr child)
+	{
+		if (_children.find(child) == _children.end())
+		{
+			_children.insert(child);
+			onChildrenChanged();
+			childrenChanged.emit();
+		}
+	}
+
+	void Widget::removeChild(WidgetSharedPtr child)
+	{
+		if (auto it = _children.find(child); it != _children.end())
+		{
+			_children.erase(it);
+			onChildrenChanged();
+			childrenChanged.emit();
+		}
 	}
 
 	WidgetWeakPtr Widget::getParent() const
