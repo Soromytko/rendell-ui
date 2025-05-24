@@ -26,6 +26,7 @@ namespace rendell_ui
 		virtual void onMouseButtonInputted(const MouseInput& mouseInput) override;
 		virtual void onMouseMoved(double x, double y) override;
 		virtual void onMouseScrolled(double x, double y) override;
+		virtual void onCursorEntered(bool entered) override;
 		virtual void onCharInputted(unsigned char character) override;
 
 	private:

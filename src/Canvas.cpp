@@ -140,6 +140,18 @@ namespace rendell_ui
 		}
 	}
 
+	void Canvas::onCursorEntered(bool entered)
+	{
+		if (!entered)
+		{
+			for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end(); it++)
+			{
+				it->operator->()->onMouseExited();
+			}
+			_mouseHoverWidgets.clear();
+		}
+	}
+
 	void Canvas::onCharInputted(unsigned char character)
 	{
 		if (_focusedWidget)

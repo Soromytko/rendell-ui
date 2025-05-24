@@ -143,6 +143,7 @@ namespace rendell_ui
 		glfwSetKeyCallback(_glfwWindow, inputKeyCallback);
 		glfwSetMouseButtonCallback(_glfwWindow, inputMouseBottonCallback);
 		glfwSetCursorPosCallback(_glfwWindow, moveMouseCallback);
+		glfwSetCursorEnterCallback(_glfwWindow, enterCursorCallback);
 		glfwSetScrollCallback(_glfwWindow, scrollMouseCallback);
 		glfwSetCharCallback(_glfwWindow, inputCharCallback);
 	}
