@@ -12,10 +12,12 @@ namespace rendell_ui
 		~PageViewerWidget() = default;
 
 		const std::vector<WidgetSharedPtr>& getPages() const;
-		size_t getIndex() const;
+		size_t getCurrentIndex() const;
 
 		void setPages(std::vector<WidgetSharedPtr> pages);
 		void addPage(WidgetSharedPtr page);
+		bool removePage(WidgetSharedPtr page);
+		bool removePage(size_t pageIndex);
 		void setCurrentIndex(int index);
 
 		Signal<void, size_t> currentIndexChanged;

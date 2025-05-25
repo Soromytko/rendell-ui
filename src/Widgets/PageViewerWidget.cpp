@@ -7,7 +7,7 @@ namespace rendell_ui
 		return _pages;
 	}
 
-	size_t PageViewerWidget::getIndex() const
+	size_t PageViewerWidget::getCurrentIndex() const
 	{
 		return _currentIndex;
 	}
@@ -28,6 +28,32 @@ namespace rendell_ui
 	{
 		_pages.push_back(page);
 		updatePageVisibility();
+	}
+
+	bool PageViewerWidget::removePage(WidgetSharedPtr page)
+	{
+		auto it = std::find(_pages.begin(), _pages.end(), page);
+		if (it == _pages.end())
+		{
+			std::cerr << "ERROR::PageViewerWidget::removePage: This is not the Page Widget " << page << std::endl;
+			return false;
+		}
+
+		_pages.erase(it);
+		return true;
+	}
+
+	bool PageViewerWidget::removePage(size_t pageIndex)
+	{
+		if (pageIndex >= _pages.size())
+		{
+			std::cerr << "ERROR::PageViewerWidget::removePage: Invalid index; index = "
+				<< pageIndex << " _page.size() = " << _pages.size() << std::endl;
+			return false;
+		}
+
+		_pages.erase(_pages.begin() + pageIndex);
+		return true;
 	}
 
 	void PageViewerWidget::setCurrentIndex(int index)
