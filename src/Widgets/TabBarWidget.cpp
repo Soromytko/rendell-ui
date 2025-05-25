@@ -156,7 +156,7 @@ namespace rendell_ui
 		_buttons.erase(_buttons.begin() + itemIndex);
 		if (_currentIndex >= itemIndex)
 		{
-			setCurrentIndex(_currentIndex + 1);
+			setCurrentIndex(_currentIndex - 1);
 		}
 		updateButtonMarkup();
 	}
