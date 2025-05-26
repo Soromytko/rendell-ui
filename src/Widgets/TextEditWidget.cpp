@@ -36,7 +36,7 @@ namespace rendell_ui
 		_textEditor.textLayoutAdded.disconnect(_textLayoutAddedConnectionId);
 		_textEditor.textLayoutSwapped.disconnect(_textLayoutSwappedConnectionId);
 		_textEditor.cursorChanged.disconnect(_caretChangedConnectionId);
-		_textEditor.cursorChanged.disconnect(_textChangedConnectionId);
+		_textEditor.textChanged.disconnect(_textChangedConnectionId);
 	}
 
 	void TextEditWidget::draw() const
