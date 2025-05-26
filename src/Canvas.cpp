@@ -50,9 +50,9 @@ namespace rendell_ui
 
 	void Canvas::onKeyInputted(const KeyboardInput& keyboardInput)
 	{
-		if (_focusedWidget)
+		if (auto locked = _focusedWidget.lock())
 		{
-			_focusedWidget->onKeyInputted(keyboardInput);
+			locked->onKeyInputted(keyboardInput);
 		}
 	}
 
@@ -62,11 +62,12 @@ namespace rendell_ui
 
 		if (mouseInput.action == InputAction::pressed)
 		{
-			setFocusedWidget(_hoveredWidget);
-			setCapturedWidget(_hoveredWidget, cursorPosition);
-			if (_focusedWidget)
+			const auto hoveredWidgetLocked = _hoveredWidget.lock();
+			setFocusedWidget(hoveredWidgetLocked);
+			setCapturedWidget(hoveredWidgetLocked, cursorPosition);
+			if (auto locked = _focusedWidget.lock())
 			{
-				_focusedWidget->onMouseDown(cursorPosition);
+				locked->onMouseDown(cursorPosition);
 			}
 			_dragStartPoint = { mouseInput.x, mouseInput.y };
 		}
@@ -74,10 +75,11 @@ namespace rendell_ui
 		{
 			if (mouseInput.button == InputMouseButton::leftButton)
 			{
-				if (_focusedWidget && _focusedWidget->intersect(cursorPosition))
+				const WidgetSharedPtr focusedWidgetLocked = _focusedWidget.lock();
+				if (focusedWidgetLocked && focusedWidgetLocked->intersect(cursorPosition))
 				{
-					_focusedWidget->onMouseUp(cursorPosition);
-					_focusedWidget->onMouseClick();
+					focusedWidgetLocked->onMouseUp(cursorPosition);
+					focusedWidgetLocked->onMouseClick();
 				}
 
 				// Handle mouse movement to update widgets currently under the cursor.
@@ -93,30 +95,36 @@ namespace rendell_ui
 	{
 		const glm::dvec2 cursor{ x, y };
 
-		if (_capturedWidget)
+		if (auto locked = _capturedWidget.lock())
 		{
-			_capturedWidget->onDragged(_dragStartPoint, cursor);
+			locked->onDragged(_dragStartPoint, cursor);
 		}
 
 		// Emit onMouseExited events.
 		for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end();)
 		{
-			WidgetSharedPtr widget = *it;
-			if (!widget->intersect(cursor))
+			if (WidgetSharedPtr widget = it->lock())
 			{
-				it = _mouseHoverWidgets.erase(it);
-				widget->onMouseExited();
+				if (!widget->intersect(cursor))
+				{
+					it = _mouseHoverWidgets.erase(it);
+					widget->onMouseExited();
+				}
+				else
+				{
+					it++;
+				}
 			}
 			else
 			{
-				it++;
+				it = _mouseHoverWidgets.erase(it);
 			}
 		}
 
 		// Process only the captured widget if it is valid.
-		if (_capturedWidget)
+		if (auto locked = _capturedWidget.lock())
 		{
-			hoverMouseRecursively(_capturedWidget, cursor);
+			hoverMouseRecursively(locked, cursor);
 		}
 		else
 		{
@@ -129,14 +137,14 @@ namespace rendell_ui
 
 	void Canvas::onMouseScrolled(double x, double y)
 	{
-		if (_capturedWidget)
+		if (_capturedWidget.lock())
 		{
 			return;
 		}
 
-		if (_hoveredWidget)
+		if (auto locked = _hoveredWidget.lock())
 		{
-			_hoveredWidget->onMouseScrolled({ x, y });
+			locked->onMouseScrolled({ x, y });
 		}
 	}
 
@@ -146,7 +154,10 @@ namespace rendell_ui
 		{
 			for (auto it = _mouseHoverWidgets.begin(); it != _mouseHoverWidgets.end(); it++)
 			{
-				it->operator->()->onMouseExited();
+				if (auto locked = it->lock())
+				{
+					locked->onMouseExited();
+				}
 			}
 			_mouseHoverWidgets.clear();
 		}
@@ -154,40 +165,43 @@ namespace rendell_ui
 
 	void Canvas::onCharInputted(unsigned char character)
 	{
-		if (_focusedWidget)
+		if (auto locked = _focusedWidget.lock())
 		{
-			_focusedWidget->onCharInputted(character);
+			locked->onCharInputted(character);
 		}
 	}
 
 	void Canvas::setFocusedWidget(const WidgetSharedPtr& widget)
 	{
-		if (_focusedWidget != widget)
+		auto focusedWidgetLocked = _focusedWidget.lock();
+
+		if (focusedWidgetLocked != widget)
 		{
-			if (_focusedWidget)
+			if (focusedWidgetLocked)
 			{
-				_focusedWidget->onUnfocused();
+				focusedWidgetLocked->onUnfocused();
 			}
 			_focusedWidget = widget;
-			if (_focusedWidget)
+			if (focusedWidgetLocked)
 			{
-				_focusedWidget->onFocused();
+				focusedWidgetLocked->onFocused();
 			}
 		}
 	}
 
 	bool Canvas::setCapturedWidget(const WidgetSharedPtr& widget, glm::dvec2 cursorPosition)
 	{
-		if (_capturedWidget != widget)
+		auto capturedWidgetLocked = _capturedWidget.lock();
+		if (capturedWidgetLocked != widget)
 		{
-			if (_capturedWidget)
+			if (capturedWidgetLocked)
 			{
-				_capturedWidget->onFreed(cursorPosition);
+				capturedWidgetLocked->onFreed(cursorPosition);
 			}
 			_capturedWidget = widget;
-			if (_capturedWidget)
+			if (capturedWidgetLocked)
 			{
-				_capturedWidget->onCaptured(cursorPosition);
+				capturedWidgetLocked->onCaptured(cursorPosition);
 			}
 			return true;
 		}
@@ -209,9 +223,16 @@ namespace rendell_ui
 			return nullptr;
 		}
 
-		if (_mouseHoverWidgets.find(widget) == _mouseHoverWidgets.end())
+		if (auto it = std::find_if(_mouseHoverWidgets.begin(), _mouseHoverWidgets.end(),
+			[=](WidgetWeakPtr currentWidget)
+			{
+				if (auto locked = currentWidget.lock())
+				{
+					return locked == widget;
+				}
+			}) == _mouseHoverWidgets.end())
 		{
-			_mouseHoverWidgets.insert(widget);
+			_mouseHoverWidgets.push_back(widget);
 			widget->onMouseEntered();
 		}
 
