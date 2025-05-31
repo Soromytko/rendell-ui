@@ -21,7 +21,7 @@ namespace rendell_ui
 		void setModel(StringListModelSharedPtr model);
 		void setCreateTabButtonDelegate(CreateTabButtonDelegate delegate);
 		void resetCreateTabButtonDelegate();
-		void setCurrentIndex(int index);
+		bool setCurrentIndex(int index);
 
 		Signal<void, int> currentIndexChanged;
 
@@ -29,6 +29,7 @@ namespace rendell_ui
 		void onSelfWeakPtrChanged() override;
 		void onMarkupUpdated() override;
 
+		void updateButtonSelection();
 		void selectButton(TabButtonWidget* button);
 
 		void onModelItemAdded(const std::wstring& item, size_t itemIndex);

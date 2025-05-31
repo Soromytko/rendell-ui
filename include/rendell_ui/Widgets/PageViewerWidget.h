@@ -18,7 +18,7 @@ namespace rendell_ui
 		void addPage(WidgetSharedPtr page);
 		bool removePage(WidgetSharedPtr page);
 		bool removePage(size_t pageIndex);
-		void setCurrentIndex(int index);
+		bool setCurrentIndex(int index);
 
 		Signal<void, size_t> currentIndexChanged;
 

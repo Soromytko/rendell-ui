@@ -1,4 +1,5 @@
 #include <rendell_ui/Widgets/PageViewerWidget.h>
+#include <algorithm>
 
 namespace rendell_ui
 {
@@ -27,7 +28,8 @@ namespace rendell_ui
 	void PageViewerWidget::addPage(WidgetSharedPtr page)
 	{
 		_pages.push_back(page);
-		updatePageVisibility();
+		const int newIndex = std::clamp(_currentIndex, 0, static_cast<int>(_pages.size()) - 1);
+		setCurrentIndex(newIndex);
 	}
 
 	bool PageViewerWidget::removePage(WidgetSharedPtr page)
@@ -53,23 +55,43 @@ namespace rendell_ui
 		}
 
 		_pages.erase(_pages.begin() + pageIndex);
+
+		if (_currentIndex >= pageIndex)
+		{
+			if (_pages.size() == 0)
+			{
+				setCurrentIndex(-1);
+			}
+			else
+			{
+				const int newIndex = std::clamp(_currentIndex + 1, 0, static_cast<int>(_pages.size()) - 1);
+				if (!setCurrentIndex(newIndex))
+				{
+					updatePageVisibility();
+				}
+			}
+		}
+		
 		return true;
 	}
 
-	void PageViewerWidget::setCurrentIndex(int index)
+	bool PageViewerWidget::setCurrentIndex(int index)
 	{
-		if (index < -1 || index >= _pages.size())
+		if (index < -1 || index >= static_cast<int>(_pages.size()))
 		{
 			std::cerr << "ERROR::PageViewerWidget::setCurrentIndex: Invalid index; index = " <<
 				index << ", _pages.size() = " << _pages.size() << std::endl;
-			return;
+			return false;
 		}
 		if (_currentIndex != index)
 		{
 			_currentIndex = index;
 			updatePageVisibility();
 			currentIndexChanged.emit(_currentIndex);
+			return true;
 		}
+
+		return false;
 	}
 
 	void PageViewerWidget::updatePageVisibility()

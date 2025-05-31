@@ -85,18 +85,16 @@ namespace rendell_ui
 		updateButtons();
 	}
 
-	void TabBarWidget::setCurrentIndex(int index)
+	bool TabBarWidget::setCurrentIndex(int index)
 	{
 		if (_currentIndex != index)
 		{
 			_currentIndex = index;
-			const bool isOkIndex = _currentIndex >= 0 && _currentIndex < _buttons.size();
-			for (size_t i = 0; i < _buttons.size(); i++)
-			{
-				_buttons[i]->setIsSelected(isOkIndex && static_cast<int>(i) == _currentIndex);
-			}
+			updateButtonSelection();
 			currentIndexChanged.emit(_currentIndex);
+			return true;
 		}
+		return false;
 	}
 
 	void TabBarWidget::resetCreateTabButtonDelegate()
@@ -116,6 +114,15 @@ namespace rendell_ui
 	{
 		Widget::onMarkupUpdated();
 		updateButtonMarkup();
+	}
+
+	void TabBarWidget::updateButtonSelection()
+	{
+		const bool isOkIndex = _currentIndex >= 0 && _currentIndex < _buttons.size();
+		for (size_t i = 0; i < _buttons.size(); i++)
+		{
+			_buttons[i]->setIsSelected(isOkIndex && static_cast<int>(i) == _currentIndex);
+		}
 	}
 
 	void TabBarWidget::selectButton(TabButtonWidget* button)
@@ -156,7 +163,18 @@ namespace rendell_ui
 		_buttons.erase(_buttons.begin() + itemIndex);
 		if (_currentIndex >= itemIndex)
 		{
-			setCurrentIndex(_currentIndex - 1);
+			if (_buttons.size() == 0)
+			{
+				setCurrentIndex(-1);
+			}
+			else
+			{
+				const int newIndex = std::clamp(_currentIndex + 1, 0, static_cast<int>(_buttons.size()) - 1);
+				if (!setCurrentIndex(newIndex))
+				{
+					updateButtonSelection();
+				}
+			}
 		}
 		updateButtonMarkup();
 	}
