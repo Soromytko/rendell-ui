@@ -4,6 +4,9 @@
 #include <functional>
 #include <type_traits>
 #include <cassert>
+#include <iostream>
+//TODO: Bad include
+#include "../../internal/OStream.h"
 
 template <typename ReturnType, typename... Args>
 class Signal
@@ -15,7 +18,7 @@ public:
 	uint32_t connect(ClassType* object, MethodType method)
 	{
 		if (!object) {
-			std::cerr << "Error: object pointer cannot be null." << std::endl;
+			rendell_ui::error << "Object pointer cannot be null." << std::endl;
 			return -1;
 		}
 
@@ -30,7 +33,7 @@ public:
 	uint32_t connect(FunctionSignature function)
 	{
 		if (!function) {
-			std::cerr << "Error: object pointer cannot be null." << std::endl;
+			rendell_ui::error << "Object pointer cannot be null." << std::endl;
 			return -1;
 		}
 
@@ -54,7 +57,7 @@ public:
 		auto it = _map.find(connectionId);
 		if (it == _map.end())
 		{
-			std::cerr << "ERROR::Signal: Invalid connection ID " << connectionId << std::endl;
+			rendell_ui::error << "Invalid connection ID " << connectionId << std::endl;
 			return false;
 		}
 

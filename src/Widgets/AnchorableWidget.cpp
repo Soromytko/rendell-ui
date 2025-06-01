@@ -1,5 +1,6 @@
 #include <rendell_ui/Widgets/AnchorableWidget.h>
 #include <algorithm>
+#include <OStream.h>
 
 namespace rendell_ui
 {
@@ -284,7 +285,7 @@ namespace rendell_ui
 		default:
 		{
 			const uint8_t anchorLogValue = static_cast<uint8_t>(_anchor);
-			std::cout << "WARNING::Widget: The anchor " << anchorLogValue << " is not implemented" << std::endl;
+			warning << "WARNING::Widget: The anchor " << anchorLogValue << " is not implemented" << std::endl;
 			return;
 		}
 		}

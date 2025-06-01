@@ -1,6 +1,5 @@
 #include "StringBuilderChunk.h"
 #include <cassert>
-#include <iostream>
 
 namespace rendell_ui
 {

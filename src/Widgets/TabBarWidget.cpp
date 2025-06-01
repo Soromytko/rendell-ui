@@ -1,6 +1,6 @@
 #include <rendell_ui/Widgets/TabBarWidget.h>
 #include <rendell_ui/Widgets/RectangleWidget.h>
-#include <iostream>
+#include <OStream.h>
 #include <algorithm>
 
 #define TAB_BAR_HEIGHT 30.0f
@@ -50,7 +50,7 @@ namespace rendell_ui
 	{
 		if (!model)
 		{
-			std::cerr << "ERROR::TabBarWidget::setModel: The Model is null" << std::endl;
+			error << "ERROR::TabBarWidget::setModel: The Model is null" << std::endl;
 			return;
 		}
 
@@ -132,7 +132,7 @@ namespace rendell_ui
 
 		if (it == _buttons.end())
 		{
-			std::cerr << "ERROR::TabBarWidget::onTabButtonFocused: Invalid button index; _buttons.size() = " << _buttons.size() << std::endl;
+			error << "ERROR::TabBarWidget::onTabButtonFocused: Invalid button index; _buttons.size() = " << _buttons.size() << std::endl;
 			return;
 		}
 
