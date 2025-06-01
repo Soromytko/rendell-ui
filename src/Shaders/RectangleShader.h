@@ -1,11 +1,15 @@
 #pragma once
 #include "Shader.h"
 
-class RectangleShader final : public Shader
+namespace rendell_ui
 {
-public:
-	RectangleShader();
-	~RectangleShader() = default;
-};
+	class RectangleShader final : public Shader
+	{
+	public:
+		RectangleShader();
+		~RectangleShader() = default;
+	};
 
-typedef std::unique_ptr<RectangleShader> RectangleShaderUniquePtr;
+	typedef std::unique_ptr<RectangleShader> RectangleShaderUniquePtr;
+}
+
