@@ -182,9 +182,9 @@ namespace rendell_ui
 				focusedWidgetLocked->onUnfocused();
 			}
 			_focusedWidget = widget;
-			if (focusedWidgetLocked)
+			if (widget)
 			{
-				focusedWidgetLocked->onFocused();
+				widget->onFocused();
 			}
 		}
 	}
@@ -199,9 +199,9 @@ namespace rendell_ui
 				capturedWidgetLocked->onFreed(cursorPosition);
 			}
 			_capturedWidget = widget;
-			if (capturedWidgetLocked)
+			if (widget)
 			{
-				capturedWidgetLocked->onCaptured(cursorPosition);
+				widget->onCaptured(cursorPosition);
 			}
 			return true;
 		}
