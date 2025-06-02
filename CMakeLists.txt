@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
     src/initialization.cpp
+    src/Timer.cpp
+    src/ActionPool.cpp
     src/Window/Window.cpp
     src/Window/window_input.cpp
     src/Window/window_callbacks.cpp
@@ -48,6 +50,7 @@ set(HEADER_FILES
     include/rendell_ui/Canvas.h
     include/rendell_ui/Viewport.h
     include/rendell_ui/StringListModel.h
+    include/rendell_ui/Timer.h
 
     #Window
     include/rendell_ui/Window/Window.h
@@ -87,6 +90,7 @@ set(HEADER_FILES
     src/String/StringExtension.h
 
     internal/OStream.h
+    internal/ActionPool.h
 )
 
 include_directories(include)

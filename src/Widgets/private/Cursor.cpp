@@ -8,23 +8,17 @@ namespace rendell_ui
 	Cursor::Cursor() : RectangleWidget()
 	{
 		setThickness(CURSOR_THICKNESS);
+		_timer = makeTimer(500);
+		_timer->triggered.connect([this]() { _shouldDraw = !_shouldDraw; });
+		_timer->start();
 	}
 
 	void Cursor::draw() const
 	{
-		_blinkTimer += Time::getDeltaTime();
-		if (_blinkTimer < _blinkTimeout)
+		if (_shouldDraw)
 		{
-			return;
+			RectangleWidget::draw();
 		}
-		if (_blinkTimer > _blinkTimeout * 2.0)
-		{
-			_blinkTimer -= _blinkTimeout * 2.0;
-			return;
-		}
-
-		RectangleWidget::draw();
-
 	}
 
 	void Cursor::setThickness(float value)
@@ -43,9 +37,24 @@ namespace rendell_ui
 		_offset.y = _verticalOffset;
 	}
 
+	void Cursor::setBlinkTimeout(size_t ms)
+	{
+		_timer->setInterval(ms);
+	}
+
 	void Cursor::resetBlinkTimer()
 	{
-		_blinkTimer = _blinkTimeout;
+		_shouldDraw = true;
+		if (_timer->isRunning())
+		{
+			_timer->stop();
+			_timer->start();
+		}
+	}
+
+	size_t Cursor::getBlinkTimeout() const
+	{
+		return _timer->getInterval();
 	}
 
 	float Cursor::getThickness() const
@@ -61,5 +70,17 @@ namespace rendell_ui
 	float Cursor::getVerticalOffset() const
 	{
 		return _verticalOffset;
+	}
+
+	void Cursor::onVisibleChanged()
+	{
+		if (_visible)
+		{
+			_timer->start();
+		}
+		else
+		{
+			_timer->stop();
+		}
 	}
 }
