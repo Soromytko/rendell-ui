@@ -80,6 +80,11 @@ namespace rendell_ui
 		return nullptr;
 	}
 
+	void Window::waitEvent() const
+	{
+		glfwWaitEvents();
+	}
+
 	void* Window::getNativeWindowHandle() const
 	{
 		return get_native_window_handle(_glfwWindow);
