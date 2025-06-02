@@ -1,4 +1,6 @@
 #include <rendell_ui/initialization.h>
+#include <ActionPool.h>
+#include <GLFW/glfw3.h>
 #include "Time.h"
 #include "Shaders/ShaderStorage.h"
 #include "Widgets/WidgetRegistrator.h"
@@ -8,6 +10,7 @@
 namespace rendell_ui
 {
 	static WidgetRenderPipelineSharedPtr s_widgetRenderPipeline{ nullptr };
+	static ActionPoolSharedPtr s_actionPool{ nullptr };
 
 	bool init()
 	{
@@ -20,6 +23,8 @@ namespace rendell_ui
 
 		ShaderStorage::init();
 
+		s_actionPool = makeActionPool();
+
 		return true;
 	}
 
@@ -27,12 +32,29 @@ namespace rendell_ui
 	{
 		WidgetRegistrator::release();
 		ShaderStorage::release();
+		s_actionPool = nullptr;
 	}
 
 	void draw()
 	{
 		Time::updateDeltaTime();
 		s_widgetRenderPipeline->draw();
+	}
+
+	void startFrame()
+	{
+		s_actionPool->execute();
+	}
+
+	void endFrame()
+	{
+
+	}
+
+	void callInMainThread(std::function<void()> action)
+	{
+		s_actionPool->addAction(action);
+		glfwPostEmptyEvent();
 	}
 
 }
