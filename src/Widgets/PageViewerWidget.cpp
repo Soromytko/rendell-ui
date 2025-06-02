@@ -50,7 +50,7 @@ namespace rendell_ui
 	{
 		if (pageIndex >= _pages.size())
 		{
-			error << "ERROR::PageViewerWidget::removePage: Invalid index; index = "
+			error << "PageViewerWidget::removePage: Invalid index; index = "
 				<< pageIndex << " _page.size() = " << _pages.size() << std::endl;
 			return false;
 		}
@@ -80,7 +80,7 @@ namespace rendell_ui
 	{
 		if (index < -1 || index >= static_cast<int>(_pages.size()))
 		{
-			error << "ERROR::PageViewerWidget::setCurrentIndex: Invalid index; index = " <<
+			error << "PageViewerWidget::setCurrentIndex: Invalid index; index = " <<
 				index << ", _pages.size() = " << _pages.size() << std::endl;
 			return false;
 		}

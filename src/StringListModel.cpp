@@ -43,7 +43,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			werror << "ERROR::StringListModel::setItem: Invalid index; index = "
+			werror << "StringListModel::setItem: Invalid index; index = "
 				<< index << ", _data.size() = " << _data.size() << std::endl;
 			return;
 		}
@@ -59,7 +59,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			werror << "ERROR::StringListModel::removeItem: Invalid index; index = "
+			werror << "StringListModel::removeItem: Invalid index; index = "
 				<< index << ", _data.size() = " << _data.size() << std::endl;
 			return;
 		}
@@ -76,7 +76,7 @@ namespace rendell_ui
 
 		if (it == _data.end())
 		{
-			werror << "ERROR::StringListModel::removeItem: Invalid item name; itemName = " << value << std::endl;
+			werror << "StringListModel::removeItem: Invalid item name; itemName = " << value << std::endl;
 			return;
 		}
 
@@ -89,7 +89,7 @@ namespace rendell_ui
 	{
 		if (i >= _data.size())
 		{
-			werror << "ERROR::StringListModel::removeItem: Invalid index; index = "
+			werror << "StringListModel::removeItem: Invalid index; index = "
 				<< i << ", _data.size() = " << _data.size() << std::endl;
 			return {};
 		}

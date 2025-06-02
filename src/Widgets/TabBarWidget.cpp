@@ -50,7 +50,7 @@ namespace rendell_ui
 	{
 		if (!model)
 		{
-			error << "ERROR::TabBarWidget::setModel: The Model is null" << std::endl;
+			error << "TabBarWidget::setModel: The Model is null" << std::endl;
 			return;
 		}
 
@@ -132,7 +132,7 @@ namespace rendell_ui
 
 		if (it == _buttons.end())
 		{
-			error << "ERROR::TabBarWidget::onTabButtonFocused: Invalid button index; _buttons.size() = " << _buttons.size() << std::endl;
+			error << "TabBarWidget::onTabButtonFocused: Invalid button index; _buttons.size() = " << _buttons.size() << std::endl;
 			return;
 		}
 

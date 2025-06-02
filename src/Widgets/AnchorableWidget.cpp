@@ -285,7 +285,7 @@ namespace rendell_ui
 		default:
 		{
 			const uint8_t anchorLogValue = static_cast<uint8_t>(_anchor);
-			warning << "WARNING::Widget: The anchor " << anchorLogValue << " is not implemented" << std::endl;
+			warning << "Widget: The anchor " << anchorLogValue << " is not implemented" << std::endl;
 			return;
 		}
 		}
