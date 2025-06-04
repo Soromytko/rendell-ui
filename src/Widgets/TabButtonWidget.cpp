@@ -120,6 +120,7 @@ namespace rendell_ui
 	void TabButtonWidget::onMouseDown(glm::dvec2 cursorPosition)
 	{
 		setIsSelected(true);
+		setColor(SELECTED_HOVERED_COLOR);
 	}
 
 }
