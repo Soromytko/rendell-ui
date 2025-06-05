@@ -1,7 +1,7 @@
 #include "StringBuilder.h"
 #include <algorithm>
 #include <cassert>
-#include <OStream.h>
+#include <logging.h>
 
 namespace rendell_ui
 {

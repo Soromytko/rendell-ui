@@ -89,7 +89,7 @@ set(HEADER_FILES
     src/String/StringBuilderChunk.h
     src/String/StringExtension.h
 
-    internal/OStream.h
+    internal/logging.h
     internal/ActionPool.h
 )
 
@@ -121,6 +121,10 @@ target_link_libraries(${BINARY_NAME} ${RENDELL_LIB})
 
 # Glm
 target_link_libraries(${BINARY_NAME} ${GLM_LIB})
+
+# LogX
+add_subdirectory(logx)
+target_link_libraries(${BINARY_NAME} logx)
 
 # Rendell-text
 set(FREETYPE_LIB freetype)

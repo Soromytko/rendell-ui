@@ -13,3 +13,6 @@
 [submodule "rendell"]
 	path = rendell
 	url = https://github.com/Soromytko/rendell.git
+[submodule "logx"]
+	path = logx
+	url = https://github.com/Soromytko/LogX.git

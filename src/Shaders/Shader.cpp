@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include <OStream.h>
+#include <logging.h>
 
 namespace rendell_ui
 {
@@ -9,13 +9,13 @@ namespace rendell_ui
 		std::string vertexInfoLog, fragmentInfoLog;
 		if (!_shaderProgram->compile(&vertexInfoLog, &fragmentInfoLog))
 		{
-			error << "Shader: Compilation error:\n" << vertexInfoLog << "\n" << fragmentInfoLog << std::endl;
+			RUI_ERROR << "Shader compilation error:\n" << vertexInfoLog << "\n" << fragmentInfoLog;
 			exit(-1);
 		}
 		std::string linkInfoLog;
 		if (!_shaderProgram->link(&linkInfoLog))
 		{
-			error << "Shader: Linking error:\n" << linkInfoLog << std::endl;
+			RUI_ERROR << "Shader linking error:\n" << linkInfoLog;
 			exit(-1);
 		}
 		_shaderProgram->freeSrc();

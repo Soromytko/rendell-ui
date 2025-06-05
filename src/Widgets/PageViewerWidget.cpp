@@ -1,6 +1,6 @@
 #include <rendell_ui/Widgets/PageViewerWidget.h>
 #include <algorithm>
-#include <OStream.h>
+#include <logging.h>
 
 namespace rendell_ui
 {
@@ -38,7 +38,7 @@ namespace rendell_ui
 		auto it = std::find(_pages.begin(), _pages.end(), page);
 		if (it == _pages.end())
 		{
-			error << "PageViewerWidget::removePage: This is not the Page Widget " << page << std::endl;
+			RUI_ERROR << "This is not the Page Widget " << page;
 			return false;
 		}
 
@@ -50,8 +50,7 @@ namespace rendell_ui
 	{
 		if (pageIndex >= _pages.size())
 		{
-			error << "PageViewerWidget::removePage: Invalid index; index = "
-				<< pageIndex << " _page.size() = " << _pages.size() << std::endl;
+			RUI_ERROR << "Invalid index; index = " << pageIndex << " _page.size() = " << _pages.size();
 			return false;
 		}
 
@@ -80,8 +79,7 @@ namespace rendell_ui
 	{
 		if (index < -1 || index >= static_cast<int>(_pages.size()))
 		{
-			error << "PageViewerWidget::setCurrentIndex: Invalid index; index = " <<
-				index << ", _pages.size() = " << _pages.size() << std::endl;
+			RUI_ERROR << "Invalid index; index = " << index << ", _pages.size() = " << _pages.size();
 			return false;
 		}
 		if (_currentIndex != index)

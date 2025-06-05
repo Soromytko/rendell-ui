@@ -6,7 +6,7 @@
 #include <cassert>
 #include <iostream>
 //TODO: Bad include
-#include "../../internal/OStream.h"
+#include "../../internal/logging.h"
 
 namespace rendell_ui
 {
@@ -20,7 +20,7 @@ namespace rendell_ui
 		uint32_t connect(ClassType* object, MethodType method)
 		{
 			if (!object) {
-				error << "Object pointer cannot be null." << std::endl;
+				RUI_ERROR << "Object pointer cannot be null";
 				return -1;
 			}
 
@@ -35,7 +35,7 @@ namespace rendell_ui
 		uint32_t connect(FunctionSignature function)
 		{
 			if (!function) {
-				error << "Object pointer cannot be null." << std::endl;
+				RUI_ERROR << "Object pointer cannot be null";
 				return -1;
 			}
 
@@ -59,7 +59,7 @@ namespace rendell_ui
 			auto it = _map.find(connectionId);
 			if (it == _map.end())
 			{
-				error << "Invalid connection ID " << connectionId << std::endl;
+				RUI_ERROR << "Invalid connection ID " << connectionId;
 				return false;
 			}
 

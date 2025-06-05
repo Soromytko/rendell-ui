@@ -1,5 +1,5 @@
 #include <rendell_ui/StringListModel.h>
-#include <OStream.h>
+#include <logging.h>
 #include <algorithm>
 
 namespace rendell_ui
@@ -30,8 +30,8 @@ namespace rendell_ui
 	{
 		if (index > _data.size())
 		{
-			werror << "StringListModel::insertItem: Invalid index; index = " << index
-				<< ", value = " << value << ", _data.size() = " << _data.size() << std::endl;
+			RUI_W_ERROR << "Invalid index; index = " << index
+				<< ", value = " << value << ", _data.size() = " << _data.size();
 			return;
 		}
 
@@ -43,8 +43,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			werror << "StringListModel::setItem: Invalid index; index = "
-				<< index << ", _data.size() = " << _data.size() << std::endl;
+			RUI_ERROR << "Invalid index; index = " << index << ", _data.size() = " << _data.size();
 			return;
 		}
 
@@ -59,8 +58,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			werror << "StringListModel::removeItem: Invalid index; index = "
-				<< index << ", _data.size() = " << _data.size() << std::endl;
+			RUI_ERROR << "Invalid index; index = " << index << ", _data.size() = " << _data.size();
 			return;
 		}
 
@@ -76,7 +74,7 @@ namespace rendell_ui
 
 		if (it == _data.end())
 		{
-			werror << "StringListModel::removeItem: Invalid item name; itemName = " << value << std::endl;
+			RUI_W_ERROR << "Invalid item name; itemName = " << value;
 			return;
 		}
 
@@ -89,8 +87,7 @@ namespace rendell_ui
 	{
 		if (i >= _data.size())
 		{
-			werror << "StringListModel::removeItem: Invalid index; index = "
-				<< i << ", _data.size() = " << _data.size() << std::endl;
+			RUI_ERROR << "Invalid index; index = " << i << ", _data.size() = " << _data.size();
 			return {};
 		}
 		return _data[i];
