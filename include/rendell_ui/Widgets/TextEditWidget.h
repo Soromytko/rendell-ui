@@ -20,23 +20,23 @@ namespace rendell_ui
 		void draw() const override;
 
 		// IScrollableWidget
-		float getScrollProgress() const override;
-		float getScrollRatio() const override;
-		bool setScrollProgress(float value) override;
+		double getScrollProgress() const override;
+		double getScrollRatio() const override;
+		bool setScrollProgress(double value) override;
 		void onProcessMouseScrolled(glm::dvec2 scroll) override;
 
 		const std::wstring& getText() const;
 		size_t getLineCount() const;
 		bool getScrollEnabled() const;
-		float getScrollSensitivity() const;
+		double getScrollSensitivity() const;
 
 		void setText(const std::wstring& value);
 		void setFontSize(glm::ivec2 value);
 		void setScrollEnabled(bool value);
-		void setScrollSensitivity(float value);
+		void setScrollSensitivity(double value);
 
 		Signal<void> textChanged;
-		Signal<void, float> scrollProgressChanged;
+		Signal<void, double> scrollProgressChanged;
 
 	private:
 		void onSelfWeakPtrChanged() override;
@@ -78,7 +78,7 @@ namespace rendell_ui
 		bool _scrollEnabled{ true };
 
 		glm::ivec2 _fontSize{ glm::ivec2(24, 24) };
-		float _scrollSensitivity{ 80.0f };
+		double _scrollSensitivity{ 80.0 };
 		TextEditor _textEditor{};
 		TextDrawer _textDrawer{};
 		CursorSharedPtr _cursor{};

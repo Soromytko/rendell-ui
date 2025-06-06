@@ -8,19 +8,19 @@ namespace rendell_ui
 
 	}
 
-	float TextDrawer::getScrollProgress() const
+	double TextDrawer::getScrollProgress() const
 	{
 		return _scrollProgress;
 	}
 
-	float TextDrawer::getScrollRatio() const
+	double TextDrawer::getScrollRatio() const
 	{
-		return _size.y / static_cast<float>(_textHeight);
+		return _size.y / static_cast<double>(_textHeight);
 	}
 
-	bool TextDrawer::setScrollProgress(float value)
+	bool TextDrawer::setScrollProgress(double value)
 	{
-		const float newScrollProgress = _textHeight < _size.y ? 0 : std::clamp(value, 0.0f, 1.0f);
+		const double newScrollProgress = _textHeight < _size.y ? 0 : std::clamp(value, 0.0, 1.0);
 		if (_scrollProgress != newScrollProgress || true)
 		{
 			_scrollProgress = newScrollProgress;
@@ -39,12 +39,12 @@ namespace rendell_ui
 		return _textHeight;
 	}
 
-	glm::vec2 TextDrawer::getSize() const
+	glm::dvec2 TextDrawer::getSize() const
 	{
 		return _size;
 	}
 
-	float TextDrawer::getScroll() const
+	double TextDrawer::getScroll() const
 	{
 		return _scroll;
 	}
@@ -56,11 +56,11 @@ namespace rendell_ui
 
 	void TextDrawer::draw(const glm::mat4 viewMatrix, const glm::mat4& modelMatrix) const
 	{
-		float currentOffset = _size.y * 0.5f + _startRenderingOffset;
+		double currentOffset = _size.y * 0.5 + _startRenderingOffset;
 		for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++)
 		{
 			const rendell_text::TextRendererSharedPtr& textRenderer = _textRenderers[i];
-			currentOffset -= textRenderer->getTextLayout()->getFontHeight();
+			currentOffset -= static_cast<double>(textRenderer->getTextLayout()->getFontHeight());
 			if (currentOffset < -_size.y)
 			{
 				break;
@@ -71,7 +71,7 @@ namespace rendell_ui
 		}
 	}
 
-	void TextDrawer::setSize(glm::vec2 value)
+	void TextDrawer::setSize(glm::dvec2 value)
 	{
 		if (_size != value)
 		{
@@ -110,15 +110,15 @@ namespace rendell_ui
 
 	void TextDrawer::updateScroll()
 	{
-		_scroll = (static_cast<float>(_textHeight) - _size.y) * _scrollProgress;
-		_scroll = std::max(0.0f, _scroll);
+		_scroll = (static_cast<double>(_textHeight) - _size.y) * _scrollProgress;
+		_scroll = std::max(0.0, _scroll);
 		optimizeRendering();
 	}
 
 	void TextDrawer::optimizeRendering()
 	{
-		const float baseOffset = _size.y * 0.5f;
-		float currentOffset = baseOffset + _scroll;
+		const double baseOffset = _size.y * 0.5;
+		double currentOffset = baseOffset + _scroll;
 		for (size_t i = 0; i < _textRenderers.size(); i++)
 		{
 			_startRenderingOffset = currentOffset - baseOffset;

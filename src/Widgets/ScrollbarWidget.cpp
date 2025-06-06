@@ -37,9 +37,9 @@ namespace rendell_ui
 		if (!_handleRectangleWidget->intersect(cursorPosition))
 		{
 			const glm::dvec2 localPosition = cursorPosition - static_cast<glm::dvec2>(_transform.getPosition());
-			const glm::dvec2 offsetLocalPosition = -(localPosition + glm::dvec2(0.5f, -0.5f) * static_cast<glm::dvec2>(_size));
-			const glm::vec2 halfHandleSize = _handleRectangleWidget->getSize() * 0.5f;
-			const float progress = (offsetLocalPosition.y - halfHandleSize.y) / (_size.y - halfHandleSize.y * 2);
+			const glm::dvec2 offsetLocalPosition = -(localPosition + glm::dvec2(0.5, -0.5) * static_cast<glm::dvec2>(_size));
+			const glm::dvec2 halfHandleSize = static_cast<glm::dvec2>(_handleRectangleWidget->getSize()) * 0.5;
+			const double progress = (offsetLocalPosition.y - halfHandleSize.y) / (_size.y - halfHandleSize.y * 2.0);
 			setProgress(progress);
 			if (auto locked = _scrollable.lock())
 			{
@@ -62,7 +62,7 @@ namespace rendell_ui
 		}
 	}
 
-	float ScrollbarWidget::getProgress() const
+	double ScrollbarWidget::getProgress() const
 	{
 		return _progress;
 	}
@@ -74,7 +74,7 @@ namespace rendell_ui
 
 	void ScrollbarWidget::updateProgress()
 	{
-		_progress = _scrollable.expired() ? 0.0f : _scrollable.lock()->getScrollProgress();
+		_progress = _scrollable.expired() ? 0.0 : _scrollable.lock()->getScrollProgress();
 		updateHandle();
 	}
 
@@ -87,9 +87,9 @@ namespace rendell_ui
 		}
 	}
 
-	void ScrollbarWidget::setProgress(float value)
+	void ScrollbarWidget::setProgress(double value)
 	{
-		value = std::clamp(value, 0.0f, 1.0f);
+		value = std::clamp(value, 0.0, 1.0);
 		if (_progress != value)
 		{
 			_progress = value;
@@ -109,9 +109,9 @@ namespace rendell_ui
 
 	void ScrollbarWidget::processDragging(glm::dvec2 dragOffset)
 	{
-		float offset = (_startDraggingHandleOffset.y - dragOffset.y);
-		offset = std::clamp(offset, -_size.y + _handleRectangleWidget->getSize().y, 0.0f);
-		const float progress = std::abs(offset / (_size.y - _handleRectangleWidget->getSize().y));
+		double offset = (_startDraggingHandleOffset.y - dragOffset.y);
+		offset = std::clamp(offset, static_cast<double>( - _size.y + _handleRectangleWidget->getSize().y), 0.0);
+		const double progress = std::abs(offset / (_size.y - _handleRectangleWidget->getSize().y));
 
 		setProgress(progress);
 		if (auto locked = _scrollable.lock())
@@ -123,7 +123,7 @@ namespace rendell_ui
 	void ScrollbarWidget::updateHandle()
 	{
 		const float handleHeight = calculateHandleHeight();
-		const float offset = -(_size.y - handleHeight) * _progress;
+		const float offset = -(_size.y - handleHeight) * static_cast<float>(_progress);
 		_handleRectangleWidget->setSize({ _size.x, handleHeight });
 		_handleRectangleWidget->setOffset({ 0.0f, offset });
 		_isHidden = handleHeight >= _size.y;
@@ -133,7 +133,7 @@ namespace rendell_ui
 	{
 		if (auto locked = _scrollable.lock())
 		{
-			return locked->getScrollRatio() * _size.y;
+			return static_cast<float>(locked->getScrollRatio()) * _size.y;
 		}
 		return _size.y;
 	}

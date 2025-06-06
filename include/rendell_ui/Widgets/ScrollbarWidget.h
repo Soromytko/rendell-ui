@@ -20,12 +20,12 @@ namespace rendell_ui
 		void onMouseScrolled(glm::dvec2 scroll) override;
 
 	public:
-		float getProgress() const;
+		double getProgress() const;
 		IScrollableWidgetWeakPtr getScrollable() const;
 
 		void updateProgress();
 		void setScrollable(IScrollableWidgetWeakPtr scrollable);
-		void setProgress(float value);
+		void setProgress(double value);
 
 	private:
 		// Widget
@@ -39,9 +39,9 @@ namespace rendell_ui
 		RectangleWidgetSharedPtr _backgroundRectangleWidget;
 		RectangleWidgetSharedPtr _handleRectangleWidget;
 
-		float _progress{ 0.0f };
+		double _progress{ 0.0 };
 		bool _isHidden{ false };
-		glm::dvec2 _lastDragLength{ 0.0f, 0.0f };
+		glm::dvec2 _lastDragLength{ 0.0, 0.0 };
 		glm::dvec2 _startDraggingHandleOffset{};
 		IScrollableWidgetWeakPtr _scrollable{};
 	};

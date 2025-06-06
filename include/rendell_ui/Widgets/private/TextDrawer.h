@@ -12,18 +12,18 @@ namespace rendell_ui
 		~TextDrawer() = default;
 
 		// IScrollableWidget
-		float getScrollProgress() const override;
-		float getScrollRatio() const override;
-		bool setScrollProgress(float value) override;
+		double getScrollProgress() const override;
+		double getScrollRatio() const override;
+		bool setScrollProgress(double value) override;
 		void onProcessMouseScrolled(glm::dvec2 scroll) override;
 
 		uint32_t getTextHeight() const;
-		glm::vec2 getSize() const;
-		float getScroll() const;
+		glm::dvec2 getSize() const;
+		double getScroll() const;
 		const std::vector<rendell_text::TextRendererSharedPtr>& getLines() const;
 		void draw(const glm::mat4 viewMatrix, const glm::mat4& modelMatrix) const;
 
-		void setSize(glm::vec2 value);
+		void setSize(glm::dvec2 value);
 
 		void clear();
 		void removeLine(size_t index);
@@ -35,12 +35,12 @@ namespace rendell_ui
 		void optimizeRendering();
 
 		size_t _startRenderingIndex{ 0 };
-		float _startRenderingOffset{ 0.0f };
+		double _startRenderingOffset{ 0.0 };
 		uint32_t _textHeight{ 0 };
 
-		glm::vec2 _size{};
-		float _scroll{};
-		float _scrollProgress{};
+		glm::dvec2 _size{};
+		double _scroll{};
+		double _scrollProgress{};
 		std::vector<rendell_text::TextRendererSharedPtr> _textRenderers;
 
 	};

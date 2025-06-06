@@ -10,10 +10,10 @@ namespace rendell_ui
 	public:
 		~IScrollableWidget() = default;
 
-		virtual float getScrollProgress() const = 0;
-		virtual float getScrollRatio() const = 0;
+		virtual double getScrollProgress() const = 0;
+		virtual double getScrollRatio() const = 0;
 
-		virtual bool setScrollProgress(float value) = 0;
+		virtual bool setScrollProgress(double value) = 0;
 		virtual void onProcessMouseScrolled(glm::dvec2 scroll) = 0;
 	};
 

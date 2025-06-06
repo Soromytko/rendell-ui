@@ -58,17 +58,17 @@ namespace rendell_ui
 		}
 	}
 
-	float TextEditWidget::getScrollProgress() const
+	double TextEditWidget::getScrollProgress() const
 	{
 		return _textDrawer.getScrollProgress();
 	}
 
-	float TextEditWidget::getScrollRatio() const
+	double TextEditWidget::getScrollRatio() const
 	{
 		return _size.y / static_cast<float>(_textDrawer.getTextHeight());
 	}
 
-	bool TextEditWidget::setScrollProgress(float value)
+	bool TextEditWidget::setScrollProgress(double value)
 	{
 		if (_textDrawer.setScrollProgress(value))
 		{
@@ -99,7 +99,7 @@ namespace rendell_ui
 		return _scrollEnabled;
 	}
 
-	float TextEditWidget::getScrollSensitivity() const
+	double TextEditWidget::getScrollSensitivity() const
 	{
 		return _scrollSensitivity;
 	}
@@ -120,7 +120,7 @@ namespace rendell_ui
 		_scrollbarWidget->setVisible(_scrollEnabled);
 	}
 
-	void TextEditWidget::setScrollSensitivity(float value)
+	void TextEditWidget::setScrollSensitivity(double value)
 	{
 		_scrollSensitivity = value;
 	}
@@ -193,7 +193,7 @@ namespace rendell_ui
 
 	void TextEditWidget::onMouseScrolled(glm::dvec2 scroll)
 	{
-		const float newScrollProgresss = (_textDrawer.getScroll() - scroll.y * _scrollSensitivity) /
+		const double newScrollProgresss = (_textDrawer.getScroll() - scroll.y * _scrollSensitivity) /
 			(_textDrawer.getTextHeight() - _textDrawer.getSize().y);
 		if (setScrollProgress(newScrollProgresss))
 		{
@@ -322,7 +322,8 @@ namespace rendell_ui
 	void TextEditWidget::updateCursorPosition()
 	{
 		const float cursorOffsetX = static_cast<float>(_textEditor.getCursorHorizontalOffset());
-		const float cursorOffsetY = -static_cast<float>(_textEditor.getCursorVerticalOffset()) + _textDrawer.getScroll();
+		const float cursorOffsetY = -static_cast<float>(_textEditor.getCursorVerticalOffset()) +
+			static_cast<float>(_textDrawer.getScroll());
 		_cursor->setOffset({ cursorOffsetX, cursorOffsetY });
 	}
 
