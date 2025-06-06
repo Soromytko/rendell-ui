@@ -152,7 +152,7 @@ namespace rendell_ui
 		else if (_currentIndex == itemIndex)
 		{
 			_currentIndex = -1;
-			setCurrentIndex(itemIndex);
+			setCurrentIndex(static_cast<int>(itemIndex));
 		}
 
 		updateButtonMarkup();

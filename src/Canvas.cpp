@@ -230,6 +230,7 @@ namespace rendell_ui
 				{
 					return locked == widget;
 				}
+				return false;
 			}) == _mouseHoverWidgets.end())
 		{
 			_mouseHoverWidgets.push_back(widget);

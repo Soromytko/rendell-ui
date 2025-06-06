@@ -88,7 +88,8 @@ namespace rendell_ui
 		if (i >= _data.size())
 		{
 			RUI_ERROR << "Invalid index; index = " << i << ", _data.size() = " << _data.size();
-			return {};
+			static String emptyString;
+			return emptyString;
 		}
 		return _data[i];
 	}
