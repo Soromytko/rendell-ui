@@ -10,6 +10,8 @@
 
 namespace rendell_ui
 {
+	using signal_connection_id_t = size_t;
+
 	template <typename ReturnType, typename... Args>
 	class Signal
 	{
@@ -17,7 +19,7 @@ namespace rendell_ui
 
 	public:
 		template<typename ClassType, typename MethodType>
-		uint32_t connect(ClassType* object, MethodType method)
+		signal_connection_id_t connect(ClassType* object, MethodType method)
 		{
 			if (!object) {
 				RUI_ERROR << "Object pointer cannot be null";
@@ -32,7 +34,7 @@ namespace rendell_ui
 			return registerConnection(_connections.size() - 1);
 		}
 
-		uint32_t connect(FunctionSignature function)
+		signal_connection_id_t connect(FunctionSignature function)
 		{
 			if (!function) {
 				RUI_ERROR << "Object pointer cannot be null";
@@ -44,7 +46,7 @@ namespace rendell_ui
 			return registerConnection(_connections.size() - 1);
 		}
 
-		uint32_t connect(Signal<ReturnType, Args...>& signal)
+		signal_connection_id_t connect(Signal<ReturnType, Args...>& signal)
 		{
 			_connections.emplace_back([&signal](Args... args) -> ReturnType
 				{
@@ -54,7 +56,7 @@ namespace rendell_ui
 			return registerConnection(_connections.size() - 1);
 		}
 
-		bool disconnect(uint32_t connectionId)
+		bool disconnect(signal_connection_id_t connectionId)
 		{
 			auto it = _map.find(connectionId);
 			if (it == _map.end())
@@ -69,7 +71,7 @@ namespace rendell_ui
 			return true;
 		}
 
-		bool isConnected(uint32_t connectionId)
+		bool isConnected(signal_connection_id_t connectionId)
 		{
 			return _map.find(connectionId) != _map.end();
 		}
@@ -83,22 +85,22 @@ namespace rendell_ui
 		}
 
 	private:
-		uint32_t registerConnection(size_t connectionIndex)
+		signal_connection_id_t registerConnection(size_t connectionIndex)
 		{
-			const uint32_t connectionId = generateConnectionId();
+			const signal_connection_id_t connectionId = generateConnectionId();
 			assert(_map.find(connectionId) == _map.end());
 			_map.insert({ connectionId, connectionIndex });
 			return connectionId;
 		}
 
-		uint32_t generateConnectionId()
+		signal_connection_id_t generateConnectionId()
 		{
 			return _connectionIdCounter++;
 		}
 
-		uint32_t _connectionIdCounter{ 0 };
+		signal_connection_id_t _connectionIdCounter{ 0 };
 		std::vector<FunctionSignature> _connections;
-		std::unordered_map<uint32_t, size_t> _map;
+		std::unordered_map<signal_connection_id_t, size_t> _map;
 	};
 
 	class Action : public Signal<void>

@@ -68,12 +68,12 @@ namespace rendell_ui
 
 		void updateCursorPosition();
 
-		uint32_t _textLayoutClearedConnectionId;
-		uint32_t _textLayoutRemovedConnectionId;
-		uint32_t _textLayoutAddedConnectionId;
-		uint32_t _textLayoutSwappedConnectionId;
-		uint32_t _caretChangedConnectionId;
-		uint32_t _textChangedConnectionId;
+		signal_connection_id_t _textLayoutClearedConnectionId;
+		signal_connection_id_t _textLayoutRemovedConnectionId;
+		signal_connection_id_t _textLayoutAddedConnectionId;
+		signal_connection_id_t _textLayoutSwappedConnectionId;
+		signal_connection_id_t _caretChangedConnectionId;
+		signal_connection_id_t _textChangedConnectionId;
 
 		bool _scrollEnabled{ true };
 

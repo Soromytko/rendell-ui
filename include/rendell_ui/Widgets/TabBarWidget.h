@@ -44,9 +44,9 @@ namespace rendell_ui
 		void updateButtons();
 		void updateButtonMarkup();
 
-		size_t _itemAddedConnectionId;
-		size_t _itemRemovedConnectionId;
-		size_t _itemChangedConnectionId;
+		signal_connection_id_t _itemAddedConnectionId;
+		signal_connection_id_t _itemRemovedConnectionId;
+		signal_connection_id_t _itemChangedConnectionId;
 
 		int _currentIndex{ -1 };
 		CreateTabButtonDelegate _createTabButtonDelegate;
