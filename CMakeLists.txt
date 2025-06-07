@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(SOURCE_FILES
     src/initialization.cpp
+    src/logging.cpp
     src/Timer.cpp
     src/ActionPool.cpp
     src/Window/Window.cpp
