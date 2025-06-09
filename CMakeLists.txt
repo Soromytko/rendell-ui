@@ -94,7 +94,6 @@ set(HEADER_FILES
     internal/ActionPool.h
 )
 
-include_directories(include)
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(${BINARY_NAME} PUBLIC include)
 target_include_directories(${BINARY_NAME} PRIVATE internal)
@@ -112,22 +111,3 @@ set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(glfw)
 target_link_libraries(${BINARY_NAME} glfw)
-
-# FreeType
-add_subdirectory(freetype)
-target_link_libraries(${BINARY_NAME} freetype)
-
-# rendell
-target_link_libraries(${BINARY_NAME} ${RENDELL_LIB})
-
-# Glm
-target_link_libraries(${BINARY_NAME} ${GLM_LIB})
-
-# LogX
-add_subdirectory(logx)
-target_link_libraries(${BINARY_NAME} logx)
-
-# Rendell-text
-set(FREETYPE_LIB freetype)
-add_subdirectory(rendell-text)
-target_link_libraries(${BINARY_NAME} rendell_text)

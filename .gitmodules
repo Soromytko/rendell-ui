@@ -1,18 +1,3 @@
-[submodule "rendell-text"]
-	path = rendell-text
-	url = https://github.com/Soromytko/rendell-text
-[submodule "glm"]
-	path = glm
-	url = https://github.com/g-truc/glm.git
-[submodule "freetype"]
-	path = freetype
-	url = https://github.com/freetype/freetype.git
 [submodule "glfw"]
 	path = glfw
 	url = https://github.com/glfw/glfw.git
-[submodule "rendell"]
-	path = rendell
-	url = https://github.com/Soromytko/rendell.git
-[submodule "logx"]
-	path = logx
-	url = https://github.com/Soromytko/LogX.git
