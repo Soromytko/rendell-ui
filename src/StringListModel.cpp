@@ -30,8 +30,7 @@ namespace rendell_ui
 	{
 		if (index > _data.size())
 		{
-			RUI_W_ERROR << "Invalid index; index = " << index
-				<< ", value = " << value << ", _data.size() = " << _data.size();
+			RUI_ERROR(L"Invalid index; index = {}, value = {}, _data.size() = ", index, value, _data.size());
 			return;
 		}
 
@@ -43,7 +42,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			RUI_ERROR << "Invalid index; index = " << index << ", _data.size() = " << _data.size();
+			RUI_ERROR("Invalid index; index = {}, _data.size() = {}", index, _data.size());
 			return;
 		}
 
@@ -58,7 +57,7 @@ namespace rendell_ui
 	{
 		if (index >= _data.size())
 		{
-			RUI_ERROR << "Invalid index; index = " << index << ", _data.size() = " << _data.size();
+			RUI_ERROR("Invalid index; index = {}, _data.size() = {}", index, _data.size());
 			return;
 		}
 
@@ -74,7 +73,7 @@ namespace rendell_ui
 
 		if (it == _data.end())
 		{
-			RUI_W_ERROR << "Invalid item name; itemName = " << value;
+			RUI_ERROR(L"Invalid item name; itemName = {}", value);
 			return;
 		}
 
@@ -87,7 +86,7 @@ namespace rendell_ui
 	{
 		if (i >= _data.size())
 		{
-			RUI_ERROR << "Invalid index; index = " << i << ", _data.size() = " << _data.size();
+			RUI_ERROR("Invalid index; index = {}, _data.size() = {}", i, _data.size());
 			static String emptyString;
 			return emptyString;
 		}

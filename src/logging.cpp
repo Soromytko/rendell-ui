@@ -1,27 +1,54 @@
 #include <logging.h>
+#include <memory>
+#include <unordered_map>
+#include <cassert>
 
 namespace rendell_ui
 {
-	RUICLogger::RUICLogger(std::ostream& stream, std::string_view prefix, logx::Color color, std::string_view funcName) :
-		logx::CLogger(stream, prefix, color), _funcName(funcName)
+	std::unique_ptr<logx::Logger> s_logger{ nullptr };
+
+	void init_logger()
+	{
+		assert(!s_logger);
+		s_logger = std::make_unique<RUILogger>();
+	}
+
+	void release_logger()
+	{
+		assert(s_logger);
+		s_logger.release();
+	}
+
+	logx::Logger* get_logger()
+	{
+		assert(s_logger);
+		return s_logger.get();
+	}
+
+	RUILogger::RUILogger() : logx::Logger()
 	{
 
 	}
 
-	RUICLogger::~RUICLogger()
+	const char* RUILogger::getLevelName_Unsafe(logx::Level level) const
 	{
-		this->operator<<(" (") << _funcName << ")";
-	}
+		static const std::unordered_map<logx::Level, const char*> levelNames
+		{
+			{logx::Level::critical, "RENDELL_UI::CRITICAL"},
+			{logx::Level::error, "RENDELL_UI::ERROR"},
+			{logx::Level::warning, "RENDELL_UI::WARNING"},
+			{logx::Level::info, "RENDELL_UI::INFO"},
+			{logx::Level::debug, "RENDELL_UI::DEBUG"},
+			{logx::Level::trace, "RENDELL_UI::TRACE"},
+		};
 
-	RUIWLogger::RUIWLogger(std::wostream& stream, std::wstring_view prefix, logx::Color color, std::string& funcName) :
-		logx::WLogger(stream, prefix, color), _funcName(funcName)
-	{
+		auto it = levelNames.find(level);
+		if (it != levelNames.end())
+		{
+			return it->second;
+		}
 
-	}
-
-	RUIWLogger::~RUIWLogger()
-	{
-		this->operator<<(L" (") << _funcName.c_str() << L")";
+		return nullptr;
 	}
 
 }

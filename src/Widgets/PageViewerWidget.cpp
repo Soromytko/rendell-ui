@@ -38,7 +38,7 @@ namespace rendell_ui
 		auto it = std::find(_pages.begin(), _pages.end(), page);
 		if (it == _pages.end())
 		{
-			RUI_ERROR << "This is not the Page Widget " << page;
+			RUI_ERROR("The \"{}\" widget is not the Page Widget", page->getName());
 			return false;
 		}
 
@@ -50,7 +50,7 @@ namespace rendell_ui
 	{
 		if (pageIndex >= _pages.size())
 		{
-			RUI_ERROR << "Invalid index; index = " << pageIndex << " _page.size() = " << _pages.size();
+			RUI_ERROR("Invalid index; index = {}, _page.size() = {}", pageIndex, _pages.size());
 			return false;
 		}
 
@@ -79,7 +79,7 @@ namespace rendell_ui
 	{
 		if (index < -1 || index >= static_cast<int>(_pages.size()))
 		{
-			RUI_ERROR << "Invalid index; index = " << index << ", _pages.size() = " << _pages.size();
+			RUI_ERROR("Invalid index; index = {}, _pages.size() = {}", index, _pages.size());
 			return false;
 		}
 		if (_currentIndex != index)

@@ -22,7 +22,7 @@ namespace rendell_ui
 		signal_connection_id_t connect(ClassType* object, MethodType method)
 		{
 			if (!object) {
-				RUI_ERROR << "Object pointer cannot be null";
+				RUI_ERROR("Object pointer cannot be null");
 				return -1;
 			}
 
@@ -37,7 +37,7 @@ namespace rendell_ui
 		signal_connection_id_t connect(FunctionSignature function)
 		{
 			if (!function) {
-				RUI_ERROR << "Object pointer cannot be null";
+				RUI_ERROR("Object pointer cannot be null");
 				return -1;
 			}
 
@@ -61,7 +61,7 @@ namespace rendell_ui
 			auto it = _map.find(connectionId);
 			if (it == _map.end())
 			{
-				RUI_ERROR << "Invalid connection ID " << connectionId;
+				RUI_ERROR("Invalid connection ID {}", static_cast<size_t>(connectionId));
 				return false;
 			}
 

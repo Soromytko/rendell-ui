@@ -1,5 +1,6 @@
 #include <rendell_ui/initialization.h>
 #include <ActionPool.h>
+#include <logging.h>
 #include <GLFW/glfw3.h>
 #include "Time.h"
 #include "Shaders/ShaderStorage.h"
@@ -14,6 +15,8 @@ namespace rendell_ui
 
 	bool init()
 	{
+		init_logger();
+
 		s_widgetRenderPipeline = makeWidgetRenderPipeline();
 
 		WidgetRegistrator::init({
@@ -33,6 +36,8 @@ namespace rendell_ui
 		WidgetRegistrator::release();
 		ShaderStorage::release();
 		s_actionPool = nullptr;
+
+		release_logger();
 	}
 
 	void draw()

@@ -50,7 +50,7 @@ namespace rendell_ui
 	{
 		if (!model)
 		{
-			RUI_ERROR << "The Model is null";
+			RUI_ERROR("The Model is null");
 			return;
 		}
 
@@ -132,7 +132,7 @@ namespace rendell_ui
 
 		if (it == _buttons.end())
 		{
-			RUI_ERROR << "Invalid button index; _buttons.size() = " << _buttons.size();
+			RUI_ERROR("Invalid button index; _buttons.size() = {}", _buttons.size());
 			return;
 		}
 

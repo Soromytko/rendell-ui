@@ -1,46 +1,28 @@
 #pragma once
 #include <iostream>
-#include <string>
-#include <string_view>
 #include <logx/logx.h>
 
 namespace rendell_ui
 {
-	class RUICLogger final : public logx::CLogger
+	class RUILogger final : public logx::Logger
 	{
 	public:
-		RUICLogger(std::ostream& stream, std::string_view prefix, logx::Color color, std::string_view funcName);
-		~RUICLogger();
+		RUILogger();
 
 	private:
-		std::string_view _funcName;
+		const char* getLevelName_Unsafe(logx::Level level) const override;
 	};
 
-	class RUIWLogger final : public logx::WLogger
-	{
-	public:
-		RUIWLogger(std::wostream& stream, std::wstring_view prefix, logx::Color color, std::string& funcName);
-		~RUIWLogger();
+	void init_logger();
+	void release_logger();
 
-	private:
-		std::string& _funcName;
-	};
+	logx::Logger* get_logger();
+
 }
 
-#define RENDELL_UI_DEBUG_PREFIX "[RENDELL_UI::DEBUG] "
-#define RENDELL_UI_ERROR_PREFIX "[RENDELL_UI::ERROR] "
-#define RENDELL_UI_WARNING_PREFIX "[RENDELL_UI::WARNING] "
-
-#define RENDELL_UI_DEBUG_WPREFIX L"[RENDELL_UI::DEBUG] "
-#define RENDELL_UI_ERROR_WPREFIX L"[RENDELL_UI::ERROR] "
-#define RENDELL_UI_WARNING_WPREFIX L"[RENDELL_UI::WARNING] "
-
-#define RENDELL_UI_CLASS_FUNC std::string(LOGX_CLASS) + "::" + __func__
-
-#define RUI_DEBUG rendell_ui::RUICLogger(std::cout, RENDELL_UI_DEBUG_PREFIX, LOGX_WHITE, RENDELL_UI_CLASS_FUNC)
-#define RUI_ERROR rendell_ui::RUICLogger(std::cerr, RENDELL_UI_ERROR_PREFIX, LOGX_RED, RENDELL_UI_CLASS_FUNC)
-#define RUI_WARNING rendell_ui::RUICLogger(std::cout, RENDELL_UI_WARNING_PREFIX, LOGX_YELLOW, RENDELL_UI_CLASS_FUNC)
-
-#define RUI_W_DEBUG rendell_ui::RUIWLogger(std::wcout, RENDELL_UI_DEBUG_WPREFIX, LOGX_WHITE, RENDELL_UI_CLASS_FUNC)
-#define RUI_W_ERROR rendell_ui::RUIWLogger(std::wcerr, RENDELL_UI_ERROR_WPREFIX, LOGX_RED, RENDELL_UI_CLASS_FUNC)
-#define RUI_W_WARNING rendell_ui::RUIWLogger(std::wcout, RENDELL_UI_WARNING_WPREFIX, LOGX_YELLOW, RENDELL_UI_CLASS_FUNC)
+#define RUI_CRITICAL(formatStr, ...) rendell_ui::get_logger()->critical(std::format(formatStr, __VA_ARGS__))
+#define RUI_ERROR(formatStr, ...) rendell_ui::get_logger()->error(std::format(formatStr, __VA_ARGS__))
+#define RUI_WARNING(formatStr, ...) rendell_ui::get_logger()->warning(std::format(formatStr, __VA_ARGS__))
+#define RUI_INFO(formatStr, ...) rendell_ui::get_logger()->info(std::format(formatStr, __VA_ARGS__))
+#define RUI_DEBUG(formatStr, ...) rendell_ui::get_logger()->debug(std::format(formatStr, __VA_ARGS__))
+#define RUI_TRACE(formatStr, ...) rendell_ui::get_logger()->trace(std::format(formatStr, __VA_ARGS__))
