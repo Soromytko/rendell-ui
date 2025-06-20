@@ -110,4 +110,4 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(glfw)
-target_link_libraries(${BINARY_NAME} glfw)
+target_link_libraries(${BINARY_NAME} PRIVATE glfw)

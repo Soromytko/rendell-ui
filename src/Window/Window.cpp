@@ -1,4 +1,5 @@
 #include <rendell_ui/Window/Window.h>
+#include <GLFW/glfw3.h>
 #include "window_callbacks.h"
 
 #if defined(_WIN32)

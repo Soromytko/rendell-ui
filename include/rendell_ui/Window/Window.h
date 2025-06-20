@@ -1,8 +1,9 @@
 #pragma once
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include "window_input.h"
 #include "WindowEventHandler.h"
+
+struct GLFWwindow;
 
 namespace rendell_ui
 {
