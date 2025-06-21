@@ -35,6 +35,8 @@ namespace rendell_ui
 
 	void Canvas::onRefreshed(int width, int height)
 	{
+		_size = glm::ivec2(width, height);
+
 		const float ratio = (float)width / (float)height;
 		const float worldWidth = height * ratio;
 
@@ -48,6 +50,11 @@ namespace rendell_ui
 		updateWidgetRecursively();
 	}
 
+	void Canvas::onResized(int width, int height)
+	{
+		_size = glm::ivec2(width, height);
+	}
+
 	void Canvas::onKeyInputted(const KeyboardInput& keyboardInput)
 	{
 		if (auto locked = _focusedWidget.lock())
@@ -58,7 +65,7 @@ namespace rendell_ui
 
 	void Canvas::onMouseButtonInputted(const MouseInput& mouseInput)
 	{
-		const glm::vec2 cursorPosition = glm::vec2(mouseInput.x, mouseInput.y);
+		const glm::dvec2 cursorPosition = convertCursorPositionToViewport({ mouseInput.x, mouseInput.y });
 
 		if (mouseInput.action == InputAction::pressed)
 		{
@@ -69,7 +76,7 @@ namespace rendell_ui
 			{
 				locked->onMouseDown(cursorPosition);
 			}
-			_dragStartPoint = { mouseInput.x, mouseInput.y };
+			_dragStartPoint = cursorPosition;
 		}
 		else if (mouseInput.action == InputAction::release)
 		{
@@ -93,7 +100,7 @@ namespace rendell_ui
 
 	void Canvas::onMouseMoved(double x, double y)
 	{
-		const glm::dvec2 cursor{ x, y };
+		const glm::dvec2 cursor = convertCursorPositionToViewport({ x, y });
 
 		if (auto locked = _capturedWidget.lock())
 		{
@@ -169,6 +176,21 @@ namespace rendell_ui
 		{
 			locked->onCharInputted(character);
 		}
+	}
+
+	glm::dvec2 Canvas::convertCursorPositionToViewport(glm::dvec2 cursorPosition) const
+	{
+		const glm::ivec2 viewportSize = _viewport->getSize();
+
+		if (viewportSize.x == 0 || viewportSize.y == 0)
+		{
+			return cursorPosition;
+		}
+
+		const glm::dvec2 ratio = static_cast<glm::dvec2>(_size) / static_cast<glm::dvec2>(viewportSize);
+
+		const glm::ivec2 viewportOffset = _viewport->getOffset() - _size / 2;
+		return cursorPosition * ratio - static_cast<glm::dvec2>(viewportOffset);
 	}
 
 	void Canvas::setFocusedWidget(const WidgetSharedPtr& widget)

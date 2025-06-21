@@ -27,6 +27,7 @@ namespace rendell_ui
 		const glm::mat4& getProjectMat() const;
 		const glm::mat4& getViewMat() const;
 
+		glm::ivec2 getOffset() const;
 		glm::ivec2 getSize() const;
 
 	private:

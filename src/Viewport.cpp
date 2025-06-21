@@ -52,4 +52,9 @@ namespace rendell_ui
 	{
 		return glm::ivec2({ _width, _height });
 	}
+
+	glm::ivec2 Viewport::getOffset() const
+	{
+		return glm::ivec2({ _x, _y});
+	}
 }
