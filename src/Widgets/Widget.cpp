@@ -77,6 +77,8 @@ namespace rendell_ui
 		}
 
 		RUI_WARNING("This widget tree does not have a root parent!");
+
+		return WindowCursorType::arrow;
 	}
 
 	void Widget::setWindowCursorType(WindowCursorType type)
