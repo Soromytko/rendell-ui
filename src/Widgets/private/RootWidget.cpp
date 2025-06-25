@@ -16,4 +16,15 @@ namespace rendell_ui
 	{
 		_windowEventHandler = windowEventHandler;
 	}
+
+	WindowCursorType RootWidget::getWindowCursorType() const
+	{
+		return _windowEventHandler->getWindowCursorType();
+	}
+
+	void RootWidget::setWindowCursorType(WindowCursorType type)
+	{
+		_windowEventHandler->setWindowCursor(type);
+	}
+
 }

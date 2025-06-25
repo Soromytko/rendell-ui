@@ -1,17 +1,23 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "IWindow.h"
 #include "window_input.h"
 #include "WindowEventHandler.h"
 
 struct GLFWwindow;
+struct GLFWcursor;
 
 namespace rendell_ui
 {
-	class Window
+	class Window : public IWindow
 	{
 	public:
 		Window(int width, int height, const char* title);
 		virtual ~Window();
+
+		// IWindow
+		WindowCursorType getCursorType() const override;
+		void setCursorType(WindowCursorType type) override;
 
 		bool isOpen();
 		void processEvents();
@@ -33,9 +39,11 @@ namespace rendell_ui
 
 	protected:
 		GLFWwindow* _glfwWindow;
+		GLFWcursor* _glfwCursor{ nullptr };
 		WindowEventHandlerSharedPtr _eventHandler{ nullptr };
 		static bool _glfwInitialized;
 		static int _windowCount;
+		WindowCursorType _cursorType{ WindowCursorType::arrow };
 
 	};
 

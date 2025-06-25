@@ -7,6 +7,7 @@
 #include <rendell_ui/Widgets/AnchorableWidget.h>
 #include <rendell_ui/Widgets/Anchor.h>
 #include <rendell_ui/Window/window_input.h>
+#include <rendell_ui/Window/IWindow.h>
 #include "../src/Widgets/WidgetRegistrator.h"
 #include "../src/Widgets/Transform2D.h"
 
@@ -42,6 +43,9 @@ namespace rendell_ui
 		void onMarkupUpdated() override;
 		glm::vec2 getRootPosition() const override;
 		glm::vec2 getRootSize() const override;
+
+		virtual WindowCursorType getWindowCursorType() const;
+		virtual void setWindowCursorType(WindowCursorType type);
 
 	private:
 		void setSelfWeakPtr(WidgetWeakPtr value);

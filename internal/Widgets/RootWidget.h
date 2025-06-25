@@ -16,6 +16,9 @@ namespace rendell_ui
 		void setWindowEventHandler(WindowEventHandler* windowEventHandler);
 
 	private:
+		// Widget
+		WindowCursorType getWindowCursorType() const override;
+		void setWindowCursorType(WindowCursorType type) override;
 
 		WindowEventHandler* _windowEventHandler{ nullptr };
 	};

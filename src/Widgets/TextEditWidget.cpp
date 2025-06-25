@@ -191,6 +191,16 @@ namespace rendell_ui
 		_textEditor.setupCursorByOffset(x, y);
 	}
 
+	void TextEditWidget::onMouseEntered()
+	{
+		setWindowCursorType(WindowCursorType::ibeam);
+	}
+
+	void TextEditWidget::onMouseExited()
+	{
+		setWindowCursorType(WindowCursorType::arrow);
+	}
+
 	void TextEditWidget::onMouseScrolled(glm::dvec2 scroll)
 	{
 		const double newScrollProgresss = (_textDrawer.getScroll() - scroll.y * _scrollSensitivity) /

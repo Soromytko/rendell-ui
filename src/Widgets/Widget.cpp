@@ -69,6 +69,26 @@ namespace rendell_ui
 		return static_cast<glm::vec2>(Viewport::getCurrent()->getSize());
 	}
 
+	WindowCursorType Widget::getWindowCursorType() const
+	{
+		if (auto lockedParent = _parent.lock())
+		{
+			return _parent.lock()->getWindowCursorType();
+		}
+
+		RUI_WARNING("This widget tree does not have a root parent!");
+	}
+
+	void Widget::setWindowCursorType(WindowCursorType type)
+	{
+		if (auto lockedParent = _parent.lock())
+		{
+			return lockedParent->setWindowCursorType(type);
+		}
+
+		RUI_WARNING("This widget tree does not have a root parent!");
+	}
+
 	void Widget::setVisible(bool value)
 	{
 		if (_visible != value)

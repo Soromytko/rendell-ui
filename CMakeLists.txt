@@ -10,9 +10,13 @@ set(SOURCE_FILES
     src/logging.cpp
     src/Timer.cpp
     src/ActionPool.cpp
+
+    # Window
     src/Window/Window.cpp
+    src/Window/WindowEventHandler.cpp
     src/Window/window_input.cpp
     src/Window/window_callbacks.cpp
+
     src/Viewport.cpp
     src/Time.cpp
     src/Canvas.cpp

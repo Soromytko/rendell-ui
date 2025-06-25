@@ -52,6 +52,8 @@ namespace rendell_ui
 		void onFocused() override;
 		void onUnfocused() override;
 		void onMouseDown(glm::dvec2 cursorPosition) override;
+		void onMouseEntered() override;
+		void onMouseExited() override;
 		void onMouseScrolled(glm::dvec2 scroll) override;
 		void onKeyInputted(const KeyboardInput& keyboardInput) override;
 		void onCharInputted(unsigned char character) override;

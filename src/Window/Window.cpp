@@ -33,6 +33,14 @@ namespace rendell_ui
 		setupWindowCallbacks();
 	}
 
+	static void release_glfw_cursor(GLFWcursor* glfwCursor)
+	{
+		if (glfwCursor)
+		{
+			glfwDestroyCursor(glfwCursor);
+		}
+	}
+
 	Window::~Window()
 	{
 		if (_glfwWindow)
@@ -43,6 +51,38 @@ namespace rendell_ui
 				glfwTerminate();
 				_glfwInitialized = false;
 			}
+		}
+
+		release_glfw_cursor(_glfwCursor);
+	}
+
+	WindowCursorType Window::getCursorType() const
+	{
+		return  _cursorType;
+	}
+
+	static int get_glfw_cursor_type(WindowCursorType type)
+	{
+		switch (type)
+		{
+		case WindowCursorType::arrow: return GLFW_ARROW_CURSOR;
+		case WindowCursorType::hand: return GLFW_HAND_CURSOR;
+		case WindowCursorType::cross: return GLFW_CROSSHAIR_CURSOR;
+		case WindowCursorType::ibeam: return GLFW_IBEAM_CURSOR;
+		}
+
+		return GLFW_ARROW_CURSOR;
+	}
+
+	void Window::setCursorType(WindowCursorType type)
+	{
+		if (_cursorType != type)
+		{
+			_cursorType = type;
+
+			release_glfw_cursor(_glfwCursor);
+			_glfwCursor = glfwCreateStandardCursor(get_glfw_cursor_type(type));
+			glfwSetCursor(_glfwWindow, _glfwCursor);
 		}
 	}
 
@@ -69,6 +109,7 @@ namespace rendell_ui
 	void Window::setEventHandler(WindowEventHandlerSharedPtr eventHandler)
 	{
 		_eventHandler = eventHandler;
+		_eventHandler->setWindow(this);
 	}
 
 	static void* get_native_window_handle(GLFWwindow* window)
