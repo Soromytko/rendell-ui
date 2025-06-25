@@ -1,31 +1,24 @@
 #include <rendell_ui/Canvas.h>
+#include <Widgets/RootWidget.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace rendell_ui
 {
 	Canvas::Canvas(ViewportSharedPtr viewport) : WindowEventHandler(), _viewport(viewport)
 	{
-
+		RootWidgetSharedPtr rootWidget = createRootWidget();
+		rootWidget->setWindowEventHandler(this);
+		_rootWidget = std::static_pointer_cast<Widget>(rootWidget);
 	}
 
-	void Canvas::addWidget(const WidgetSharedPtr& widget)
+	WidgetSharedPtr Canvas::getRootWidget() const
 	{
-		_widgets.insert(widget);
-	}
-
-	void Canvas::removeWidget(const WidgetSharedPtr& widget)
-	{
-		_widgets.erase(widget);
+		return _rootWidget;
 	}
 
 	void Canvas::focusWidget(const WidgetSharedPtr& widget)
 	{
 		setFocusedWidget(widget);
-	}
-
-	const std::set<WidgetSharedPtr>& Canvas::getWidgets() const
-	{
-		return _widgets;
 	}
 
 	ViewportSharedPtr Canvas::getViewport() const
@@ -47,7 +40,7 @@ namespace rendell_ui
 		_viewport->setProjectMat(projectMat);
 		_viewport->setParameters(0, 0, width, height);
 
-		updateWidgetRecursively();
+		_rootWidget->updateRecursively();
 	}
 
 	void Canvas::onResized(int width, int height)
@@ -135,10 +128,7 @@ namespace rendell_ui
 		}
 		else
 		{
-			for (const WidgetSharedPtr& widget : _widgets)
-			{
-				_hoveredWidget = hoverMouseRecursively(widget, cursor);
-			}
+			_hoveredWidget = hoverMouseRecursively(_rootWidget, cursor);
 		}
 	}
 
@@ -219,14 +209,6 @@ namespace rendell_ui
 			return true;
 		}
 		return false;
-	}
-
-	void Canvas::updateWidgetRecursively()
-	{
-		for (const WidgetSharedPtr& widget : _widgets)
-		{
-			widget->updateRecursively();
-		}
 	}
 
 	WidgetSharedPtr Canvas::hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor)

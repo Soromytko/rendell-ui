@@ -35,6 +35,7 @@ set(SOURCE_FILES
     src/Widgets/private/TextEditorWord.cpp
     src/Widgets/private/TextDrawer.cpp
     src/Widgets/private/Cursor.cpp
+    src/Widgets/private/RootWidget.cpp
     src/Shaders/Shader.cpp
     src/Shaders/ShaderStorage.cpp
     src/Shaders/RectangleShader.cpp
@@ -92,6 +93,7 @@ set(HEADER_FILES
 
     internal/logging.h
     internal/ActionPool.h
+    internal/Widgets/RootWidget.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})

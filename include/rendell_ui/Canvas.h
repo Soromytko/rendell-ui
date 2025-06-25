@@ -14,11 +14,10 @@ namespace rendell_ui
 		Canvas(ViewportSharedPtr viewport);
 		virtual ~Canvas() = default;
 
-		void addWidget(const WidgetSharedPtr& widget);
-		void removeWidget(const WidgetSharedPtr& widget);
+		WidgetSharedPtr getRootWidget() const;
+
 		void focusWidget(const WidgetSharedPtr& widget);
 
-		const std::set<WidgetSharedPtr>& getWidgets() const;
 		ViewportSharedPtr getViewport() const;
 
 		virtual void onRefreshed(int width, int height) override;
@@ -35,8 +34,9 @@ namespace rendell_ui
 
 		void setFocusedWidget(const WidgetSharedPtr& widget);
 		bool setCapturedWidget(const WidgetSharedPtr& widget, glm::dvec2 cursorPosition = {});
-		void updateWidgetRecursively();
 		WidgetSharedPtr hoverMouseRecursively(const WidgetSharedPtr& widget, glm::dvec2 cursor);
+
+		WidgetSharedPtr _rootWidget;
 
 		WidgetWeakPtr _focusedWidget;
 		WidgetWeakPtr _capturedWidget;
@@ -45,7 +45,6 @@ namespace rendell_ui
 		glm::dvec2 _dragStartPoint{};
 
 		ViewportSharedPtr _viewport;
-		std::set<WidgetSharedPtr> _widgets;
 		std::vector<WidgetWeakPtr> _mouseHoverWidgets;
 
 	};
