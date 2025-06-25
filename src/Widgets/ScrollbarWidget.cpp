@@ -72,6 +72,11 @@ namespace rendell_ui
 		return _scrollable;
 	}
 
+	bool ScrollbarWidget::getIsHidden() const
+	{
+		return _isHidden;
+	}
+
 	void ScrollbarWidget::updateProgress()
 	{
 		_progress = _scrollable.expired() ? 0.0 : _scrollable.lock()->getScrollProgress();

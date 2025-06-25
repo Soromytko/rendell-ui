@@ -22,6 +22,7 @@ namespace rendell_ui
 	public:
 		double getProgress() const;
 		IScrollableWidgetWeakPtr getScrollable() const;
+		bool getIsHidden() const;
 
 		void updateProgress();
 		void setScrollable(IScrollableWidgetWeakPtr scrollable);

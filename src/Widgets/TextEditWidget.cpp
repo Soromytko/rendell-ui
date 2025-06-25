@@ -191,6 +191,18 @@ namespace rendell_ui
 		_textEditor.setupCursorByOffset(x, y);
 	}
 
+	void TextEditWidget::onMouseHovered(glm::dvec2 cursorPosition)
+	{
+		if (!_scrollbarWidget->getIsHidden() && _scrollbarWidget->intersect(cursorPosition))
+		{
+			setWindowCursorType(WindowCursorType::arrow);
+		}
+		else
+		{
+			setWindowCursorType(WindowCursorType::ibeam);
+		}
+	}
+
 	void TextEditWidget::onMouseEntered()
 	{
 		setWindowCursorType(WindowCursorType::ibeam);
