@@ -35,7 +35,7 @@ namespace rendell_ui
 
 	void Canvas::onRefreshed(int width, int height)
 	{
-		_size = glm::ivec2(width, height);
+		_viewport->setWindowSize({ width, height });
 
 		const float ratio = (float)width / (float)height;
 		const float worldWidth = height * ratio;
@@ -52,7 +52,7 @@ namespace rendell_ui
 
 	void Canvas::onResized(int width, int height)
 	{
-		_size = glm::ivec2(width, height);
+		_viewport->setWindowSize({ width, height });
 	}
 
 	void Canvas::onKeyInputted(const KeyboardInput& keyboardInput)
@@ -180,17 +180,8 @@ namespace rendell_ui
 
 	glm::dvec2 Canvas::convertCursorPositionToViewport(glm::dvec2 cursorPosition) const
 	{
-		const glm::ivec2 viewportSize = _viewport->getSize();
-
-		if (viewportSize.x == 0 || viewportSize.y == 0)
-		{
-			return cursorPosition;
-		}
-
-		const glm::dvec2 ratio = static_cast<glm::dvec2>(_size) / static_cast<glm::dvec2>(viewportSize);
-
-		const glm::ivec2 viewportOffset = _viewport->getOffset() - _size / 2;
-		return cursorPosition * ratio - static_cast<glm::dvec2>(viewportOffset);
+		auto result = _viewport->convertCursorPosition(static_cast<glm::ivec2>(cursorPosition));
+		return result;
 	}
 
 	void Canvas::setFocusedWidget(const WidgetSharedPtr& widget)

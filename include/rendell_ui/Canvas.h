@@ -48,8 +48,6 @@ namespace rendell_ui
 		std::set<WidgetSharedPtr> _widgets;
 		std::vector<WidgetWeakPtr> _mouseHoverWidgets;
 
-		glm::ivec2 _size{};
-
 	};
 
 	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Canvas)

@@ -65,6 +65,7 @@ namespace rendell_ui
 		{
 			return maybeParent->_size;
 		}
+
 		return static_cast<glm::vec2>(Viewport::getCurrent()->getSize());
 	}
 

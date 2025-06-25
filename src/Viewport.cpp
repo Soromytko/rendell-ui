@@ -17,13 +17,24 @@ namespace rendell_ui
 
 	void Viewport::apply()
 	{
-		rendell::setViewport(_x, _y, _width, _height);
+		rendell::setViewport(_x, _y, _width, _height, _windowSize.x, _windowSize.y);
 	}
 
 	void Viewport::setParameters(int x, int y, int width, int height)
 	{
 		_x = x;
 		_y = y;
+		_width = width;
+		_height = height;
+	}
+
+	void Viewport::setWindowSize(glm::ivec2 value)
+	{
+		_windowSize = value;
+	}
+
+	void Viewport::setSize(int width, int height)
+	{
 		_width = width;
 		_height = height;
 	}
@@ -36,6 +47,11 @@ namespace rendell_ui
 	void Viewport::setViewMat(const glm::mat4& value)
 	{
 		_viewMat = value;
+	}
+
+	glm::ivec2 Viewport::getWindowSize() const
+	{
+		return _windowSize;
 	}
 
 	const glm::mat4& Viewport::getProjectMat() const
@@ -51,6 +67,13 @@ namespace rendell_ui
 	glm::ivec2 Viewport::getSize() const
 	{
 		return glm::ivec2({ _width, _height });
+	}
+
+	glm::ivec2 Viewport::convertCursorPosition(glm::ivec2 cursorPosition) const
+	{
+		const glm::ivec2 localViewportOffset = glm::ivec2(-_windowSize.x, _windowSize.y) / 2 + glm::ivec2(_x, -_y);
+		const glm::ivec2 viewportCenter = localViewportOffset + glm::ivec2(_width, -_height) / 2;
+		return cursorPosition - viewportCenter;
 	}
 
 	glm::ivec2 Viewport::getOffset() const
