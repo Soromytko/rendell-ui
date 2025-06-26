@@ -39,6 +39,16 @@ namespace rendell_ui
 		_height = height;
 	}
 
+	void Viewport::startScissors(int x, int y, int width, int height)
+	{
+		rendell::startScissors(x, y, width, height);
+	}
+
+	void Viewport::endScissors()
+	{
+		rendell::endScissors();
+	}
+
 	void Viewport::setProjectMat(const glm::mat4& value)
 	{
 		_projectMat = value;

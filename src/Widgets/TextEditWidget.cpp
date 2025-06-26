@@ -43,14 +43,19 @@ namespace rendell_ui
 	{
 		const glm::mat4& projectMat = Viewport::getCurrent()->getProjectMat();
 		const glm::mat4& viewMat = Viewport::getCurrent()->getViewMat();
-		const glm::mat4& transformMat = _transform.getMatrix();
+		const glm::mat4& transformMat = glm::translate(_transform.getMatrix(), glm::vec3(-_scrollbarWidget->getSize().x * 0.5f, 0.0f, 0.0f));
+
+		const auto windowSize = Viewport::getCurrent()->getSize();
 
 		_textDrawer.draw(projectMat * viewMat, transformMat);
 
+		const glm::ivec2 textDrawerSize = static_cast<glm::ivec2>(_textDrawer.getSize());
+		Viewport::getCurrent()->startScissors(static_cast<int>(transformMat[3].x), static_cast<int>(transformMat[3].x), textDrawerSize.x, textDrawerSize.y);
 		if (_cursor->getVisible())
 		{
 			_cursor->draw();
 		}
+		Viewport::getCurrent()->endScissors();
 
 		if (_scrollbarWidget->getVisible())
 		{
@@ -139,7 +144,7 @@ namespace rendell_ui
 
 	void TextEditWidget::onSizeChanged()
 	{
-		_textDrawer.setSize(_size);
+		_textDrawer.setSize(_size - glm::vec2(_scrollbarWidget->getSize().x, 0.0f));
 	}
 
 	void TextEditWidget::onTextLayoutCleared()

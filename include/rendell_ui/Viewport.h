@@ -23,6 +23,9 @@ namespace rendell_ui
 		void setWindowSize(glm::ivec2 value);
 		void setSize(int width, int height);
 
+		void startScissors(int x, int y, int width, int height);
+		void endScissors();
+
 		void setProjectMat(const glm::mat4& value);
 		void setViewMat(const glm::mat4& value);
 

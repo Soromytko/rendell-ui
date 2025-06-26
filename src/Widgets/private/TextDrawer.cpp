@@ -1,4 +1,5 @@
 #include <rendell_ui/Widgets/private/TextDrawer.h>
+#include <rendell_ui/Viewport.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace rendell_ui
@@ -56,6 +57,10 @@ namespace rendell_ui
 
 	void TextDrawer::draw(const glm::mat4 viewMatrix, const glm::mat4& modelMatrix) const
 	{
+		const glm::vec3 offset = modelMatrix[3];
+
+		Viewport::getCurrent()->startScissors(offset.x, offset.y, static_cast<int>(_size.x), static_cast<int>(_size.y));
+
 		double currentOffset = _size.y * 0.5 + _startRenderingOffset;
 		for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++)
 		{
@@ -69,6 +74,8 @@ namespace rendell_ui
 			textRenderer->setMatrix(viewMatrix * worldMat);
 			textRenderer->draw();
 		}
+
+		Viewport::getCurrent()->endScissors();
 	}
 
 	void TextDrawer::setSize(glm::dvec2 value)
