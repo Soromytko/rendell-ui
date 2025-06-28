@@ -69,6 +69,11 @@ namespace rendell_ui
 		case WindowCursorType::hand: return GLFW_HAND_CURSOR;
 		case WindowCursorType::cross: return GLFW_CROSSHAIR_CURSOR;
 		case WindowCursorType::ibeam: return GLFW_IBEAM_CURSOR;
+		case WindowCursorType::verticalResize: return GLFW_VRESIZE_CURSOR;
+		case WindowCursorType::horizontalResize: return GLFW_HRESIZE_CURSOR;
+		case WindowCursorType::nvseResize: return GLFW_RESIZE_NWSE_CURSOR;
+		case WindowCursorType::neswResize: return GLFW_RESIZE_NESW_CURSOR;
+		case WindowCursorType::centerResize: return  GLFW_RESIZE_ALL_CURSOR;
 		}
 
 		return GLFW_ARROW_CURSOR;
