@@ -50,7 +50,7 @@ namespace rendell_ui
 		_textDrawer.draw(projectMat * viewMat, transformMat);
 
 		const glm::ivec2 textDrawerSize = static_cast<glm::ivec2>(_textDrawer.getSize());
-		Viewport::getCurrent()->startScissors(static_cast<int>(transformMat[3].x), static_cast<int>(transformMat[3].x), textDrawerSize.x, textDrawerSize.y);
+		Viewport::getCurrent()->startScissors(static_cast<int>(transformMat[3].x), static_cast<int>(transformMat[3].y), textDrawerSize.x, textDrawerSize.y);
 		if (_cursor->getVisible())
 		{
 			_cursor->draw();
