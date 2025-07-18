@@ -7,20 +7,12 @@ namespace rendell_ui
 {
 	std::unique_ptr<logx::Logger> s_logger{ nullptr };
 
-	void init_logger()
-	{
-		assert(!s_logger);
-		s_logger = std::make_unique<RUILogger>();
-	}
-
-	void release_logger()
-	{
-		assert(s_logger);
-		s_logger.release();
-	}
-
 	logx::Logger* get_logger()
 	{
+		if (!s_logger)
+		{
+			s_logger = std::make_unique<RUILogger>();
+		}
 		assert(s_logger);
 		return s_logger.get();
 	}

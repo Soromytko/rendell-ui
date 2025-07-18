@@ -15,8 +15,6 @@ namespace rendell_ui
 
 	bool init()
 	{
-		init_logger();
-
 		s_widgetRenderPipeline = makeWidgetRenderPipeline();
 
 		WidgetRegistrator::init({
@@ -36,8 +34,6 @@ namespace rendell_ui
 		WidgetRegistrator::release();
 		ShaderStorage::release();
 		s_actionPool = nullptr;
-
-		release_logger();
 	}
 
 	void draw()

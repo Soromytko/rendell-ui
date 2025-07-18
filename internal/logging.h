@@ -13,9 +13,6 @@ namespace rendell_ui
 		const char* getLevelName_Unsafe(logx::Level level) const override;
 	};
 
-	void init_logger();
-	void release_logger();
-
 	logx::Logger* get_logger();
 
 }
