@@ -1,5 +1,7 @@
 #include <rendell_ui/Window/Window.h>
+#include <rendell/rendell.h>
 #include <GLFW/glfw3.h>
+#include <logging.h>
 #include "window_callbacks.h"
 
 #if defined(_WIN32)
@@ -17,6 +19,22 @@ namespace rendell_ui
 {
 	static WindowEventHandlerSharedPtr s_eventHandlerStub;
 
+	static rendell::context_id init_rendell(Window* window)
+	{
+		rendell::Initer initer;
+		initer.nativeWindowHandle = window->getNativeWindowHandle();
+#if defined(__linux__)
+		initer.x11Display = window->getX11Display();
+#endif
+		if (rendell::context_id context = rendell::init(initer))
+		{
+			rendell::setPixelUnpackAlignment(1);
+			rendell::setClearBits(rendell::colorBufferBit | rendell::depthBufferBit);
+			return context;
+		}
+		return 0;
+	}
+
 	Window::Window(int width, int height, const char* title)
 	{
 		if (!init())
@@ -31,6 +49,12 @@ namespace rendell_ui
 		_windowCount++;
 
 		setupWindowCallbacks();
+
+		_rendell_context_id = init_rendell(this);
+		if (!_rendell_context_id)
+		{
+			RUI_ERROR("Failed to initialize rendell");
+		}
 	}
 
 	static void release_glfw_cursor(GLFWcursor* glfwCursor)
@@ -54,6 +78,13 @@ namespace rendell_ui
 		}
 
 		release_glfw_cursor(_glfwCursor);
+
+		rendell::releaseContext(_rendell_context_id);
+	}
+
+	size_t Window::getRendellContextId() const
+	{
+		return _rendell_context_id;
 	}
 
 	WindowCursorType Window::getCursorType() const

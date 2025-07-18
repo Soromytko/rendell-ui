@@ -15,6 +15,8 @@ namespace rendell_ui
 		Window(int width, int height, const char* title);
 		virtual ~Window();
 
+		size_t getRendellContextId() const;
+
 		// IWindow
 		WindowCursorType getCursorType() const override;
 		void setCursorType(WindowCursorType type) override;
@@ -44,7 +46,7 @@ namespace rendell_ui
 		static bool _glfwInitialized;
 		static int _windowCount;
 		WindowCursorType _cursorType{ WindowCursorType::arrow };
-
+		size_t _rendell_context_id;
 	};
 
 	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Window)
