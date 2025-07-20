@@ -62,7 +62,7 @@ namespace rendell_ui
 	void ButtonWidget::onCaptured(glm::dvec2 cursorPosition)
 	{
 		_isCaptured = true;
-		setColor({ CAPTURED_DEFAULT_COLOR, 1.0 });
+		setColor({CAPTURED_HOVER_COLOR, 1.0});
 	}
 
 	void ButtonWidget::onFreed(glm::dvec2 cursorPosition)
