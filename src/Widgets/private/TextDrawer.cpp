@@ -59,7 +59,11 @@ namespace rendell_ui
 	{
 		const glm::vec3 offset = modelMatrix[3];
 
-		Viewport::getCurrent()->startScissors(offset.x, offset.y, static_cast<int>(_size.x), static_cast<int>(_size.y));
+		Viewport::getCurrent()->startScissors(
+			static_cast<int>(offset.x),
+			static_cast<int>(offset.y),
+			static_cast<int>(_size.x),
+			static_cast<int>(_size.y));
 
 		double currentOffset = _size.y * 0.5 + _startRenderingOffset;
 		for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++)
