@@ -1,5 +1,6 @@
 #pragma once
 #include "defines.h"
+#include "color_defines.h"
 #include "initialization.h"
 #include "Viewport.h"
 #include "Canvas.h"

@@ -51,6 +51,7 @@ set(SOURCE_FILES
 set(HEADER_FILES
     include/rendell_ui/rendell_ui.h
     include/rendell_ui/defines.h
+    include/rendell_ui/color_defines.h
     include/rendell_ui/Signal.h
     include/rendell_ui/initialization.h
     include/rendell_ui/Canvas.h
