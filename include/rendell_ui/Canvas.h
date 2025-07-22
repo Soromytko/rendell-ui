@@ -27,7 +27,7 @@ public:
     virtual void onCursorEntered(bool entered) override;
     virtual void onCharInputted(unsigned char character) override;
 
-private:
+protected:
     glm::dvec2 convertCursorPositionToViewport(glm::dvec2 cursorPosition) const;
 
     void setFocusedWidget(const WidgetSharedPtr &widget);

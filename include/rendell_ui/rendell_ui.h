@@ -5,6 +5,8 @@
 #include "defines.h"
 #include "initialization.h"
 
+//#include "Memory/Ref.h"
+
 #include "Window/Window.h"
 #include "Window/window_input.h"
 
@@ -15,3 +17,7 @@
 #include "Widgets/TabButtonWidget.h"
 #include "Widgets/TextEditWidget.h"
 #include "Widgets/TextWidget.h"
+
+#include "Docking/DockCanvas.h"
+#include "Docking/DockNode.h"
+#include "Docking/DockSeparator.h"

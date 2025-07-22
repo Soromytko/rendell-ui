@@ -46,6 +46,11 @@ set(SOURCE_FILES
     src/String/StringBuilder.cpp
     src/String/StringBuilderChunk.cpp
     src/String/StringExtension.cpp
+
+    # Docking
+    src/Docking/DockCanvas.cpp
+    src/Docking/DockNode.cpp
+    #src/Docking/DockSeparator.cpp
 )
 
 set(HEADER_FILES
@@ -82,6 +87,14 @@ set(HEADER_FILES
     include/rendell_ui/Widgets/private/TextEditor.h
     include/rendell_ui/Widgets/private/TextEditorWord.h
     include/rendell_ui/Widgets/private/TextDrawer.h
+
+    # Docking
+    include/rendell_ui/Docking/DockCanvas.h
+    include/rendell_ui/Docking/DockNode.h
+    #include/rendell_ui/Docking/DockSeparator.h
+
+    # Memory
+    include/rendell_ui/Memory/Ref.h
 
     src/Window/window_callbacks.h
     src/Time.h
