@@ -1,37 +1,35 @@
 #pragma once
-#include <memory>
-#include <list>
 #include "StringBuilderChunk.h"
+#include <list>
+#include <memory>
 
-namespace rendell_ui
-{
-	class StringBuilder final
-	{
-		using ChunkConstIter = std::list<StringBuilderChunkSharedPtr>::const_iterator;
-	public:
-		StringBuilder(const StringType& data = {}, size_t chunkSize = 16);
-		~StringBuilder() = default;
+namespace rendell_ui {
+class StringBuilder final {
+    using ChunkConstIter = std::list<StringBuilderChunkSharedPtr>::const_iterator;
 
-		StringType toString() const;
-		size_t getLength() const;
+public:
+    StringBuilder(const StringType &data = {}, size_t chunkSize = 16);
+    ~StringBuilder() = default;
 
-		void append(StringType&& data);
-		void append(const StringType& data);
-		void insert(size_t index, const StringType& value);
-		void removeAt(size_t index);
-		void remove(size_t indexFrom, size_t count = 1);
+    StringType toString() const;
+    size_t getLength() const;
 
-	protected:
-		ChunkConstIter findChunkByItemIndex(size_t itemIndex, size_t* indexInChunk = nullptr) const;
-		bool mergeChunks(ChunkConstIter chunkIt1, ChunkConstIter chunkIt2);
-		bool mergeChunks(ChunkConstIter chunkIt, size_t neighborCount = 1);
+    void append(StringType &&data);
+    void append(const StringType &data);
+    void insert(size_t index, const StringType &value);
+    void removeAt(size_t index);
+    void remove(size_t indexFrom, size_t count = 1);
 
-		size_t _length{ 0 };
-		size_t _chunkSize;
-		std::list<StringBuilderChunkSharedPtr> _chunks;
+protected:
+    ChunkConstIter findChunkByItemIndex(size_t itemIndex, size_t *indexInChunk = nullptr) const;
+    bool mergeChunks(ChunkConstIter chunkIt1, ChunkConstIter chunkIt2);
+    bool mergeChunks(ChunkConstIter chunkIt, size_t neighborCount = 1);
 
-	};
+    size_t _length{0};
+    size_t _chunkSize;
+    std::list<StringBuilderChunkSharedPtr> _chunks;
+};
 
-	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(StringBuilder)
+RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(StringBuilder)
 
-}
+} // namespace rendell_ui

@@ -25,10 +25,8 @@ static const std::string s_fragmentSrc = R"(
 	}
 )";
 
-namespace rendell_ui
-{
-	RectangleShader::RectangleShader() : Shader(s_vertexSrc, s_fragmentSrc)
-	{
-
-	}
+namespace rendell_ui {
+RectangleShader::RectangleShader()
+    : Shader(s_vertexSrc, s_fragmentSrc) {
 }
+} // namespace rendell_ui

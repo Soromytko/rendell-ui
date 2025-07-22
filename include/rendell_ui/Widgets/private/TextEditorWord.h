@@ -1,39 +1,33 @@
 #pragma once
 #include <memory>
-#include <string>
 #include <rendell_ui/defines.h>
+#include <string>
 
-namespace rendell_ui
-{
-	class TextEditorWord
-	{
-	public:
-		TextEditorWord(const std::wstring& characters = {});
-		virtual ~TextEditorWord() = default;
+namespace rendell_ui {
+class TextEditorWord {
+public:
+    TextEditorWord(const std::wstring &characters = {});
+    virtual ~TextEditorWord() = default;
 
-		const std::wstring& getCharacters() const;
+    const std::wstring &getCharacters() const;
 
-		virtual bool isWordCharacter(wchar_t character) const;
+    virtual bool isWordCharacter(wchar_t character) const;
 
-	private:
-		std::wstring _characters;
+private:
+    std::wstring _characters;
+};
+RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(TextEditorWord)
 
-	};
-	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(TextEditorWord)
+class DigitTextEditorWord final : public TextEditorWord {
+public:
+    bool isWordCharacter(wchar_t character) const override;
+};
+RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(DigitTextEditorWord)
 
-	class DigitTextEditorWord final : public TextEditorWord
-	{
-	public:
-		bool isWordCharacter(wchar_t character) const override;
-	};
-	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(DigitTextEditorWord)
+class VerbalTextEditorWord final : public TextEditorWord {
+public:
+    bool isWordCharacter(wchar_t character) const override;
+};
+RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(VerbalTextEditorWord)
 
-	class VerbalTextEditorWord final : public TextEditorWord
-	{
-	public:
-		bool isWordCharacter(wchar_t character) const override;
-	};
-	RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(VerbalTextEditorWord)
-
-
-}
+} // namespace rendell_ui
