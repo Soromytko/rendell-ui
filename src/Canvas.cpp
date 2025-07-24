@@ -1,5 +1,4 @@
 #include <Widgets/RootWidget.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <rendell_ui/Canvas.h>
 
 namespace rendell_ui {
@@ -25,23 +24,16 @@ ViewportSharedPtr Canvas::getViewport() const {
 
 void Canvas::onRefreshed(int width, int height) {
     _viewport->setWindowSize({width, height});
-
-    const float ratio = (float)width / (float)height;
-    const float worldWidth = height * ratio;
-
-    const float halfWidth = worldWidth * 0.5f;
-    const float halfHeight = height * 0.5f;
-
-    const glm::mat4 projectMat =
-        glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
-    _viewport->setProjectMat(projectMat);
-    _viewport->setParameters(0, 0, width, height);
-
+    _viewport->setSize(width, height);
+    _viewport->setOffset(0.0f, 0.0f);
     _rootWidget->updateRecursively();
 }
 
 void Canvas::onResized(int width, int height) {
     _viewport->setWindowSize({width, height});
+    _viewport->setSize(width, height);
+    _viewport->setOffset(0.0f, 0.0f);
+    _rootWidget->updateRecursively();
 }
 
 void Canvas::onKeyInputted(const KeyboardInput &keyboardInput) {

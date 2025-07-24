@@ -17,9 +17,9 @@ public:
     static ViewportSharedPtr getCurrent();
 
     void apply();
-    void setParameters(int x, int y, int width, int height);
     void setWindowSize(glm::ivec2 value);
     void setSize(int width, int height);
+    void setOffset(int x, int y);
 
     void startScissors(int x, int y, int width, int height);
     void endScissors();
@@ -37,6 +37,8 @@ public:
     glm::ivec2 convertCursorPosition(glm::ivec2 cursorPosition) const;
 
 private:
+    void updateMatrix();
+
     int _x{0}, _y{0}, _width{100}, _height{100};
     glm::ivec2 _windowSize{_width, _height};
     glm::mat4 _projectMat = glm::mat4(1.0f);

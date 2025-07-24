@@ -1,3 +1,4 @@
+#include <glm/gtc/matrix_transform.hpp>
 #include <rendell/rendell.h>
 #include <rendell_ui/Viewport.h>
 
@@ -16,20 +17,21 @@ void Viewport::apply() {
     rendell::setViewport(_x, _y, _width, _height, _windowSize.x, _windowSize.y);
 }
 
-void Viewport::setParameters(int x, int y, int width, int height) {
-    _x = x;
-    _y = y;
-    _width = width;
-    _height = height;
-}
-
 void Viewport::setWindowSize(glm::ivec2 value) {
     _windowSize = value;
 }
 
 void Viewport::setSize(int width, int height) {
-    _width = width;
-    _height = height;
+    if (_width != width || _height != height) {
+        _width = width;
+        _height = height;
+        updateMatrix();
+    }
+}
+
+void Viewport::setOffset(int x, int y) {
+    _x = x;
+    _y = y;
 }
 
 void Viewport::startScissors(int x, int y, int width, int height) {
@@ -73,5 +75,15 @@ glm::ivec2 Viewport::convertCursorPosition(glm::ivec2 cursorPosition) const {
 
 glm::ivec2 Viewport::getOffset() const {
     return glm::ivec2({_x, _y});
+}
+
+void Viewport::updateMatrix() {
+    const float ratio = static_cast<float>(_width) / static_cast<float>(_height);
+    const float worldWidth = _height * ratio;
+
+    const float halfWidth = worldWidth * 0.5f;
+    const float halfHeight = _height * 0.5f;
+
+    _projectMat = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
 }
 } // namespace rendell_ui
