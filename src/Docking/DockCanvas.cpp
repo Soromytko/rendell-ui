@@ -11,12 +11,16 @@ DockNodeSharedPtr DockCanvas::getRootDockNode() const {
 }
 
 void DockCanvas::onRefreshed(int width, int height) {
-    Canvas::onRefreshed(width, height);
+    _viewport->setWindowSize({width, height});
+    _viewport->setSize(width, height);
+    _viewport->setOffset(0, 0);
     updateDockNodeRect(width, height);
 }
 
 void DockCanvas::onResized(int width, int height) {
-    Canvas::onResized(width, height);
+    _viewport->setWindowSize({width, height});
+    _viewport->setSize(width, height);
+    _viewport->setOffset(0, 0);
     updateDockNodeRect(width, height);
 }
 
