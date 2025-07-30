@@ -5,10 +5,10 @@
 #include <rendell_ui/defines.h>
 
 namespace rendell_ui {
-class RootWidget final : public Widget {
+class RootWidget : public Widget {
 public:
     RootWidget();
-    ~RootWidget() = default;
+    virtual ~RootWidget() = default;
 
     WindowEventHandler *getWindowEventHandler() const;
     void setWindowEventHandler(WindowEventHandler *windowEventHandler);
