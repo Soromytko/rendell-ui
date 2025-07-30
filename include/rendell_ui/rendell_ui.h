@@ -1,3 +1,4 @@
+
 #pragma once
 #include "Canvas.h"
 #include "Viewport.h"
@@ -15,6 +16,12 @@
 #include "Widgets/TabButtonWidget.h"
 #include "Widgets/TextEditWidget.h"
 #include "Widgets/TextWidget.h"
+
+#include "Docking/DockCanvas.h"
+#include "Docking/DockNode.h"
+#include "Docking/Widgets/DockHeaderWidget.h"
+#include "Docking/Widgets/DockRootWidget.h"
+#include "Docking/Widgets/DockSeparatorWidget.h"
 
 namespace rendell_ui {
 IWindow *createWindow(uint32_t width, uint32_t height, const char *title, bool isHidden = false);

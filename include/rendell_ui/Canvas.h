@@ -27,8 +27,11 @@ public:
     virtual void onCursorEntered(bool entered) override;
     virtual void onCharInputted(unsigned char character) override;
 
-private:
+protected:
     glm::dvec2 convertCursorPositionToViewport(glm::dvec2 cursorPosition) const;
+    bool containsMouseHoverWidgets(WidgetSharedPtr widget) const;
+
+    virtual void onResized(glm::ivec2 size);
 
     void setFocusedWidget(const WidgetSharedPtr &widget);
     bool setCapturedWidget(const WidgetSharedPtr &widget, glm::dvec2 cursorPosition = {});
