@@ -23,17 +23,11 @@ ViewportSharedPtr Canvas::getViewport() const {
 }
 
 void Canvas::onRefreshed(int width, int height) {
-    _viewport->setWindowSize({width, height});
-    _viewport->setSize(width, height);
-    _viewport->setOffset(0.0f, 0.0f);
-    _rootWidget->updateRecursively();
+    onResized({width, height});
 }
 
 void Canvas::onResized(int width, int height) {
-    _viewport->setWindowSize({width, height});
-    _viewport->setSize(width, height);
-    _viewport->setOffset(0.0f, 0.0f);
-    _rootWidget->updateRecursively();
+    onResized({width, height});
 }
 
 void Canvas::onKeyInputted(const KeyboardInput &keyboardInput) {
@@ -131,6 +125,23 @@ glm::dvec2 Canvas::convertCursorPositionToViewport(glm::dvec2 cursorPosition) co
     return result;
 }
 
+bool Canvas::containsMouseHoverWidgets(WidgetSharedPtr widget) const {
+    return std::find_if(_mouseHoverWidgets.begin(), _mouseHoverWidgets.end(),
+                        [=](WidgetWeakPtr currentWidget) {
+                            if (auto locked = currentWidget.lock()) {
+                                return locked == widget;
+                            }
+                            return false;
+                        }) != _mouseHoverWidgets.end();
+}
+
+void Canvas::onResized(glm::ivec2 size) {
+    _viewport->setWindowSize(size);
+    _viewport->setSize(size.x, size.y);
+    _viewport->setOffset(0, 0);
+    _rootWidget->setSize(static_cast<glm::vec2>(size));
+}
+
 void Canvas::setFocusedWidget(const WidgetSharedPtr &widget) {
     auto focusedWidgetLocked = _focusedWidget.lock();
 
@@ -165,13 +176,7 @@ WidgetSharedPtr Canvas::hoverMouseRecursively(const WidgetSharedPtr &widget, glm
         return nullptr;
     }
 
-    if (auto it = std::find_if(_mouseHoverWidgets.begin(), _mouseHoverWidgets.end(),
-                               [=](WidgetWeakPtr currentWidget) {
-                                   if (auto locked = currentWidget.lock()) {
-                                       return locked == widget;
-                                   }
-                                   return false;
-                               }) == _mouseHoverWidgets.end()) {
+    if (!containsMouseHoverWidgets(widget)) {
         _mouseHoverWidgets.push_back(widget);
         widget->onMouseEntered();
     }

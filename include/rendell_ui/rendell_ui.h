@@ -15,3 +15,9 @@
 #include "Widgets/TabButtonWidget.h"
 #include "Widgets/TextEditWidget.h"
 #include "Widgets/TextWidget.h"
+
+#include "Docking/DockCanvas.h"
+#include "Docking/DockNode.h"
+#include "Docking/Widgets/DockRootWidget.h"
+#include "Docking/Widgets/DockHeaderWidget.h"
+#include "Docking/Widgets/DockSeparatorWidget.h"

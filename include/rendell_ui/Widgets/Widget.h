@@ -39,8 +39,8 @@ public:
 protected:
     // AnchorableWidget
     void onMarkupUpdated() override;
-    glm::vec2 getRootPosition() const override;
-    glm::vec2 getRootSize() const override;
+    virtual glm::vec2 getRootPosition() const override;
+    virtual glm::vec2 getRootSize() const override;
 
     virtual WindowCursorType getWindowCursorType() const;
     virtual void setWindowCursorType(WindowCursorType type);
