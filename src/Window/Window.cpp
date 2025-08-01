@@ -5,6 +5,7 @@
 #include <rendell_ui/Window/Window.h>
 
 #if defined(_WIN32)
+#define NOMINMAX
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
 #elif defined(__linux__)
@@ -129,6 +130,21 @@ int Window::getWindowCount() {
     return _windowCount;
 }
 
+void Window::setSize(glm::ivec2 value) {
+    glfwSetWindowSize(_glfwWindow, value.x, value.y);
+}
+
+void Window::setMinSize(glm::ivec2 value) {
+    if (_minSize != value) {
+        _minSize = value;
+        glfwSetWindowSizeLimits(_glfwWindow, _minSize.x, _minSize.y, GLFW_DONT_CARE,
+                                GLFW_DONT_CARE);
+
+        const glm::ivec2 newSize = glm::max(_minSize, getSize());
+        setSize(newSize);
+    }
+}
+
 void Window::setEventHandler(WindowEventHandlerSharedPtr eventHandler) {
     _eventHandler = eventHandler;
     _eventHandler->setWindow(this);
@@ -162,6 +178,10 @@ glm::ivec2 Window::getSize() const {
     int width, height;
     glfwGetFramebufferSize(_glfwWindow, &width, &height);
     return glm::ivec2(width, height);
+}
+
+glm::ivec2 Window::getMinSize() const {
+    return _minSize;
 }
 
 glm::dvec2 Window::getCursorPosition() const {

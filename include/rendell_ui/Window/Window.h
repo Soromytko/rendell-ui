@@ -24,12 +24,15 @@ public:
     static bool isInitialized();
     static int getWindowCount();
 
+    void setSize(glm::ivec2 value);
+    void setMinSize(glm::ivec2 value);
     void setEventHandler(WindowEventHandlerSharedPtr eventHandler);
 
     void waitEvent() const;
     void *getNativeWindowHandle() const;
     void *getX11Display() const;
     glm::ivec2 getSize() const;
+    glm::ivec2 getMinSize() const;
     glm::dvec2 getCursorPosition() const;
     WindowEventHandlerSharedPtr getEventHandler() const;
 
@@ -45,6 +48,8 @@ protected:
     static int _windowCount;
     WindowCursorType _cursorType{WindowCursorType::arrow};
     size_t _rendell_context_id;
+
+    glm::ivec2 _minSize{0, 0};
 };
 
 RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(Window)
