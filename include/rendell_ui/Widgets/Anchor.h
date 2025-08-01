@@ -27,10 +27,25 @@ enum class Anchor : uint8_t {
 };
 
 struct Margins {
-    float left;
-    float right;
-    float bottom;
-    float top;
+    float left{0.0f};
+    float right{0.0f};
+    float bottom{0.0f};
+    float top{0.0f};
+
+    constexpr static Margins makeLeft(float value) { return {value, 0.0f, 0.0f, 0.0f}; }
+    constexpr static Margins makeRight(float value) { return {0.0f, value, 0.0f, 0.0f}; }
+    constexpr static Margins makeBottom(float value) { return {0.0f, 0.0f, value, 0.0f}; }
+    constexpr static Margins makeTop(float value) { return {0.0f, 0.0f, 0.0f, value}; }
+    constexpr static Margins makeHorizontal(float value) { return {value, value, 0.0f, 0.0f}; }
+    constexpr static Margins makeVertical(float value) { return {0.0f, 0.0f, value, value}; }
+    constexpr static Margins makeAll(float value) { return {value, value, value, value}; }
+
+    constexpr Margins() = default;
+    constexpr Margins(float left, float right, float bottom, float top)
+        : left(left)
+        , right(right)
+        , bottom(bottom)
+        , top(top) {}
 };
 
 inline bool operator==(const Margins &lhs, const Margins &rhs) {
