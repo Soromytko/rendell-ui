@@ -74,6 +74,7 @@ void Canvas::onMouseMoved(double x, double y) {
 
     if (auto locked = _capturedWidget.lock()) {
         locked->onDragged(_dragStartPoint, cursor);
+        return;
     }
 
     // Emit onMouseExited events.
