@@ -5,25 +5,12 @@
 #include <tuple>
 
 namespace rendell_ui {
-DockNode::CreateDockSeparatorCallback s_createDockSeparatorCallback = [](WidgetSharedPtr parent) {
-    return createDockSeparatorWidget(parent);
-};
-} // namespace rendell_ui
 
-namespace rendell_ui {
-void DockNode::setCreateDockSeparatorCallback(CreateDockSeparatorCallback callback) {
-    assert(callback != nullptr);
-    s_createDockSeparatorCallback = callback;
+DockNode::DockNode(DockNodeSharedPtr parent)
+    : _parent(parent) {
 }
 
-DockNode::DockNode(DockNodeSharedPtr parent, WidgetSharedPtr canvasRootWidget)
-    : _parent(parent)
-    , _canvasRootWidget(canvasRootWidget) {
-    _rootWidget = createRootWidget();
-}
-
-const std::string &DockNode::getHeader() const {
-    return _header;
+DockNode::~DockNode() {
 }
 
 glm::vec2 DockNode::getOrigin() const {
@@ -38,14 +25,6 @@ glm::vec2 DockNode::getMinSize() const {
     return _minSize;
 }
 
-DockRootWidgetSharedPtr DockNode::getRootWidget() const {
-    return _rootWidget;
-}
-
-WidgetSharedPtr DockNode::getWorkSpaceWidget() const {
-    return _rootWidget->getWorkSpaceWidget();
-}
-
 DockNodeSharedPtr DockNode::getParent() const {
     return _parent.lock();
 }
@@ -58,19 +37,20 @@ DockNodeSharedPtr DockNode::getSecondChild() const {
     return _secondChild;
 }
 
-DockSeparatorWidgetSharedPtr DockNode::getSeparator() const {
-    return _dockSeparatorWidget;
+IDockNodeSeparatorSharedPtr DockNode::getSeparator() const {
+    return _separator;
+}
+
+DockNode::RequestParentResizeCallback DockNode::getRequestParentResizeCallback() const {
+    return _requestParentResizeCallback;
+}
+
+const std::vector<IDockableSharedPtr> &DockNode::getDockables() const {
+    return _dockables;
 }
 
 bool DockNode::hasChildren() const {
     return _firstChild || _secondChild;
-}
-
-void DockNode::setHeader(const std::string &header) {
-    if (_header != header) {
-        _rootWidget->getTitleBarWidget()->getHeaderWidget()->setHeader(header);
-        _header = header;
-    }
 }
 
 void DockNode::setOrigin(glm::vec2 value) {
@@ -88,10 +68,6 @@ void DockNode::setSize(glm::vec2 value) {
     }
 }
 
-void DockNode::setMinSize(glm::vec2 value) {
-    _minSize = value;
-}
-
 void DockNode::setRect(glm::vec2 origin, glm::vec2 size) {
     const glm::vec2 normalizedSize = glm::max(size, _minSize);
     if (_origin != origin || _size != normalizedSize) {
@@ -101,50 +77,86 @@ void DockNode::setRect(glm::vec2 origin, glm::vec2 size) {
     }
 }
 
-bool DockNode::splitBy(DockNodeSharedPtr dockNode, SplitType type) {
-    if (hasChildren()) {
-        RUI_WARNING("This node has already been split");
-        return false;
-    }
+void DockNode::setChildren(DockNodeSharedPtr firstChild, DockNodeSharedPtr secondChild) {
+    const auto setChild = [this](DockNodeSharedPtr &memberChild, DockNodeSharedPtr newChild) {
+        if (memberChild != newChild) {
+            if (memberChild) {
+                memberChild->_parent.reset();
+            }
+            memberChild = newChild;
+            if (memberChild) {
+                memberChild->_parent = weak_from_this();
+            }
+        }
+    };
 
-    DockNodeSharedPtr surrogateDockNode = makeDockNode(shared_from_this(), _canvasRootWidget);
-    surrogateDockNode->setRootWidget(_rootWidget);
-    surrogateDockNode->setMinSize(_minSize);
+    setChild(_firstChild, firstChild);
+    setChild(_secondChild, secondChild);
 
-    const bool isHorizontal = type == SplitType::bottom || type == SplitType::top;
-
-    _firstChild = surrogateDockNode;
-    _secondChild = dockNode;
-    _firstChild->_depth = _secondChild->_depth = _depth + 1;
-
-    _rootWidget = nullptr;
-
-    // Separator
-    _dockSeparatorWidget = s_createDockSeparatorCallback(_canvasRootWidget);
-    _dockSeparatorWidget->setIsHorizontal(isHorizontal);
-    _dockSeparatorWidget->setNormalizeRatioCallback(
-        [&](float ratio) -> float { return getNormalizedRatio(ratio); });
-    _dockSeparatorWidget->ratioChanged.connect(this, &DockNode::onRatioChanged);
-    _dockSeparatorWidget->setDockNodeRect(_size, getCenter());
-    _dockSeparatorWidget->setRatio(0.5f);
-
-    update();
-
-    return true;
+    updateMinSizeAccordingChildren();
+    updateChildren();
 }
 
-bool DockNode::release() {
-    if (auto lockedParent = _parent.lock()) {
-        if (lockedParent->_firstChild.get() == this) {
-            lockedParent->replaceWith(lockedParent->_secondChild);
-        } else {
-            assert(lockedParent->_secondChild.get() == this);
-            lockedParent->replaceWith(lockedParent->_firstChild);
+void DockNode::setSeparator(IDockNodeSeparatorSharedPtr separator) {
+    if (_separator != separator) {
+        _separator = separator;
+        if (_separator) {
+            _separator->setOnDraggedCallback([&](float ratio) { setRatio(ratio); });
+            _separator->setIsHorizontal(_isHorizontal);
+            _separator->setRatio(_ratio);
         }
-        return true;
     }
+}
 
-    return false;
+void DockNode::setRequestParentResizeCallback(RequestParentResizeCallback callback) {
+    _requestParentResizeCallback = callback;
+}
+
+void DockNode::setRatio(float value) {
+    const float newRatio = normalizeRatio(value);
+    if (_ratio != newRatio) {
+        _ratio = newRatio;
+        onRatioChanged();
+    }
+}
+
+void DockNode::setIsHorizontal(bool value) {
+    if (_isHorizontal != value) {
+        _isHorizontal = value;
+        if (_separator) {
+            _separator->setIsHorizontal(_isHorizontal);
+        }
+    }
+}
+
+void DockNode::setDockables(std::vector<IDockableSharedPtr> dockables) {
+    if (_dockables != dockables) {
+        _dockables = std::move(dockables);
+
+        const DockNodeSharedPtr self = shared_from_this();
+        for (IDockableSharedPtr dockable : _dockables) {
+            dockable->setMinSizeChangedCallback(
+                [this](glm::vec2 minSize) { updateMinSizeAccordingDockables(); });
+        }
+
+        updateMinSizeAccordingDockables();
+    }
+}
+
+void DockNode::moveDockablesTo(DockNodeSharedPtr dockNodeReceiver) {
+    assert(dockNodeReceiver);
+    assert(dockNodeReceiver.get() != this);
+
+    dockNodeReceiver->setDockables(std::move(_dockables));
+    _dockables.clear();
+}
+
+void DockNode::takeDockablesFrom(DockNodeSharedPtr dockNodeSender) {
+    assert(dockNodeSender);
+    assert(dockNodeSender.get() != this);
+
+    setDockables(std::move(dockNodeSender->_dockables));
+    dockNodeSender->_dockables.clear();
 }
 
 glm::vec2 DockNode::getCenter() const {
@@ -155,19 +167,19 @@ glm::vec2 DockNode::getDeltaSize(glm::vec2 newSize) const {
     return glm::max(newSize, _minSize) - glm::max(_size, _minSize);
 }
 
-DockRootWidgetSharedPtr DockNode::createRootWidget() const {
-    DockRootWidgetSharedPtr result = createDockRootWidget(_canvasRootWidget);
-    result->setAnchor(Anchor::center);
-    return result;
-}
-
-float DockNode::getNormalizedRatio(float ratio) const {
+float DockNode::normalizeRatio(float ratio) const {
     ratio = std::clamp(ratio, 0.0f, 1.0f);
 
-    const float halfThickness = _dockSeparatorWidget->getThickness() * 0.5f;
+    if (!hasChildren()) {
+        return ratio;
+    }
+    assert(_firstChild);
+    assert(_secondChild);
+
+    const float halfThickness = _separator->getThickness() * 0.5f;
 
     const auto [newFirstSize, newSecondSize, sizeDim] =
-        _dockSeparatorWidget->getIsHorizontal()
+        _isHorizontal
             ? std::tuple(
                   glm::max(_firstChild->_minSize.y + halfThickness, _size.y * ratio),
                   glm::max(_secondChild->_minSize.y + halfThickness, _size.y * (1.0f - ratio)),
@@ -177,75 +189,112 @@ float DockNode::getNormalizedRatio(float ratio) const {
                   glm::max(_secondChild->_minSize.x + halfThickness, _size.x * (1.0f - ratio)),
                   _size.x);
 
-    return (newFirstSize <= newSecondSize) ? (newFirstSize / sizeDim)
-                                           : ((sizeDim - newSecondSize) / sizeDim);
+    const float result = (newFirstSize <= newSecondSize) ? (newFirstSize / sizeDim)
+                                                         : ((sizeDim - newSecondSize) / sizeDim);
+    return std::clamp(result, 0.0f, 1.0f);
 }
 
-void DockNode::setRootWidget(DockRootWidgetSharedPtr widget) {
-    rendell_ui::release_widget(_rootWidget);
-    _rootWidget = widget;
+void DockNode::setMinSize(glm::vec2 value) {
+    if (_minSize != value) {
+        _minSize = value;
+        if (auto lockedParent = _parent.lock()) {
+            lockedParent->updateMinSizeAccordingChildren();
+        } else if (_requestParentResizeCallback) {
+            _requestParentResizeCallback(_minSize);
+        }
+    }
 }
 
-void DockNode::replaceWith(DockNodeSharedPtr dockNode) {
-    _rootWidget = dockNode->_rootWidget;
-    _firstChild->_parent.reset();
-    _secondChild->_parent.reset();
-    _firstChild = _secondChild = nullptr;
+void DockNode::onRatioChanged() {
+    if (_separator) {
+        _separator->setRatio(_ratio);
+    }
+
+    updateChildren();
 }
 
-void DockNode::onRatioChanged(float ratio) {
-    assert(_dockSeparatorWidget);
+void DockNode::updateMinSizeAccordingChildren() {
     assert(_firstChild);
     assert(_secondChild);
 
-    updateChildren(ratio);
+    glm::vec2 newMinSize;
+    if (_isHorizontal) {
+        newMinSize = glm::vec2(std::max(_firstChild->_minSize.x, _secondChild->_minSize.x),
+                               _firstChild->_minSize.y + _secondChild->_minSize.y +
+                                   _separator->getThickness());
+    } else {
+        newMinSize = glm::vec2(_firstChild->_minSize.x + _secondChild->_minSize.x +
+                                   _separator->getThickness(),
+                               std::max(_firstChild->_minSize.y, _secondChild->_minSize.y));
+    }
+    setSize(glm::max(newMinSize, _size));
+    setMinSize(newMinSize);
 }
 
-void DockNode::updateRootWidget() {
-    assert(_rootWidget);
-    _rootWidget->setAnchor(Anchor::center);
-    _rootWidget->setSize(_size);
-    _rootWidget->setOffset(getCenter());
+void DockNode::updateMinSizeAccordingDockables() {
+    if (!_dockables.empty()) {
+        glm::vec2 newMinSize = _dockables[0]->getMinSize();
+        for (const IDockableSharedPtr dockable : _dockables) {
+            newMinSize = glm::max(newMinSize, dockable->getMinSize());
+        }
+        setSize(glm::max(newMinSize, _size));
+        setMinSize(newMinSize);
+    }
 }
 
-void DockNode::updateChildren(float ratio) {
+void DockNode::updateChildren() {
     assert(_firstChild);
     assert(_secondChild);
 
-    const float halfSeparatorThickness = _dockSeparatorWidget->getThickness() * 0.5f;
+    const float halfSeparatorThickness = _separator->getThickness() * 0.5f;
 
-    if (_dockSeparatorWidget->getIsHorizontal()) {
-        _firstChild->setRect(_origin, glm::vec2(_size.x, _size.y * ratio - halfSeparatorThickness));
+    if (_isHorizontal) {
+        _firstChild->setRect(_origin,
+                             glm::vec2(_size.x, _size.y * _ratio - halfSeparatorThickness));
         _secondChild->setRect(
-            _origin + glm::vec2(0.0f, _size.y * ratio + halfSeparatorThickness),
-            glm::vec2(_size.x, _size.y * (1.0f - ratio) - halfSeparatorThickness));
+            _origin + glm::vec2(0.0f, _size.y * _ratio + halfSeparatorThickness),
+            glm::vec2(_size.x, _size.y * (1.0f - _ratio) - halfSeparatorThickness));
 
     } else {
-        _firstChild->setRect(_origin, glm::vec2(_size.x * ratio - halfSeparatorThickness, _size.y));
+        _firstChild->setRect(_origin,
+                             glm::vec2(_size.x * _ratio - halfSeparatorThickness, _size.y));
         _secondChild->setRect(
-            _origin + glm::vec2(_size.x * ratio + halfSeparatorThickness, 0.0f),
-            glm::vec2(_size.x * (1.0f - ratio) - halfSeparatorThickness, _size.y));
+            _origin + glm::vec2(_size.x * _ratio + halfSeparatorThickness, 0.0f),
+            glm::vec2(_size.x * (1.0f - _ratio) - halfSeparatorThickness, _size.y));
     }
 
     _isChildrenUpdated = true;
 }
 
 void DockNode::update() {
-    if (_rootWidget && !hasChildren()) {
-        updateRootWidget();
+    if (!hasChildren()) {
+        updateDockables();
         return;
     }
     assert(_firstChild);
     assert(_secondChild);
-    assert(_dockSeparatorWidget);
+    assert(_separator);
+
+    _separator->setDockNodeRect(getCenter(), _size);
 
     _isChildrenUpdated = false;
-    _dockSeparatorWidget->setDockNodeRect(_size, getCenter());
+    updateRatio();
 
-    // The setDockNodeRect method could already update children.
+    // The updateRatio method could already update children.
     if (!_isChildrenUpdated) {
-        updateChildren(_dockSeparatorWidget->getRatio());
+        updateChildren();
     }
+}
+
+void DockNode::updateDockables() {
+    for (IDockableSharedPtr dockable : _dockables) {
+        dockable->setSize(_size);
+        dockable->setPosition(getCenter());
+    }
+}
+
+void DockNode::updateRatio() {
+    setRatio(_ratio);
 }
 
 } // namespace rendell_ui

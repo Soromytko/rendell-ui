@@ -24,15 +24,20 @@ public:
     static bool isInitialized();
     static int getWindowCount();
 
-    void setSize(glm::ivec2 value);
-    void setMinSize(glm::ivec2 value);
+    // IWindow
+    void setSize(glm::ivec2 value) override;
+    void setMinSize(glm::ivec2 value) override;
+
     void setEventHandler(WindowEventHandlerSharedPtr eventHandler);
 
     void waitEvent() const;
     void *getNativeWindowHandle() const;
     void *getX11Display() const;
-    glm::ivec2 getSize() const;
-    glm::ivec2 getMinSize() const;
+
+    // IWindow
+    glm::ivec2 getSize() const override;
+    glm::ivec2 getMinSize() const override;
+
     glm::dvec2 getCursorPosition() const;
     WindowEventHandlerSharedPtr getEventHandler() const;
 
