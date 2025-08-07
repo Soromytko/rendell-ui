@@ -4,13 +4,16 @@ namespace rendell_ui {
 
 DockRootWidget::DockRootWidget()
     : Widget() {
+    _name = "DockRootWidget";
 
     _titleBarWidget = createUnregisteredDockTitleBarWidget();
+    _titleBarWidget->setName("TitleBarWidget");
     _titleBarWidget->setAnchor(Anchor::topStretch);
     _titleBarWidget->setSize({0.0f, 30.0f});
     _titleBarWidget->setColor({0.18f, 0.18f, 0.18f, 1.0f});
 
     _workSpaceWidget = createUnregisteredRectangleWidget();
+    _workSpaceWidget->setName("WorkSpaceWidget");
     _workSpaceWidget->setAnchor(Anchor::centerStretch);
     _workSpaceWidget->setMargins(Margins::makeTop(_titleBarWidget->getSize().y));
 }

@@ -3,6 +3,7 @@
 #include <rendell_ui/Widgets/TextWidget.h>
 #include <rendell_ui/Widgets/Widget.h>
 #include <rendell_ui/defines.h>
+#include <rendell_ui/Signal.h>
 
 namespace rendell_ui {
 class DockHeaderWidget final : public RectangleWidget {
@@ -12,8 +13,13 @@ public:
 
     // Widget
     void draw() const override;
+    void onMouseDown(glm::dvec2 cursorPosition) override;
+    void onFreed(glm::dvec2 cursorPosition) override;
+    void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) override;
 
     void setHeader(const std::string &header);
+
+    Action headerDragged; 
 
 private:
     // Widget

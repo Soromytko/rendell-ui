@@ -53,7 +53,10 @@ set(SOURCE_FILES
 
     # Docking
     src/Docking/DockCanvas.cpp
+    src/Docking/DockTree.cpp
+    src/Docking/DockTreeBuilder.cpp
     src/Docking/DockNode.cpp
+    src/Docking/DockableWindow.cpp
     src/Docking/Widgets/DockRootWidget.cpp
     src/Docking/Widgets/DockTitleBarWidget.cpp
     src/Docking/Widgets/DockHeaderWidget.cpp
@@ -98,7 +101,11 @@ set(HEADER_FILES
 
     # Docking
     include/rendell_ui/Docking/DockCanvas.h
+    include/rendell_ui/Docking/DockTree.h
+    include/rendell_ui/Docking/DockTreeBuilder.h
     include/rendell_ui/Docking/DockNode.h
+    include/rendell_ui/Docking/IDockable.h
+    include/rendell_ui/Docking/DockableWindow.h
     include/rendell_ui/Docking/Widgets/DockRootWidget.h
     include/rendell_ui/Docking/Widgets/DockTitleBarWidget.h
     include/rendell_ui/Docking/Widgets/DockHeaderWidget.h
