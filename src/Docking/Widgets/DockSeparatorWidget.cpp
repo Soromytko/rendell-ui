@@ -8,7 +8,7 @@ DockSeparatorWidget::DockSeparatorWidget()
 }
 
 void DockSeparatorWidget::onMouseDown(glm::dvec2 cursorPosition) {
-    _startDragOffset = _dragOffset;
+    _startRatio = _ratio;
 }
 
 void DockSeparatorWidget::onMouseHovered(glm::dvec2 cursorPosition) {
@@ -22,44 +22,33 @@ void DockSeparatorWidget::onMouseExited() {
 }
 
 void DockSeparatorWidget::onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) {
-    if (!_normalizeRatioCallback) {
+    if (!_onDraggedCallback) {
         return;
     }
 
-    const float start = static_cast<float>(_isHorizontal ? startPoint.y : startPoint.x);
-    const float end = static_cast<float>(_isHorizontal ? endPoint.y : endPoint.x);
+    const float startPointDim = static_cast<float>(_isHorizontal ? startPoint.y : startPoint.x);
+    const float endPointDim = static_cast<float>(_isHorizontal ? endPoint.y : endPoint.x);
+    const float sizeSim = _isHorizontal ? _dockNodeSize.y : _dockNodeSize.x;
 
-    const float dragDelta = end - start;
+    const float dragDelta = endPointDim - startPointDim;
     if (dragDelta == 0.0f) {
         return;
     }
 
-    const float newRatio = getRatioWithDelta(_startDragOffset + dragDelta);
-    const float normalizedRatio = _normalizeRatioCallback(newRatio);
-    setRatio(normalizedRatio);
+    const float newRatio = _startRatio + dragDelta / sizeSim;
+    _onDraggedCallback(newRatio);
 }
 
 bool DockSeparatorWidget::getIsHorizontal() const {
     return _isHorizontal;
 }
 
-DockSeparatorWidget::NormalizeRatioCallback DockSeparatorWidget::getNormalizeRatioCallback() const {
-    return _normalizeRatioCallback;
+float DockSeparatorWidget::getRatio() const {
+    return _ratio;
 }
 
 float DockSeparatorWidget::getThickness() const {
     return _thickness;
-}
-
-float DockSeparatorWidget::getRatio() const {
-    return getRatioWithDelta(_dragOffset);
-}
-
-void DockSeparatorWidget::setThickness(float value) {
-    if (_thickness != value) {
-        _thickness = value;
-        update();
-    }
 }
 
 void DockSeparatorWidget::setIsHorizontal(bool value) {
@@ -69,24 +58,37 @@ void DockSeparatorWidget::setIsHorizontal(bool value) {
     }
 }
 
-void DockSeparatorWidget::setNormalizeRatioCallback(NormalizeRatioCallback callback) {
-    _normalizeRatioCallback = callback;
+void DockSeparatorWidget::setRatio(float value) {
+    const float ratio = std::clamp(value, 0.0f, 1.0f);
+    if (_ratio != ratio) {
+        _ratio = ratio;
+        update();
+    }
 }
 
-void DockSeparatorWidget::setDockNodeRect(glm::vec2 size, glm::vec2 center) {
-    if (_dockNodeSize != size || _dockNodeCenter != center) {
-        _dockNodeSize = size;
-        _dockNodeCenter = center;
-        updateRatioWithNewSize();
+void DockSeparatorWidget::setThickness(float value) {
+    if (_thickness != value) {
+        _thickness = value;
+        update();
+    }
+}
+
+void DockSeparatorWidget::setDockNodeRect(glm::vec2 dockNodeCenter, glm::vec2 dockNodeSize) {
+    if (_dockNodeCenter != dockNodeCenter || _dockNodeSize != dockNodeSize) {
+        _dockNodeCenter = dockNodeCenter;
+        _dockNodeSize = dockNodeSize;
         // TODO: Can we call only one update?
         update();
         updateMarkup();
     }
 }
 
-void DockSeparatorWidget::setRatio(float value) {
-    const float ratio = std::clamp(value, 0.0f, 1.0f);
-    setDragOffset(ratio * (_isHorizontal ? _dockNodeSize.y : _dockNodeSize.x));
+void DockSeparatorWidget::setOnDraggedCallback(OnDraggedCallback callback) {
+    _onDraggedCallback = callback;
+}
+
+void DockSeparatorWidget::release() {
+    setParent({});
 }
 
 glm::vec2 DockSeparatorWidget::getRootPosition() const {
@@ -102,40 +104,15 @@ float DockSeparatorWidget::getRatioWithDelta(float delta) const {
     return std::clamp(delta / size, 0.0f, 1.0f);
 }
 
-void DockSeparatorWidget::setDragOffset(float value) {
-    if (_dragOffset != value) {
-        _dragOffset = value;
-        update();
-        ratioChanged.emit(getRatio());
-    }
-}
-
-void DockSeparatorWidget::updateRatioWithNewSize() {
-    if (_oldDockNodeSize == _dockNodeSize || !_normalizeRatioCallback) {
-        return;
-    }
-
-    const float sizeDim = _isHorizontal ? _dockNodeSize.y : _dockNodeSize.x;
-    const float oldSizeDim = _isHorizontal ? _oldDockNodeSize.y : _oldDockNodeSize.x;
-
-    if (oldSizeDim > 0.0f) {
-        const float scaleRatio = sizeDim / oldSizeDim;
-        const float newRatio = _normalizeRatioCallback(getRatio() * scaleRatio);
-        setRatio(newRatio);
-    }
-
-    _oldDockNodeSize = _dockNodeSize;
-}
-
 void DockSeparatorWidget::update() {
     if (_isHorizontal) {
         setAnchor(Anchor::bottom);
         setSize({_dockNodeSize.x, _thickness});
-        setOffset(glm::vec2(0.0f, _dragOffset - _thickness * 0.5f));
+        setOffset(glm::vec2(0.0f, _dockNodeSize.y * _ratio - _thickness * 0.5f));
     } else {
         setAnchor(Anchor::left);
         setSize({_thickness, _dockNodeSize.y});
-        setOffset(glm::vec2(_dragOffset - _thickness * 0.5f, 0.0f));
+        setOffset(glm::vec2(_dockNodeSize.x * _ratio - _thickness * 0.5f, 0.0f));
     }
 }
 

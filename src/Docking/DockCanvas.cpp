@@ -1,4 +1,5 @@
 #include <rendell_ui/Docking/DockCanvas.h>
+#include <logging.h>
 
 namespace rendell_ui {
 DockCanvas::DockCanvas(ViewportSharedPtr viewport)

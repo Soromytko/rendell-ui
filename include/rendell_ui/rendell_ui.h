@@ -17,7 +17,11 @@
 #include "Widgets/TextWidget.h"
 
 #include "Docking/DockCanvas.h"
+#include "Docking/DockTree.h"
 #include "Docking/DockNode.h"
+#include "Docking/DockTreeBuilder.h"
+#include "Docking/IDockable.h"
+#include "Docking/DockableWindow.h"
 #include "Docking/Widgets/DockRootWidget.h"
 #include "Docking/Widgets/DockHeaderWidget.h"
 #include "Docking/Widgets/DockSeparatorWidget.h"

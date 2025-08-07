@@ -1,6 +1,8 @@
 #pragma once
-#include "Widgets/DockRootWidget.h"
+#include "IDockNodeSeparator.h"
+#include "IDockable.h"
 #include "Widgets/DockSeparatorWidget.h"
+#include <functional>
 #include <memory>
 #include <rendell_ui/Widgets/Widget.h>
 #include <rendell_ui/defines.h>
@@ -20,65 +22,71 @@ public:
         top,
     };
 
-    using CreateDockSeparatorCallback =
-        std::function<DockSeparatorWidgetSharedPtr(WidgetSharedPtr parent)>;
+    using RequestParentResizeCallback = std::function<void(glm::vec2)>;
 
-    static void setCreateDockSeparatorCallback(CreateDockSeparatorCallback callback);
-
-    DockNode(DockNodeSharedPtr parent, WidgetSharedPtr canvasRootWidget);
+    DockNode(DockNodeSharedPtr parent);
     ~DockNode() = default;
 
-    const std::string &getHeader() const;
+    float getRatio() const;
+    bool getIsHorizontal() const;
     glm::vec2 getOrigin() const;
     glm::vec2 getSize() const;
     glm::vec2 getMinSize() const;
-    DockRootWidgetSharedPtr getRootWidget() const;
-    WidgetSharedPtr getWorkSpaceWidget() const;
     DockNodeSharedPtr getParent() const;
     DockNodeSharedPtr getFirstChild() const;
     DockNodeSharedPtr getSecondChild() const;
-    DockSeparatorWidgetSharedPtr getSeparator() const;
+    IDockNodeSeparatorSharedPtr getSeparator() const;
+    RequestParentResizeCallback getRequestParentResizeCallback() const;
+    const std::vector<IDockableSharedPtr> &getDockables() const;
+
     bool hasChildren() const;
 
-    void setHeader(const std::string &header);
+    void setRatio(float value);
+    void setIsHorizontal(bool value);
     void setOrigin(glm::vec2 value);
     void setSize(glm::vec2 value);
-    void setMinSize(glm::vec2 value);
     void setRect(glm::vec2 origin, glm::vec2 size);
+    void setChildren(DockNodeSharedPtr firstChild, DockNodeSharedPtr secondChild);
+    void setSeparator(IDockNodeSeparatorSharedPtr separator);
+    void setRequestParentResizeCallback(RequestParentResizeCallback callback);
+    void setDockables(std::vector<IDockableSharedPtr> dockables);
 
-    bool splitBy(DockNodeSharedPtr dockNode, SplitType type);
-    bool release();
+    void moveDockablesTo(DockNodeSharedPtr dockNodeReceiver);
+    void takeDockablesFrom(DockNodeSharedPtr dockNodeSender);
 
 private:
     glm::vec2 getCenter() const;
     glm::vec2 getDeltaSize(glm::vec2 newSize) const;
-    DockRootWidgetSharedPtr createRootWidget() const;
-    float getNormalizedRatio(float ratio) const;
+    float normalizeRatio(float ratio) const;
 
-    void setRootWidget(DockRootWidgetSharedPtr widget);
-    void replaceWith(DockNodeSharedPtr dockNode);
-    void onRatioChanged(float ratio);
-    void updateRootWidget();
-    void updateChildren(float ratio);
+    void setMinSize(glm::vec2 value);
+
+    void updateMinSizeAccordingChildren();
+    void updateMinSizeAccordingDockables();
+    void updateChildren();
     void update();
-
-    std::string _header{};
+    void updateDockables();
+    void updateRatio();
+    void updateSeparator();
 
     DockNodeWeakPtr _parent;
     DockNodeSharedPtr _firstChild{nullptr};
     DockNodeSharedPtr _secondChild{nullptr};
-    DockRootWidgetSharedPtr _rootWidget;
-    WidgetSharedPtr _canvasRootWidget;
+    std::vector<IDockableSharedPtr> _dockables{};
 
-    DockSeparatorWidgetSharedPtr _dockSeparatorWidget{nullptr};
+    int _depth{0};
+    float _ratio{0.5f};
+    bool _isHorizontal{false};
 
     // Lower left corner (window Center).
     glm::vec2 _origin{};
     glm::vec2 _size{100.0f, 100.0f};
     glm::vec2 _minSize{100.0f, 100.0f};
-    int _depth{0};
 
     bool _isChildrenUpdated{false};
+
+    IDockNodeSeparatorSharedPtr _separator{nullptr};
+    RequestParentResizeCallback _requestParentResizeCallback{nullptr};
 };
 
 RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(DockNode)

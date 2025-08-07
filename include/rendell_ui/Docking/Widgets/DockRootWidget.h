@@ -14,7 +14,7 @@ public:
 
     // Widget
     void draw() const override;
-
+    
     DockHeaderWidgetSharedPtr getHeaderWidget() const;
     DockTitleBarWidgetSharedPtr getTitleBarWidget() const;
     WidgetSharedPtr getWorkSpaceWidget() const;
