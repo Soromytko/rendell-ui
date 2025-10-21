@@ -1,12 +1,13 @@
 #include "window_callbacks.h"
+#include "Window.h"
+
 #include <GLFW/glfw3.h>
-#include <rendell_ui/Window/Window.h>
 
 #define GET_WINDOW(glfwWindow) static_cast<Window *>(glfwGetWindowUserPointer(glfwWindow))
 
 namespace rendell_ui {
 void refreshWindowCallback(GLFWwindow *glfwWindow) {
-    Window *window = GET_WINDOW(glfwWindow);
+    IWindow *window = GET_WINDOW(glfwWindow);
     WindowEventHandlerSharedPtr evnetHandler = window->getEventHandler();
     glm::ivec2 windowSize = window->getSize();
     evnetHandler->onRefreshed(windowSize.x, windowSize.y);

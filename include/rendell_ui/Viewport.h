@@ -21,8 +21,7 @@ public:
     void setSize(int width, int height);
     void setOffset(int x, int y);
 
-    void startScissors(int x, int y, int width, int height);
-    void endScissors();
+    void setScissors(int x, int y, int width, int height);
 
     void setProjectMat(const glm::mat4 &value);
     void setViewMat(const glm::mat4 &value);

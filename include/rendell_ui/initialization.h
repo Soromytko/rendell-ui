@@ -2,7 +2,9 @@
 #include <functional>
 
 namespace rendell_ui {
-bool init();
+using InitRendellDelegate = std::function<void()>();
+
+bool init(InitRendellDelegate initRendellDelegate = nullptr);
 void release();
 void draw();
 

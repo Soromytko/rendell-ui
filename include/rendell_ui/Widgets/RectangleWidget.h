@@ -7,10 +7,10 @@ public:
     RectangleWidget();
     virtual ~RectangleWidget();
 
-    virtual void draw() const override;
+    virtual void draw() override;
 
 private:
-    rendell::VertexArraySharedPtr _vertexArray;
+    rendell::oop::VertexAssemblySharedPtr _vertexAssembly;
 };
 
 RENDELL_UI_DECLARE_WIDGET(RectangleWidget)

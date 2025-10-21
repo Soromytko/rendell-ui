@@ -42,7 +42,7 @@ TextEditWidget::~TextEditWidget() {
     _textEditor.textChanged.disconnect(_textChangedConnectionId);
 }
 
-void TextEditWidget::draw() const {
+void TextEditWidget::draw() {
     const glm::mat4 &projectMat = Viewport::getCurrent()->getProjectMat();
     const glm::mat4 &viewMat = Viewport::getCurrent()->getViewMat();
     const glm::mat4 &transformMat = glm::translate(
@@ -53,13 +53,12 @@ void TextEditWidget::draw() const {
     _textDrawer.draw(projectMat * viewMat, transformMat);
 
     const glm::ivec2 textDrawerSize = static_cast<glm::ivec2>(_textDrawer.getSize());
-    Viewport::getCurrent()->startScissors(static_cast<int>(transformMat[3].x),
-                                          static_cast<int>(transformMat[3].y), textDrawerSize.x,
-                                          textDrawerSize.y);
+    Viewport::getCurrent()->setScissors(static_cast<int>(transformMat[3].x),
+                                        static_cast<int>(transformMat[3].y), textDrawerSize.x,
+                                        textDrawerSize.y);
     if (_cursor->getVisible()) {
         _cursor->draw();
     }
-    Viewport::getCurrent()->endScissors();
 
     if (_scrollbarWidget->getVisible()) {
         _scrollbarWidget->draw();

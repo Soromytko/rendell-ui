@@ -46,8 +46,8 @@ const std::vector<rendell_text::TextRendererSharedPtr> &TextDrawer::getLines() c
 void TextDrawer::draw(const glm::mat4 viewMatrix, const glm::mat4 &modelMatrix) const {
     const glm::vec3 offset = modelMatrix[3];
 
-    Viewport::getCurrent()->startScissors(static_cast<int>(offset.x), static_cast<int>(offset.y),
-                                          static_cast<int>(_size.x), static_cast<int>(_size.y));
+    Viewport::getCurrent()->setScissors(static_cast<int>(offset.x), static_cast<int>(offset.y),
+                                        static_cast<int>(_size.x), static_cast<int>(_size.y));
 
     double currentOffset = _size.y * 0.5 + _startRenderingOffset;
     for (size_t i = _startRenderingIndex; i < _textRenderers.size(); i++) {
@@ -61,8 +61,6 @@ void TextDrawer::draw(const glm::mat4 viewMatrix, const glm::mat4 &modelMatrix) 
         textRenderer->setMatrix(viewMatrix * worldMat);
         textRenderer->draw();
     }
-
-    Viewport::getCurrent()->endScissors();
 }
 
 void TextDrawer::setSize(glm::dvec2 value) {

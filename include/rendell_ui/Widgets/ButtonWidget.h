@@ -9,7 +9,7 @@ public:
     ButtonWidget();
     ~ButtonWidget() = default;
 
-    void draw() const override;
+    void draw() override;
 
     Signal<void> clicked;
 

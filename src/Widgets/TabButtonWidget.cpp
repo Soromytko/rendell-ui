@@ -37,7 +37,7 @@ const std::wstring &TabButtonWidget::getTitle() const {
     return _title;
 }
 
-void TabButtonWidget::draw() const {
+void TabButtonWidget::draw() {
     _rectangle->draw();
     _textWidget->draw();
 }

@@ -34,7 +34,7 @@ TabBarWidget::CreateTabButtonDelegate TabBarWidget::getCreateTabButtonDelegate()
     return _createTabButtonDelegate;
 }
 
-void TabBarWidget::draw() const {
+void TabBarWidget::draw() {
     for (const TabButtonWidgetSharedPtr &button : _buttons) {
         button->draw();
     }

@@ -92,7 +92,7 @@ void TextWidget::setColor(glm::vec4 value) {
     }
 }
 
-void TextWidget::draw() const {
+void TextWidget::draw() {
     const glm::mat4 &projectMat = Viewport::getCurrent()->getProjectMat();
     const glm::mat4 &viewMat = Viewport::getCurrent()->getViewMat();
     const glm::mat4 &transformMat = _transform.getMatrix();

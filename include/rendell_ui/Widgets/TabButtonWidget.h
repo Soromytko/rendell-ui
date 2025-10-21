@@ -13,7 +13,7 @@ public:
     bool getIsSelected() const;
     const std::wstring &getTitle() const;
 
-    void draw() const override;
+    void draw() override;
 
     void setTitle(std::wstring value);
     void setIsSelected(bool value);

@@ -6,12 +6,16 @@ set(BINARY_NAME rendell_ui)
 set(CMAKE_CXX_STANDARD 23)
 
 set(SOURCE_FILES
+    src/rendell_ui.cpp
     src/initialization.cpp
     src/logging.cpp
     src/Timer.cpp
     src/ActionPool.cpp
 
     # Window
+    src/Window/Window.h
+    src/Window/WindowManager.h
+    src/Window/WindowManager.cpp
     src/Window/Window.cpp
     src/Window/WindowEventHandler.cpp
     src/Window/window_input.cpp
@@ -60,8 +64,9 @@ set(HEADER_FILES
     include/rendell_ui/Timer.h
 
     #Window
-    include/rendell_ui/Window/Window.h
+    include/rendell_ui/Window/IWindow.h
     include/rendell_ui/Window/WindowEventHandler.h
+    include/rendell_ui/Window/WindowCursorType.h
     include/rendell_ui/Window/window_input.h
 
     #Widgets

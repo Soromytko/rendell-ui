@@ -8,7 +8,7 @@ public:
     Cursor();
     ~Cursor() = default;
 
-    void draw() const override;
+    void draw() override;
 
     void setThickness(float value);
     void setHeight(float value);

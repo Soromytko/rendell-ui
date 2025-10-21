@@ -16,6 +16,6 @@ public:
     virtual bool getInteract() const = 0;
 
     virtual void updateRecursively() = 0;
-    virtual void draw() const = 0;
+    virtual void draw() = 0;
 };
 } // namespace rendell_ui

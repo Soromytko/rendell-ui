@@ -14,7 +14,7 @@ public:
 
     StringListModelSharedPtr getModel() const;
     CreateTabButtonDelegate getCreateTabButtonDelegate() const;
-    void draw() const override;
+    void draw() override;
 
     void setModel(StringListModelSharedPtr model);
     void setCreateTabButtonDelegate(CreateTabButtonDelegate delegate);

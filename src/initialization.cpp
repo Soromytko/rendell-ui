@@ -1,18 +1,29 @@
+#include <rendell_ui/initialization.h>
+
 #include "Shaders/ShaderStorage.h"
 #include "Time.h"
 #include "Widgets/WidgetHandlePipeline.h"
 #include "Widgets/WidgetRegistrator.h"
 #include "Widgets/WidgetRenderPipeline.h"
+#include "Window/WindowManager.h"
 #include <ActionPool.h>
 #include <GLFW/glfw3.h>
 #include <logging.h>
-#include <rendell_ui/initialization.h>
+#include <rendell/init.h>
 
 namespace rendell_ui {
 static WidgetRenderPipelineSharedPtr s_widgetRenderPipeline{nullptr};
 static ActionPoolSharedPtr s_actionPool{nullptr};
 
-bool init() {
+bool init(InitRendellDelegate initRendellDelegate) {
+    if (initRendellDelegate) {
+        initRendellDelegate();
+    } else {
+        rendell::init(rendell::Initer());
+    }
+    WindowManager::init();
+    WindowManager::getInstance()->reserveWindow();
+
     s_widgetRenderPipeline = makeWidgetRenderPipeline();
 
     WidgetRegistrator::init({
@@ -30,6 +41,8 @@ bool init() {
 void release() {
     WidgetRegistrator::release();
     ShaderStorage::release();
+    WindowManager::release();
+    rendell::release();
     s_actionPool = nullptr;
 }
 

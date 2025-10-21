@@ -14,7 +14,7 @@ void WidgetRenderPipeline::remove(IWidget *widget) {
     _widgets.erase(newEnd, _widgets.end());
 }
 
-void WidgetRenderPipeline::draw() const {
+void WidgetRenderPipeline::draw() {
     for (IWidget *widget : _widgets) {
         if (widget->getImplicitVisible()) {
             widget->draw();

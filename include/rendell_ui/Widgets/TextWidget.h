@@ -9,7 +9,7 @@ public:
     ~TextWidget() = default;
 
     void setColor(glm::vec4 value) override;
-    void draw() const override;
+    void draw() override;
 
     void setFontPath(const std::string &value);
     void setFontSize(glm::ivec2 value);

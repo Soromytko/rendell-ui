@@ -1,10 +1,13 @@
 #pragma once
-#include "IWindow.h"
+#include "WindowCursorType.h"
 #include "window_input.h"
-#include <memory>
 #include <rendell_ui/defines.h>
 
+#include <memory>
+
 namespace rendell_ui {
+class IWindow;
+
 class WindowEventHandler {
 public:
     WindowEventHandler() = default;
@@ -20,8 +23,11 @@ public:
     virtual void onKeyInputted(const KeyboardInput &keyboardInput) {};
     virtual void onMouseButtonInputted(const MouseInput &mouseInput) {};
     virtual void onMouseMoved(double x, double y) {};
+
     virtual void onCursorEntered(bool entered) {}
+
     virtual void onMouseScrolled(double x, double y) {}
+
     virtual void onCharInputted(unsigned char character) {};
 
 protected:

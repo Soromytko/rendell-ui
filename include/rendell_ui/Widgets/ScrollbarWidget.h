@@ -11,7 +11,7 @@ public:
     ~ScrollbarWidget() = default;
 
     // Widget
-    void draw() const override;
+    void draw() override;
 
 private:
     void onCaptured(glm::dvec2 cursorPosition) override;

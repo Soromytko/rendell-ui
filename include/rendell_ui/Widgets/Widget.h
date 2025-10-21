@@ -2,7 +2,7 @@
 #include "../src/Widgets/Transform2D.h"
 #include "../src/Widgets/WidgetRegistrator.h"
 #include <memory>
-#include <rendell/rendell.h>
+#include <rendell/oop/rendell_oop.h>
 #include <rendell_ui/Signal.h>
 #include <rendell_ui/Widgets/Anchor.h>
 #include <rendell_ui/Widgets/AnchorableWidget.h>
@@ -75,20 +75,28 @@ public:
 
     // IWidget
     void updateRecursively() override;
-    virtual void draw() const override {};
+    virtual void draw() override {};
 
     virtual void onFocused();
     virtual void onUnfocused();
     virtual void onMouseClick() {};
     virtual void onMouseDown(glm::dvec2 cursorPosition) {};
     virtual void onMouseUp(glm::dvec2 cursorPosition) {};
+
     virtual void onMouseHovered(glm::dvec2 cursorPosition) {}
+
     virtual void onMouseEntered() {}
+
     virtual void onMouseExited() {}
+
     virtual void onMouseScrolled(glm::dvec2 scroll) {}
+
     virtual void onCaptured(glm::dvec2 cursorPosition) {}
+
     virtual void onFreed(glm::dvec2 cursorPosition) {}
+
     virtual void onDragged(glm::dvec2 startPoint, glm::dvec2 endPoint) {}
+
     virtual void onKeyInputted(const KeyboardInput &keyboardInput) {};
     virtual void onCharInputted(unsigned char character) {};
 
@@ -103,15 +111,22 @@ public:
     Signal<void, const std::string &> nameChanged;
 
 protected:
-    virtual void updateUniforms() const;
+    virtual void updateUniforms();
 
     virtual void onSelfWeakPtrChanged() {}
+
     virtual void onParentChanged() {}
+
     virtual void onChildrenChanged() {}
+
     virtual void onVisibleChanged() {}
+
     virtual void onImplicitVisibleChanged() {}
+
     virtual void onInteractChanged() {}
+
     virtual void onColorChanged() {}
+
     virtual void onNameChanged() {}
 
     void updateImplicitVisibleRecursively();
@@ -127,12 +142,11 @@ protected:
 
     std::string _name{"Widget"};
 
-    uint32_t _matrixUniformIndex{0};
-    uint32_t _sizeUniformIndex{0};
-    uint32_t _colorUniformIndex{0};
-
     glm::vec4 _color{1.0f, 1.0f, 1.0f, 1.0f};
-    rendell::ShaderProgramSharedPtr _shaderProgram{nullptr};
+    rendell::oop::ShaderProgramSharedPtr _shaderProgram{nullptr};
+    rendell::oop::Mat4Uniform _matrixUniform{"u_Matrix"};
+    rendell::oop::Float2Uniform _sizeUniform{"u_Size"};
+    rendell::oop::Float4Uniform _colorUniform{"u_Color"};
 };
 
 RENDELL_UI_DECLARE_WIDGET(Widget)

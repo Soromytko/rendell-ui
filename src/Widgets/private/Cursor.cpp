@@ -12,7 +12,7 @@ Cursor::Cursor()
     _timer->start();
 }
 
-void Cursor::draw() const {
+void Cursor::draw() {
     if (_shouldDraw) {
         RectangleWidget::draw();
     }

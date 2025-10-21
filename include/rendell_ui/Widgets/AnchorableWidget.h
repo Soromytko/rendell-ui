@@ -36,8 +36,11 @@ public:
 
 protected:
     virtual void onOffsetChanged() {}
+
     virtual void onSizeChanged() {}
+
     virtual void onMarginsChanged() {}
+
     virtual void onAnchorChanged() {}
 
     bool setSizePrivate(glm::vec2 value);

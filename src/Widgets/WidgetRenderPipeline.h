@@ -13,7 +13,7 @@ public:
     void append(IWidget *widget) override;
     void remove(IWidget *widget) override;
 
-    void draw() const;
+    void draw();
 
 private:
     std::vector<IWidget *> _widgets{};

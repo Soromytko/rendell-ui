@@ -15,7 +15,7 @@ public:
     TextEditWidget();
     ~TextEditWidget();
 
-    void draw() const override;
+    void draw() override;
 
     // IScrollableWidget
     double getScrollProgress() const override;

@@ -20,7 +20,7 @@ ScrollbarWidget::ScrollbarWidget() {
     sizeChanged.connect([&](glm::vec2 size) { updateHandle(); });
 }
 
-void ScrollbarWidget::draw() const {
+void ScrollbarWidget::draw() {
     if (_isHidden) {
         return;
     }

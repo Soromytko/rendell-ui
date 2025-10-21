@@ -12,7 +12,7 @@ ButtonWidget::ButtonWidget()
     setColor({DEFAULT_COLOR, 1.0f});
 }
 
-void ButtonWidget::draw() const {
+void ButtonWidget::draw() {
     _rectangleWidget->draw();
 }
 

@@ -14,7 +14,7 @@ ViewportSharedPtr Viewport::getCurrent() {
 }
 
 void Viewport::apply() {
-    rendell::setViewport(_x, _y, _width, _height, _windowSize.x, _windowSize.y);
+    rendell::setViewport(_x, _y, _width, _height);
 }
 
 void Viewport::setWindowSize(glm::ivec2 value) {
@@ -34,12 +34,8 @@ void Viewport::setOffset(int x, int y) {
     _y = y;
 }
 
-void Viewport::startScissors(int x, int y, int width, int height) {
-    rendell::startScissors(x, y, width, height);
-}
-
-void Viewport::endScissors() {
-    rendell::endScissors();
+void Viewport::setScissors(int x, int y, int width, int height) {
+    rendell::setScissors(x, y, width, height);
 }
 
 void Viewport::setProjectMat(const glm::mat4 &value) {

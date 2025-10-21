@@ -196,17 +196,15 @@ void Widget::onUnfocused() {
     unfocused.emit();
 }
 
-void Widget::updateUniforms() const {
+void Widget::updateUniforms() {
     const glm::mat4 &projectMat = Viewport::getCurrent()->getProjectMat();
     const glm::mat4 &viewMat = Viewport::getCurrent()->getViewMat();
     const glm::mat4 &worldMat = _transform.getMatrix();
     const glm::mat4 mat = projectMat * viewMat * worldMat;
 
-    _shaderProgram->setUniformMat4(_matrixUniformIndex, reinterpret_cast<const float *>(&mat));
-
-    _shaderProgram->setUniformVec2(_sizeUniformIndex, reinterpret_cast<const float *>(&_size));
-
-    _shaderProgram->setUniformVec4(_colorUniformIndex, reinterpret_cast<const float *>(&_color));
+    _matrixUniform.set(reinterpret_cast<const float *>(&mat));
+    _sizeUniform.set(_size.x, _size.y);
+    _colorUniform.set(_color.r, _color.g, _color.b, _color.a);
 }
 
 void Widget::updateImplicitVisibleRecursively() {

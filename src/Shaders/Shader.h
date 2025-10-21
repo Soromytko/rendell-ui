@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <rendell/rendell.h>
+#include <rendell/oop/rendell_oop.h>
 #include <string>
 
 namespace rendell_ui {
@@ -9,9 +9,9 @@ public:
     Shader(const std::string &vertexSrc, const std::string &fragmentSrc);
     ~Shader() = default;
 
-    rendell::ShaderProgramSharedPtr getShaderProgram() const;
+    rendell::oop::ShaderProgramSharedPtr getShaderProgram() const;
 
 private:
-    rendell::ShaderProgramSharedPtr _shaderProgram;
+    rendell::oop::ShaderProgramSharedPtr _shaderProgram;
 };
 } // namespace rendell_ui

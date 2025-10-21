@@ -5,7 +5,7 @@
 #include "defines.h"
 #include "initialization.h"
 
-#include "Window/Window.h"
+#include "Window/IWindow.h"
 #include "Window/window_input.h"
 
 #include "Widgets/ButtonWidget.h"
@@ -15,3 +15,11 @@
 #include "Widgets/TabButtonWidget.h"
 #include "Widgets/TextEditWidget.h"
 #include "Widgets/TextWidget.h"
+
+namespace rendell_ui {
+IWindow *createWindow(uint32_t width, uint32_t height, const char *title, bool isHidden = false);
+void releaseWindow(IWindow *window);
+size_t getWindowCount();
+std::vector<IWindow *> getWindows();
+bool isValidWindow(IWindow *window);
+} // namespace rendell_ui
