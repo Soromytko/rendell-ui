@@ -12,7 +12,7 @@ public:
     DockTreeBuilder(WidgetSharedPtr rootWidget);
     ~DockTreeBuilder() = default;
 
-    DockTreeBuilder &setWindow(IWindowWeakPtr window);
+    DockTreeBuilder &setWindow(IWindow *window);
     DockTreeBuilder &setCreateSeparatorDelegate(DockTree::CreateSeparatorDelegate delegate);
     DockTreeBuilder &splitHorizontal(float ratio = 0.5f);
     DockTreeBuilder &splitVertical(float ratio = 0.5f);

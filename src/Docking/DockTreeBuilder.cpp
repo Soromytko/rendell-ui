@@ -9,7 +9,7 @@ DockTreeBuilder::DockTreeBuilder(WidgetSharedPtr rootWidget)
     _curretDockNode = _tree->createRootNode(rootWidget);
 }
 
-DockTreeBuilder &DockTreeBuilder::setWindow(IWindowWeakPtr window) {
+DockTreeBuilder &DockTreeBuilder::setWindow(IWindow *window) {
     assert(_tree);
     _tree->setWindow(window);
     return *this;

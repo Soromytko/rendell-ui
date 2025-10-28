@@ -18,7 +18,7 @@ DockRootWidget::DockRootWidget()
     _workSpaceWidget->setMargins(Margins::makeTop(_titleBarWidget->getSize().y));
 }
 
-void DockRootWidget::draw() const {
+void DockRootWidget::draw() {
     _workSpaceWidget->draw();
     _titleBarWidget->draw();
 }

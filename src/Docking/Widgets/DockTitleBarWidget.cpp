@@ -10,7 +10,7 @@ DockTitleBarWidget::DockTitleBarWidget()
     _headerWidget->setColor({0.09f, 0.09f, 0.09f, 1.0f});
 }
 
-void DockTitleBarWidget::draw() const {
+void DockTitleBarWidget::draw() {
     RectangleWidget::draw();
     _headerWidget->draw();
 }

@@ -14,10 +14,10 @@ public:
     virtual ~DockTree() = default;
 
     DockNodeSharedPtr getRootNode() const;
-    IWindowWeakPtr getWindow() const;
+    IWindow *getWindow() const;
     CreateSeparatorDelegate getCreateSeparatorDelegate() const;
 
-    void setWindow(IWindowWeakPtr window);
+    void setWindow(IWindow *window);
     void setCreateSeparatorDelegate(CreateSeparatorDelegate delegate);
 
     DockNodeSharedPtr createRootNode(WidgetSharedPtr rootWidget);
@@ -31,7 +31,7 @@ private:
 
     WidgetSharedPtr _rootWidget;
     DockNodeSharedPtr _rootDockNode;
-    IWindowWeakPtr _window;
+    IWindow *_window;
 };
 
 RENDELL_UI_DECLARE_SHARED_PTR_FACTORY(DockTree)

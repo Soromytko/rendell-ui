@@ -1,5 +1,7 @@
 #include <rendell_ui/Docking/DockTree.h>
 
+#include <rendell_ui/rendell_ui.h>
+
 namespace rendell_ui {
 DockTree::DockTree() {
 }
@@ -8,7 +10,7 @@ DockNodeSharedPtr DockTree::getRootNode() const {
     return _rootDockNode;
 }
 
-IWindowWeakPtr DockTree::getWindow() const {
+IWindow *DockTree::getWindow() const {
     return _window;
 }
 
@@ -16,7 +18,7 @@ DockTree::CreateSeparatorDelegate DockTree::getCreateSeparatorDelegate() const {
     return _createSeparatorDelegate;
 }
 
-void DockTree::setWindow(IWindowWeakPtr window) {
+void DockTree::setWindow(IWindow *window) {
     _window = window;
 }
 
@@ -35,8 +37,8 @@ DockNodeSharedPtr DockTree::createRootNode(WidgetSharedPtr rootWidget) {
             return;
         }
 
-        const auto window = tree->_window.lock();
-        if (!window) {
+        IWindow *window = tree->_window;
+        if (!isValidWindow(window)) {
             RUI_DEBUG("The Window of DockNode is nullptr!");
             return;
         }

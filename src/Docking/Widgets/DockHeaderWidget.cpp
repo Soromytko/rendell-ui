@@ -1,5 +1,7 @@
 #include <rendell_ui/Docking/Widgets/DockHeaderWidget.h>
 
+#include <wrench_editor/logging/logging.h>
+
 namespace rendell_ui {
 DockHeaderWidget::DockHeaderWidget()
     : RectangleWidget() {
@@ -10,9 +12,11 @@ DockHeaderWidget::DockHeaderWidget()
     _textWidget->setFontSize({20, 20});
     _textWidget->setInteract(false);
 }
-void DockHeaderWidget::draw() const {
+void DockHeaderWidget::draw() {
     RectangleWidget::draw();
     _textWidget->draw();
+    //EDITOR_INFO("{}", getSize().x);
+    //EDITOR_INFO("{}", _textWidget->getSize().x);
 }
 
 void DockHeaderWidget::onMouseDown(glm::dvec2 cursorPosition) {

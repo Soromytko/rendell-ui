@@ -10,7 +10,7 @@ public:
     ~DockTitleBarWidget() = default;
 
     // Widget
-    void draw() const override;
+    void draw() override;
 
     DockHeaderWidgetSharedPtr getHeaderWidget() const;
 

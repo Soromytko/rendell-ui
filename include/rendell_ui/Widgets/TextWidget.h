@@ -22,14 +22,11 @@ public:
     const std::wstring &getText() const;
 
 private:
-    void updateText();
-    rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring &&text) const;
-    rendell_text::TextRendererSharedPtr createTextRenderer(std::wstring &&text) const;
-
     glm::vec4 _backgroundColor = glm::vec4(31.0f / 255.0, 31.0f / 255.0, 31.0f / 255.0, 1.0f);
     glm::ivec2 _fontSize{24, 24};
     std::filesystem::path _fontPath{};
-    std::vector<rendell_text::TextRendererSharedPtr> _lines{};
+    rendell_text::TextRenderer _textRenderer{};
+    std::vector<rendell_text::TextLayout> _lines{};
     std::wstring _text{};
 };
 

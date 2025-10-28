@@ -18,14 +18,15 @@ public:
     uint32_t getTextHeight() const;
     glm::dvec2 getSize() const;
     double getScroll() const;
-    const std::vector<rendell_text::TextRendererSharedPtr> &getLines() const;
-    void draw(const glm::mat4 viewMatrix, const glm::mat4 &modelMatrix) const;
+    const std::vector<rendell_text::TextLayout> &getLines() const;
+
+    void draw(const glm::mat4 viewMatrix, const glm::mat4 &modelMatrix);
 
     void setSize(glm::dvec2 value);
 
     void clear();
     void removeLine(size_t index);
-    void addLine(size_t index, const rendell_text::TextRendererSharedPtr &textRenderer);
+    void addLine(size_t index, const rendell_text::TextLayout &textLayout);
     void swapLines(size_t firstIndex, size_t secondIndex);
 
 private:
@@ -39,6 +40,7 @@ private:
     glm::dvec2 _size{};
     double _scroll{};
     double _scrollProgress{};
-    std::vector<rendell_text::TextRendererSharedPtr> _textRenderers;
+    std::vector<rendell_text::TextLayout> _textLayouts;
+    rendell_text::TextRenderer _textRenderer;
 };
 } // namespace rendell_ui
