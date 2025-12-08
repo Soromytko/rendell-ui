@@ -2,13 +2,13 @@
 #include <algorithm>
 
 namespace rendell_ui {
-std::vector<std::wstring> StringExtension::split(const std::wstring &str,
-                                                 const std::wstring &delimiter) {
-    std::vector<std::wstring> result;
+std::vector<rendell_text::String> StringExtension::split(const rendell_text::String &str,
+                                                         const rendell_text::String &delimiter) {
+    std::vector<rendell_text::String> result;
 
-    std::wstring::size_type pos = 0;
-    std::wstring::size_type prev = 0;
-    while ((pos = str.find(delimiter, prev)) != std::wstring::npos) {
+    rendell_text::String::size_type pos = 0;
+    rendell_text::String::size_type prev = 0;
+    while ((pos = str.find(delimiter, prev)) != rendell_text::String::npos) {
         result.push_back(str.substr(prev, pos - prev));
         prev = pos + delimiter.length();
     }

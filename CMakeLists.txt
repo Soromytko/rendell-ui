@@ -11,6 +11,9 @@ set(SOURCE_FILES
     src/logging.cpp
     src/Timer.cpp
     src/ActionPool.cpp
+    src/font_loading.cpp
+    src/Font.cpp
+    src/FontStorage.cpp
 
     # Window
     src/Window/Window.h
@@ -62,6 +65,8 @@ set(HEADER_FILES
     include/rendell_ui/Viewport.h
     include/rendell_ui/StringListModel.h
     include/rendell_ui/Timer.h
+    include/rendell_ui/IFont.h
+    include/rendell_ui/font_loading.h
 
     #Window
     include/rendell_ui/Window/IWindow.h
@@ -104,6 +109,8 @@ set(HEADER_FILES
     internal/logging.h
     internal/ActionPool.h
     internal/Widgets/RootWidget.h
+    internal/Font.h
+    internal/FontStorage.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})

@@ -107,7 +107,7 @@ void TextEditWidget::setText(const std::wstring &value) {
 }
 
 void TextEditWidget::setFontSize(glm::ivec2 value) {
-    _textEditor.setFontSize(value);
+    _textEditor.setScale(value);
 }
 
 void TextEditWidget::setScrollEnabled(bool value) {

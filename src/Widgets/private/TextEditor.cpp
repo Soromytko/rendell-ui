@@ -1,23 +1,18 @@
 #include "../../String/StringExtension.h"
-#include <algorithm>
+#include <rendell_text/IGlyphAtlasCache.h>
+#include <rendell_text/ITextLayout.h>
+#include <rendell_text/factory.h>
 #include <rendell_ui/Widgets/private/TextEditor.h>
 #include <rendell_ui/Widgets/private/TextEditorWord.h>
 
+#include <algorithm>
+#include <glm/glm.hpp>
+
 namespace rendell_ui {
-static uint32_t s_instanceCount{0};
-
-static rendell_text::TextLayoutSharedPtr createTextLayout(std::wstring &&text, glm::vec2 fontSize) {
-    const std::filesystem::path fontPath =
-        std::filesystem::path(FONT_ROOT_DIRECTORY) / "mononoki/mononoki-Regular.ttf";
-    rendell_text::TextLayoutSharedPtr result = rendell_text::makeTextLayout();
-    result->setText(text);
-    result->setFontPath(fontPath);
-    result->setFontSize(fontSize);
-    return result;
-}
-
-TextEditor::TextEditor() {
-    const rendell_text::TextLayoutSharedPtr textLayout = createTextLayout(L" ", _fontSize);
+TextEditor::TextEditor(std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache)
+    : _glyphAtlasCache(glyphAtlasCache) {
+    assert(_glyphAtlasCache);
+    const auto textLayout = createTextLayout(U" ");
     addTextLayout(0, textLayout);
     _wordTypes = {
         makeDigitTextEditorWord(),
@@ -34,41 +29,41 @@ TextEditor::TextEditor() {
     };
 }
 
-const std::wstring &TextEditor::getText() const {
-    if (_shouldCachedTextBeUpdated) {
-        _cachedText = convertLinesToString();
-        _shouldCachedTextBeUpdated = false;
-    }
+const rendell_text::String &TextEditor::getText() const {
+    updateCachedTextIfNeeded();
     return _cachedText;
 }
 
-void TextEditor::setText(const std::wstring &value) {
-    _textLayouts.clear();
-    textLayoutCleared.emit();
-
-    std::vector<std::wstring> lines = StringExtension::split(value, L"\n");
-    for (std::wstring &line : lines) {
-        const rendell_text::TextLayoutSharedPtr &textLayout =
-            createTextLayout(std::move(line), _fontSize);
-        addTextLayout(_textLayouts.size(), textLayout);
+void TextEditor::setText(rendell_text::String &&text) {
+    if (!_shouldCachedTextBeUpdated && _cachedText == text) {
+        return;
     }
 
-    if (_textLayouts.size() == 0) {
-        addTextLayout(0, createTextLayout(L"", _fontSize));
+    std::vector<rendell_text::String> lines = StringExtension::split(text, U"\n");
+    const size_t oldLineCount = lines.size();
+    _textLayouts.reserve(lines.size());
+
+    if (oldLineCount < _textLayouts.size()) {
+        for (size_t i = 0; i < oldLineCount; i++) {
+            rendell_text::String lineText = std::move(lines[i]);
+            _textLayouts[i]->setText(lineText);
+        }
+        for (size_t i = oldLineCount; i < _textLayouts.size(); i++) {
+            rendell_text::String lineText = std::move(lines[i]);
+            auto textLayout = createTextLayout(std::move(lineText));
+            _textLayouts[i] = textLayout;
+        }
+        return;
     }
 
-    _cachedText = value;
+    for (size_t i = 0; i < _textLayouts.size(); i++) {
+        rendell_text::String lineText = std::move(lines[i]);
+        _textLayouts[i]->setText(std::move(lineText));
+    }
+
+    _cachedText = std::move(text);
     _shouldCachedTextBeUpdated = false;
     textChanged.emit();
-}
-
-void TextEditor::setFontSize(glm::ivec2 value) {
-    if (_fontSize != value) {
-        _fontSize = value;
-        for (const rendell_text::TextLayoutSharedPtr &textLayout : _textLayouts) {
-            textLayout->setFontSize(_fontSize);
-        }
-    }
 }
 
 void TextEditor::setWordTypes(const std::vector<TextEditorWordSharedPtr> &value) {
@@ -86,7 +81,7 @@ size_t TextEditor::getCaretOffsetInString() const {
 uint32_t TextEditor::getCursorVerticalOffset() const {
     uint32_t result = 0;
     for (size_t i = 0; i < _caret.y; i++) {
-        result += _textLayouts[i]->getFontHeight();
+        result += _textLayouts[i]->getGlyphAtlasCache()->getLineHeight();
     }
     return result - _textLayouts[_caret.y]->getDescender();
 }
@@ -96,7 +91,7 @@ uint32_t TextEditor::getCursorHorizontalOffset() const {
         return 0;
     }
 
-    const rendell_text::TextLayoutSharedPtr &textLayout = _textLayouts[_caret.y];
+    const auto &textLayout = _textLayouts[_caret.y];
     if (const size_t textLength = textLayout->getTextLength(); _caret.x <= textLength) {
         return textLayout->getTextAdvance()[_caret.x - 1];
     }
@@ -104,7 +99,7 @@ uint32_t TextEditor::getCursorHorizontalOffset() const {
 }
 
 uint32_t TextEditor::getCursorHeight() const {
-    return _textLayouts[_caret.y]->getFontHeight();
+    return _textLayouts[_caret.y]->getGlyphAtlasCache()->getLineHeight();
 }
 
 const std::vector<TextEditorWordSharedPtr> &TextEditor::getWordTypes() const {
@@ -229,7 +224,7 @@ bool TextEditor::eraseBeforeCursor(size_t count) {
     assert(_caret.y > 0);
     remainingCount -= _caret.x;
 
-    const std::wstring &remainingText = takeRemainingTextInLine(_caret.x, _caret.y, false);
+    const rendell_text::String &remainingText = takeRemainingTextInLine(_caret.x, _caret.y, false);
     removeTextLayout(_caret.y);
     remainingCount--;
     size_t caretY = _caret.y - 1;
@@ -243,7 +238,7 @@ bool TextEditor::eraseBeforeCursor(size_t count) {
             break;
         }
     }
-    const rendell_text::TextLayoutSharedPtr &currentTextLayout = _textLayouts[caretY];
+    const auto &currentTextLayout = _textLayouts[caretY];
     currentTextLayout->eraseText(currentTextLayout->getTextLength() - remainingCount,
                                  remainingCount);
     currentTextLayout->appendText(remainingText);
@@ -261,7 +256,7 @@ bool TextEditor::eraseAfterCursor(size_t count) {
     _caret.xCorrector = _caret.x;
 
     size_t remainingCount = count;
-    const rendell_text::TextLayoutSharedPtr &currentTextLayout = _textLayouts[_caret.y];
+    const auto &currentTextLayout = _textLayouts[_caret.y];
     if (const size_t textLength = currentTextLayout->getTextLength();
         _caret.x + count < textLength) {
         currentTextLayout->eraseText(_caret.x, count);
@@ -273,7 +268,8 @@ bool TextEditor::eraseAfterCursor(size_t count) {
     }
 
     while (remainingCount > 0 && _caret.y + 1 < _textLayouts.size()) {
-        const rendell_text::TextLayoutSharedPtr removedTextLayout = _textLayouts[_caret.y + 1];
+        const auto &removedTextLayout = _textLayouts[_caret.y + 1];
+        assert(removedTextLayout);
         removeTextLayout(_caret.y + 1);
 
         remainingCount--;
@@ -282,9 +278,9 @@ bool TextEditor::eraseAfterCursor(size_t count) {
             remainingCount -= textLength;
         } else {
             if (removedTextLayout->getTextLength() > 0) {
-                const std::wstring &remainingText =
-                    takeRemainingTextInLine(removedTextLayout, remainingCount);
-                // const std::wstring& remainingText =
+                const rendell_text::String &remainingText =
+                    takeRemainingTextInLine(*removedTextLayout.get(), remainingCount);
+                // const rendell_text::String& remainingText =
                 // removedTextLayout->getSubText(remainingCount);
                 _textLayouts[_caret.y]->appendText(remainingText);
             }
@@ -320,12 +316,12 @@ bool TextEditor::eraseLineUnderCursor() {
     return true;
 }
 
-bool TextEditor::insertAfterCursor(const std::wstring &text) {
+bool TextEditor::insertAfterCursor(const rendell_text::String &text) {
     if (text.empty()) {
         return false;
     }
 
-    std::vector<std::wstring> lines = StringExtension::split(text, L"\n");
+    std::vector<rendell_text::String> lines = StringExtension::split(text, U"\n");
     assert(!lines.empty());
     _textLayouts[_caret.y]->insertText(lines[0], _caret.x);
 
@@ -336,11 +332,10 @@ bool TextEditor::insertAfterCursor(const std::wstring &text) {
     }
 
     size_t caretY = _caret.y;
-    const std::wstring &remainingText =
+    const rendell_text::String &remainingText =
         takeRemainingTextInLine(_caret.x + lines[0].length(), _caret.y, true);
     for (size_t i = 1; i < lines.size(); i++) {
-        const rendell_text::TextLayoutSharedPtr &newTextLayout =
-            createTextLayout(std::move(lines[i]), _fontSize);
+        auto newTextLayout = createTextLayout(std::move(lines[i]));
         caretY++;
         addTextLayout(caretY, newTextLayout);
     }
@@ -370,6 +365,14 @@ bool TextEditor::moveLineUnderCursorUp() {
     return false;
 }
 
+std::shared_ptr<rendell_text::ITextLayout>
+TextEditor::createTextLayout(rendell_text::String &&text) {
+    assert(_glyphAtlasCache);
+    auto result = rendell_text::createTextLayout(_glyphAtlasCache);
+    result->setText(std::move(text));
+    return result;
+}
+
 void TextEditor::setShouldCachedTextBeUpdated(bool value) {
     _shouldCachedTextBeUpdated = value;
     if (_shouldCachedTextBeUpdated) {
@@ -377,18 +380,20 @@ void TextEditor::setShouldCachedTextBeUpdated(bool value) {
     }
 }
 
-std::wstring TextEditor::takeRemainingTextInLine(rendell_text::TextLayoutSharedPtr textLayout,
-                                                 size_t caretX, bool erase) {
-    std::wstring result =
-        textLayout->getTextLength() > caretX ? textLayout->getSubText(caretX) : L"";
+rendell_text::String TextEditor::takeRemainingTextInLine(rendell_text::ITextLayout &textLayout,
+                                                         size_t caretX, bool erase) {
+    rendell_text::String result =
+        textLayout.getTextLength() > caretX ? textLayout.getSubText(caretX) : U"";
     if (erase) {
-        textLayout->eraseText(caretX);
+        textLayout.eraseText(caretX);
     }
     return result;
 }
 
-std::wstring TextEditor::takeRemainingTextInLine(size_t caretX, size_t caretY, bool erase) {
-    return takeRemainingTextInLine(_textLayouts[caretY], caretX, erase);
+rendell_text::String TextEditor::takeRemainingTextInLine(size_t caretX, size_t caretY, bool erase) {
+    const auto &textLayout = _textLayouts[caretY];
+    assert(textLayout);
+    return takeRemainingTextInLine(*textLayout.get(), caretX, erase);
 }
 
 void TextEditor::removeTextLayout(size_t index) {
@@ -396,7 +401,8 @@ void TextEditor::removeTextLayout(size_t index) {
     textLayoutRemoved.emit(index);
 }
 
-void TextEditor::addTextLayout(size_t index, const rendell_text::TextLayoutSharedPtr &textLayout) {
+void TextEditor::addTextLayout(size_t index,
+                               std::shared_ptr<rendell_text::ITextLayout> textLayout) {
     _textLayouts.insert(_textLayouts.begin() + index, textLayout);
     textLayoutAdded.emit(index, textLayout);
 }
@@ -421,6 +427,13 @@ bool TextEditor::setCaret(size_t x, size_t y, bool setXCorrector) {
     return false;
 }
 
+void TextEditor::updateCachedTextIfNeeded() const {
+    if (_shouldCachedTextBeUpdated) {
+        _cachedText = convertLinesToString();
+        _shouldCachedTextBeUpdated = false;
+    }
+}
+
 bool TextEditor::isSameWord(const TextEditorWordSharedPtr &word, wchar_t character) const {
     if (word) {
         if (word->isWordCharacter(character)) {
@@ -442,7 +455,7 @@ size_t TextEditor::getPrevWordLength() const {
         result++;
     }
 
-    if (const std::wstring &text = _textLayouts[caretY]->getText(); text.length() > 0) {
+    if (const rendell_text::String &text = _textLayouts[caretY]->getText(); text.length() > 0) {
         size_t i = caretX;
         if (i > 0) {
             const TextEditorWordSharedPtr &word = findWord(text[i - 1]);
@@ -465,7 +478,7 @@ size_t TextEditor::getNextWordLength() const {
         result++;
     }
 
-    if (const std::wstring &text = _textLayouts[caretY]->getText(); text.size() > 0) {
+    if (const rendell_text::String &text = _textLayouts[caretY]->getText(); text.size() > 0) {
         size_t i = caretX;
         const TextEditorWordSharedPtr &word = findWord(text[i]);
         do {
@@ -479,10 +492,10 @@ size_t TextEditor::getNextWordLength() const {
 size_t TextEditor::getCaretYByOffset(double offset) const {
     assert(_textLayouts.size() > 0);
 
-    size_t currentOffset = _textLayouts[0]->getFontHeight() / 2;
+    size_t currentOffset = _textLayouts[0]->getGlyphAtlasCache()->getLineHeight() / 2;
     double distance = abs(offset - static_cast<double>(currentOffset));
     for (size_t i = 0; i < _textLayouts.size(); i++) {
-        currentOffset += _textLayouts[i]->getFontHeight();
+        currentOffset += _textLayouts[i]->getGlyphAtlasCache()->getLineHeight();
         double newDistance = abs(offset - static_cast<double>(currentOffset));
         if (newDistance < distance) {
             distance = newDistance;
@@ -524,16 +537,16 @@ TextEditorWordSharedPtr TextEditor::findWord(wchar_t character) const {
     return nullptr;
 }
 
-std::wstring TextEditor::convertLinesToString() const {
+rendell_text::String TextEditor::convertLinesToString() const {
     size_t resultLength = 0;
-    for (const rendell_text::TextLayoutSharedPtr &textLayout : _textLayouts) {
+    for (const auto &textLayout : _textLayouts) {
         resultLength += textLayout->getText().length() + 1;
     }
 
-    std::wstring result;
+    rendell_text::String result;
     result.reserve(resultLength);
-    for (const rendell_text::TextLayoutSharedPtr &textLayout : _textLayouts) {
-        result += textLayout->getText() + L"\n";
+    for (const auto &textLayout : _textLayouts) {
+        result += textLayout->getText() + U"\n";
     }
 
     return result;

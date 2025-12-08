@@ -7,6 +7,7 @@
 #include "Widgets/WidgetRenderPipeline.h"
 #include "Window/WindowManager.h"
 #include <ActionPool.h>
+#include <FontStorage.h>
 #include <GLFW/glfw3.h>
 #include <logging.h>
 #include <rendell/init.h>
@@ -21,6 +22,7 @@ bool init(InitRendellDelegate initRendellDelegate) {
     } else {
         rendell::init(rendell::Initer());
     }
+    FontStorage::init();
     WindowManager::init();
     WindowManager::getInstance()->reserveWindow();
 
@@ -39,6 +41,7 @@ bool init(InitRendellDelegate initRendellDelegate) {
 }
 
 void release() {
+    FontStorage::release();
     WidgetRegistrator::release();
     ShaderStorage::release();
     WindowManager::release();

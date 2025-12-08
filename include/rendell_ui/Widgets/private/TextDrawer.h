@@ -1,6 +1,5 @@
 #pragma once
 #include <glm/glm.hpp>
-#include <rendell_text/rendell_text.h>
 #include <rendell_ui/Widgets/IScrollableWidget.h>
 
 namespace rendell_ui {

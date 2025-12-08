@@ -5,7 +5,7 @@
 #include "private/Cursor.h"
 #include "private/TextDrawer.h"
 #include "private/TextEditor.h"
-#include <rendell_text/rendell_text.h>
+
 #include <string>
 #include <vector>
 
