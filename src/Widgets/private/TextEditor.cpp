@@ -9,8 +9,11 @@
 #include <glm/glm.hpp>
 
 namespace rendell_ui {
-TextEditor::TextEditor(std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache)
-    : _glyphAtlasCache(glyphAtlasCache) {
+TextEditor::TextEditor(std::shared_ptr<ITextModel> textModel,
+                       std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache)
+    : _textModel(textModel)
+    , _glyphAtlasCache(glyphAtlasCache) {
+    assert(_textModel);
     assert(_glyphAtlasCache);
     const auto textLayout = createTextLayout(U" ");
     addTextLayout(0, textLayout);
@@ -172,7 +175,6 @@ bool TextEditor::moveCursorToPrevLine(size_t count) {
     const size_t caretY = count <= _caret.y ? _caret.y - count : 0;
     const size_t caretX = std::min(_caret.xCorrector, _textLayouts[caretY]->getTextLength());
     return setCaret(caretX, caretY);
-    ;
 }
 
 bool TextEditor::moveCursorToNextLine(size_t count) {

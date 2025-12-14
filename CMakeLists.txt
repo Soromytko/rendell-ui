@@ -67,6 +67,7 @@ set(HEADER_FILES
     include/rendell_ui/Timer.h
     include/rendell_ui/IFont.h
     include/rendell_ui/font_loading.h
+    include/rendell_ui/ITextModel.h
 
     #Window
     include/rendell_ui/Window/IWindow.h

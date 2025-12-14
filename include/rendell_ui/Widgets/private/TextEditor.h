@@ -12,6 +12,8 @@ class IGlyphAtlasCache;
 } // namespace rendell_text
 
 namespace rendell_ui {
+class ITextModel;
+
 class TextEditor final {
     struct Caret {
         size_t x{};
@@ -21,7 +23,8 @@ class TextEditor final {
     };
 
 public:
-    TextEditor(std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache);
+    TextEditor(std::shared_ptr<ITextModel> textModel,
+               std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache);
     ~TextEditor() = default;
 
     const rendell_text::String &getText() const;
@@ -84,8 +87,10 @@ private:
     TextEditorWordSharedPtr findWord(wchar_t character) const;
     rendell_text::String convertLinesToString() const;
 
+    std::shared_ptr<ITextModel> _textModel;
+
     Caret _caret{};
-    std::vector<std::shared_ptr<rendell_text::ITextLayout>> _textLayouts;
+    //std::vector<std::shared_ptr<rendell_text::ITextLayout>> _textLayouts;
     std::vector<TextEditorWordSharedPtr> _wordTypes;
     std::shared_ptr<rendell_text::IGlyphAtlasCache> _glyphAtlasCache;
     mutable rendell_text::String _cachedText{};
