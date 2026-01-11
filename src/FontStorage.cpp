@@ -35,14 +35,21 @@ FontStorage::FontStorage() {
     _defaultFont = loadFont(path);
     if (!_defaultFont) {
     }
+#error
+}
+
+std::shared_ptr<IFont> FontStorage::getDefaultFont() const {
+    assert(_defaultFont);
+    return _defaultFont;
+}
+
+std::shared_ptr<rendell_text::IGlyphAtlasCache> FontStorage::getDefaultGlyphAtlasCache() {
+    assert(_defaultGlyphAtlasCache);
+    return _defaultGlyphAtlasCache;
 }
 
 static inline size_t getFontKey(const IFont &font) {
     return reinterpret_cast<size_t>(&font);
-}
-
-std::shared_ptr<IFont> FontStorage::getDefaultFont() const {
-    return _defaultFont;
 }
 
 std::shared_ptr<rendell_text::IGlyphAtlasCache>

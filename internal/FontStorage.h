@@ -23,10 +23,12 @@ public:
 
     std::shared_ptr<IFont> getDefaultFont() const;
 
+    std::shared_ptr<rendell_text::IGlyphAtlasCache> getDefaultGlyphAtlasCache();
     std::shared_ptr<rendell_text::IGlyphAtlasCache> getOrCreateGlyphAtlasCache(const IFont &font);
 
 private:
     std::shared_ptr<IFont> _defaultFont;
+    std::shared_ptr<rendell_text::IGlyphAtlasCache> _defaultGlyphAtlasCache;
     std::unordered_map<size_t, std::weak_ptr<rendell_text::IGlyphAtlasCache>> _glyphAtlasCaches{};
 };
 } // namespace rendell_ui

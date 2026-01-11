@@ -6,10 +6,11 @@
 #include "private/TextDrawer.h"
 #include "private/TextEditor.h"
 
-#include <string>
-#include <vector>
+#include <rendell_text/types.h>
 
 namespace rendell_ui {
+class ITextModel;
+
 class TextEditWidget final : public Widget, public IScrollableWidget {
 public:
     TextEditWidget();
@@ -23,13 +24,11 @@ public:
     bool setScrollProgress(double value) override;
     void onProcessMouseScrolled(glm::dvec2 scroll) override;
 
-    const std::wstring &getText() const;
-    size_t getLineCount() const;
+    const rendell_text::String &getText() const;
     bool getScrollEnabled() const;
     double getScrollSensitivity() const;
 
-    void setText(const std::wstring &value);
-    void setFontSize(glm::ivec2 value);
+    void setText(rendell_text::String value);
     void setScrollEnabled(bool value);
     void setScrollSensitivity(double value);
 
@@ -80,10 +79,13 @@ private:
 
     glm::ivec2 _fontSize{glm::ivec2(24, 24)};
     double _scrollSensitivity{80.0};
-    TextEditor _textEditor{};
-    TextDrawer _textDrawer{};
+    TextEditor _textEditor;
+    TextDrawer _textDrawer;
     CursorSharedPtr _cursor{};
     ScrollbarWidgetSharedPtr _scrollbarWidget{};
+
+    std::shared_ptr<rendell_text::IGlyphAtlasCache> _glyphAtlasCache;
+    std::shared_ptr<ITextModel> _textModel;
 };
 
 RENDELL_UI_DECLARE_WIDGET(TextEditWidget)

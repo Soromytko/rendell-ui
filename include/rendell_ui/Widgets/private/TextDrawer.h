@@ -1,9 +1,11 @@
 #pragma once
-#include <glm/glm.hpp>
 #include <rendell_ui/Widgets/IScrollableWidget.h>
+
+#include <glm/glm.hpp>
 
 namespace rendell_text {
 class ITextLayout;
+class ITextBuffer;
 class ITextRenderer;
 } // namespace rendell_text
 
@@ -29,11 +31,6 @@ public:
 
     void setSize(glm::dvec2 value);
 
-    void clear();
-    void removeLine(size_t index);
-    // void addLine(size_t index, const rendell_text::TextRendererSharedPtr &textRenderer);
-    void swapLines(size_t firstIndex, size_t secondIndex);
-
 private:
     struct TextLine final {
         std::shared_ptr<rendell_text::ITextRenderer> textRenderer;
@@ -41,14 +38,33 @@ private:
         bool isVisible;
     };
 
-    class TextRendererPool final {
+ /*   class TextBufferPool final {
     public:
-        std::shared_ptr<rendell_text::ITextRenderer>
-        pull(std::shared_ptr<rendell_text::ITextLayout> textLayout);
-        void push(std::shared_ptr<rendell_text::ITextRenderer> textRenderer);
-    };
+        std::shared_ptr<rendell_text::ITextBuffer> pull();
+        void push(std::shared_ptr<rendell_text::ITextBuffer> textBuffer);
 
-    TextRendererPool _textRendererPool{};
+        void collectGarbage();
+
+    private:
+        std::unordered_map<void *, std::weak_ptr<rendell_text::ITextBuffer>> _buffers;
+    };*/
+
+    //class Region final {
+    //public:
+    //    Region(uint32_t height, uint32_t offset, TextBufferPool &textBufferPool);
+    //    ~Region();
+
+    //private:
+    //    TextBufferPool &_textBufferPool;
+
+    //    uint32_t _offset;
+    //    uint32_t _height;
+
+    //    using TextBufferList = std::vector<std::shared_ptr<rendell_text::ITextBuffer>>;
+    //    TextBufferList _textBuffers;
+    //};
+
+    //TextBufferPool _textBufferPool{};
 
     bool isVisibleLine(const TextLine &textLine) const;
 
@@ -56,9 +72,14 @@ private:
     void updateScroll();
     void onScrollProgressChanged(float lastScrollProgress, float newScrollProgress);
 
-    std::shared_ptr<ITextModel> _textModel;
+    rendell::oop::ShaderBuffer _shaderBuffer;
 
+    std::shared_ptr<ITextModel> _textModel;
+    std::vector<TextLine> _lines;
+    std::vector<std::shared_ptr<rendell_text::ITextLayout>> _visibleTextLayouts{};
+    std::vector<std::shared_ptr<rendell_text::ITextBuffer>> _textBuffers{};
     std::vector<std::shared_ptr<rendell_text::ITextLayout>> _visibleTextLayoutContainer{};
+    std::shared_ptr<rendell_text::ITextRenderer> _textRenderer;
 
     size_t _startRenderingIndex{0};
     uint32_t _textHeight{0};
@@ -66,7 +87,5 @@ private:
     glm::dvec2 _size{};
     double _scroll{};
     double _scrollProgress{};
-    std::vector<std::shared_ptr<rendell_text::ITextRenderer>> _visibleTextRenderers{};
-    std::vector<TextLine> _lines;
 };
 } // namespace rendell_ui

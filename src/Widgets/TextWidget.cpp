@@ -1,17 +1,28 @@
 #include <rendell_ui/Widgets/TextWidget.h>
 
-#include "../String/StringExtension.h"
 #include <FontStorage.h>
+#include <TextModel.h>
 #include <rendell_text/ITextLayout.h>
-#include <rendell_text/ITextRenderer.h>
 #include <rendell_ui/IFont.h>
 #include <rendell_ui/Viewport.h>
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <cassert>
 
 namespace rendell_ui {
+static std::shared_ptr<ITextModel> createDefaultTextModel() {
+    auto defaultGlyphAtlasCache = FontStorage::getInstance()->getDefaultGlyphAtlasCache();
+    assert(defaultGlyphAtlasCache);
+    return std::make_shared<TextModel>(defaultGlyphAtlasCache);
+}
+
 TextWidget::TextWidget()
-    : Widget() {
+    : Widget()
+    , _textModel([]() {
+        auto result = createDefaultTextModel();
+        assert(result);
+        return result;
+    }())
+    , _textDrawer({_textModel}) {
     setName("TextWidget");
     auto font = FontStorage::getInstance()->getDefaultFont();
     setFont(font);
@@ -44,11 +55,9 @@ void TextWidget::setBackgroundColor(glm::vec4 value) {
     }
 }
 
-void TextWidget::setText(const rendell_text::String &value) {
-    if (_text != value) {
-        _text = value;
-        updateText();
-    }
+void TextWidget::setText(rendell_text::String value) {
+    assert(_textModel);
+    _textModel->setText(std::move(value));
 }
 
 std::shared_ptr<IFont> TextWidget::getFont() const {
@@ -60,50 +69,34 @@ uint32_t TextWidget::getFontSize() const {
 }
 
 const rendell_text::String &TextWidget::getText() const {
-    return _text;
+    assert(_textModel);
+    return _textModel->getText();
 }
 
-void TextWidget::updateText() {
-    std::vector<rendell_text::String> lines = StringExtension::split(_text, U"\n");
-    const size_t oldLineCount = lines.size();
-    _textLayouts.reserve(lines.size());
-
-    if (oldLineCount < _textLayouts.size()) {
-        for (size_t i = 0; i < oldLineCount; i++) {
-            rendell_text::String lineText = std::move(lines[i]);
-            _textLayouts[i]->setText(lineText);
-        }
-        for (size_t i = oldLineCount; i < _textLayouts.size(); i++) {
-            rendell_text::String lineText = std::move(lines[i]);
-            auto textLayout = createTextLayout(std::move(lineText));
-            auto textRenderer = createTextRenderer(textLayout);
-            _textLayouts[i] = textRenderer;
-        }
-        return;
-    }
-
-    for (size_t i = 0; i < _textLayouts.size(); i++) {
-        rendell_text::String lineText = std::move(lines[i]);
-        _textLayouts[i]->setText(std::move(lineText));
-    }
-}
-
-rendell_text::TextLayoutSharedPtr TextWidget::createTextLayout(rendell_text::String &&text) const {
-    assert(_glyphAtlasCache);
-    rendell_text::TextLayoutSharedPtr result = rendell_text::makeTextLayout(_glyphAtlasCache);
-    result->setText(std::move(text));
-    return result;
-}
-
-rendell_text::TextRendererSharedPtr
-TextWidget::createTextRenderer(std::shared_ptr<rendell_text::TextLayout> textLayout) const {
-    assert(textLayout);
-    rendell_text::TextRendererSharedPtr result = rendell_text::makeTextRenderer();
-    result->setTextLayout(textLayout);
-    result->setBackgroundColor(_backgroundColor);
-    result->setColor(_color);
-    return result;
-}
+// void TextWidget::updateText() {
+//     std::vector<rendell_text::String> lines = StringExtension::split(_text, U"\n");
+//     const size_t oldLineCount = lines.size();
+//     _textLayouts.reserve(lines.size());
+//
+//     if (oldLineCount < _textLayouts.size()) {
+//         for (size_t i = 0; i < oldLineCount; i++) {
+//             rendell_text::String lineText = std::move(lines[i]);
+//             _textLayouts[i]->setText(lineText);
+//         }
+//         for (size_t i = oldLineCount; i < _textLayouts.size(); i++) {
+//             rendell_text::String lineText = std::move(lines[i]);
+//             auto textLayout = createTextLayout(std::move(lineText));
+//             auto textRenderer = createTextRenderer(textLayout);
+//             _textLayouts[i] = textRenderer;
+//         }
+//         return;
+//     }
+//
+//     for (size_t i = 0; i < _textLayouts.size(); i++) {
+//         rendell_text::String lineText = std::move(lines[i]);
+//         _textLayouts[i]->setText(std::move(lineText));
+//     }
+// }
 
 void TextWidget::setColor(glm::vec4 value) {
     if (_color != value) {
@@ -119,13 +112,6 @@ void TextWidget::draw() {
     const glm::mat4 &viewMat = Viewport::getCurrent()->getViewMat();
     const glm::mat4 &transformMat = _transform.getMatrix();
 
-    float currentOffset = _size.y * 0.5f;
-    for (const auto &line : _visibleTextLines) {
-        currentOffset -= line->getTextLayout()->getHeight();
-        const glm::mat4 worldMat =
-            glm::translate(transformMat, glm::vec3(-_size.x * 0.5f, currentOffset, 0.0f));
-        line->setMatrix(projectMat * viewMat * worldMat);
-        line->draw();
-    }
+    _textDrawer.draw(viewMat, transformMat);
 }
 } // namespace rendell_ui

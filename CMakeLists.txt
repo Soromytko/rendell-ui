@@ -53,6 +53,8 @@ set(SOURCE_FILES
     src/String/StringBuilder.cpp
     src/String/StringBuilderChunk.cpp
     src/String/StringExtension.cpp
+
+    src/Text/TextModel.cpp
 )
 
 set(HEADER_FILES
@@ -105,13 +107,15 @@ set(HEADER_FILES
     src/Shaders/RectangleShader.h
     src/String/StringBuilder.h
     src/String/StringBuilderChunk.h
-    src/String/StringExtension.h
 
     internal/logging.h
     internal/ActionPool.h
     internal/Widgets/RootWidget.h
     internal/Font.h
     internal/FontStorage.h
+    internal/StringExtension.h
+
+    internal/TextModel.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})

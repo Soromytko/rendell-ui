@@ -1,18 +1,24 @@
-#include <glm/gtc/matrix_transform.hpp>
+#include <rendell_ui/Widgets/private/TextDrawer.h>
+
+#include <rendell_text/ITextBuffer.h>
 #include <rendell_text/ITextLayout.h>
 #include <rendell_text/ITextRenderer.h>
 #include <rendell_text/factory.h>
-#include <rendell_ui/Viewport.h>
-#include <rendell_ui/Widgets/private/TextDrawer.h>
-
 #include <rendell_ui/ITextModel.h>
+#include <rendell_ui/Viewport.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <cassert>
+#include <numeric>
 
 namespace rendell_ui {
 TextDrawer::TextDrawer(std::shared_ptr<ITextModel> textModel)
     : _textModel(textModel) {
     assert(_textModel);
+
+#error
+    _textRenderer = rendell_text::createTextRenderer(nullptr, nullptr);
 }
 
 double TextDrawer::getScrollProgress() const {
@@ -59,7 +65,15 @@ void TextDrawer::draw(const glm::mat4 viewMatrix, const glm::mat4 &modelMatrix) 
     Viewport::getCurrent()->setScissors(static_cast<int>(offset.x), static_cast<int>(offset.y),
                                         static_cast<int>(_size.x), static_cast<int>(_size.y));
 
-    for (TextLine &textLine : _lines) {
+    for (std::shared_ptr<rendell_text::ITextBuffer> &textBuffer : _textBuffers) {
+        _textRenderer->setTextBuffer(textBuffer);
+        _textRenderer->setTexture
+    }
+
+    for (const TextLine &textLine : _lines) {
+        if (!textLine.isVisible) {
+            continue;
+        }
         assert(textLine.textRenderer);
         const glm::mat4 worldMat =
             glm::translate(modelMatrix, glm::vec3(-_size.x * 0.5f, textLine.yOffset, 0.0f));
@@ -75,40 +89,18 @@ void TextDrawer::setSize(glm::dvec2 value) {
     }
 }
 
-void TextDrawer::clear() {
-    /*   _textRenderers.clear();
-       _textHeight = 0;
-       _startRenderingIndex = 0;*/
-}
-
-void TextDrawer::removeLine(size_t index) {
-    // auto it = _textRenderers.begin() + index;
-    //_textHeight -= it->operator->()->getTextLayout()->getFontHeight();
-    //_textRenderers.erase(it);
-    // optimizeRendering();
-}
-
-// void TextDrawer::addLine(size_t index, const rendell_text::TextRendererSharedPtr &textRenderer) {
-/* _textRenderers.insert(_textRenderers.begin() + index, textRenderer);
- _textHeight += textRenderer->getTextLayout()->getFontHeight();
- optimizeRendering();*/
-//}
-
-void TextDrawer::swapLines(size_t firstIndex, size_t secondIndex) {
-    // std::swap(_textRenderers[firstIndex], _textRenderers[secondIndex]);
-}
-
 bool TextDrawer::isVisibleLine(const TextLine &textLine) const {
-    assert(_textModel);
-    const uint32_t lineHeight = [&]() {
-        assert(textLine.textRenderer);
-        assert(textLine.textRenderer->getTextLayout());
-        return textLine.textRenderer->getTextLayout()->getHeight();
-    }();
-    const float viewYOffset = static_cast<float>(_textModel->getHeight()) * _scrollProgress;
-    const float viewHeight = _size.y;
+    return true;
+    /*  assert(_textModel);
+      const uint32_t lineHeight = [&]() {
+          assert(textLine.textRenderer);
+          assert(textLine.textRenderer->getTextLayout());
+          return textLine.textRenderer->getTextLayout()->getHeight();
+      }();
+      const float viewYOffset = static_cast<float>(_textModel->getHeight()) * _scrollProgress;
+      const float viewHeight = _size.y;
 
-    return textLine.yOffset + static_cast<float>(lineHeight) < viewYOffset + viewHeight;
+      return textLine.yOffset + static_cast<float>(lineHeight) < viewYOffset + viewHeight;*/
 }
 
 std::pair<const std::shared_ptr<rendell_text::ITextLayout> *, size_t>
@@ -126,7 +118,7 @@ void TextDrawer::updateScroll() {
 void TextDrawer::onScrollProgressChanged(float lastScrollProgress, float newScrollProgress) {
     assert(_textModel);
 
-    // Remove anvisibles.
+    // Remove invisible lines
     if (lastScrollProgress < newScrollProgress) {
         auto it = std::find_if(_lines.rbegin(), _lines.rend(),
                                [this](const std::shared_ptr<TextLine> &line) {
@@ -143,71 +135,62 @@ void TextDrawer::onScrollProgressChanged(float lastScrollProgress, float newScro
         _lines.erase(_lines.begin(), it);
     }
 
-    auto [textLayouts, count] = findVisibleTextLayouts();
-    if (_lines.size() == 0) {
-        _lines.reserve(count);
-        for (size_t i = 0; i < count; i++) {
-            assert(textLayouts[i]);
-            _lines.push_back({
-                .textRenderer = _textRendererPool.pull(textLayouts[i]),
-                .yOffset = 0,
-                .isVisible = false,
-            });
-        }
+    // Add new lines
+    auto [newVisibleTextLayouts, count] = findVisibleTextLayouts();
+    if (_visibleTextLayouts.size() == 0) {
+        _visibleTextLayouts.insert(_visibleTextLayouts.end(), newVisibleTextLayouts,
+                                   newVisibleTextLayouts + count);
     } else if (lastScrollProgress < newScrollProgress) {
-        for (size_t i = 0; i < count; i++) {
-            auto textLayout = textLayouts[i];
-            assert(textLayout);
-            if (textLayout != _lines[0].textRenderer->getTextLayout()) {
-                continue;
-            }
-            for (size_t j = 0; j < i; j++) {
-                _lines.insert(_lines.begin() + j,
-                              {
-                                  .textRenderer = _textRendererPool.pull(textLayouts[j]),
-                                  .yOffset = 0,
-                                  .isVisible = true,
-                              });
-            }
-            assert(_lines[i].textRenderer->getTextLayout() == textLayout);
-            break;
-            /*   if (_lines[i].textRenderer->getTextLayout() != textLayout) {
-                   _lines.insert(_lines.begin(),
-                                 {
-                                     .textRenderer = _textRendererPool.pull(textLayout),
-                                     .yOffset = 0,
-                                     .isVisible = false,
-                                 });
-               } else {
-                   break;
-               }*/
-        }
+        assert(_visibleTextLayouts[0]);
+        auto targetTextLayout =
+            std::find(newVisibleTextLayouts, newVisibleTextLayouts + count, _visibleTextLayouts[0]);
+        const size_t countToCopy = static_cast<size_t>(targetTextLayout - newVisibleTextLayouts);
+        _visibleTextLayouts.insert(_visibleTextLayouts.begin(), newVisibleTextLayouts,
+                                   newVisibleTextLayouts + countToCopy);
     } else {
         for (size_t i = count - 1; i != 0; i--) {
-            auto textLayout = textLayouts[i];
+            auto textLayout = newVisibleTextLayouts[i];
             assert(textLayout);
-            if (textLayout != _lines[_lines.size() - 1].textRenderer->getTextLayout()) {
+            if (textLayout != _visibleTextLayouts[_visibleTextLayouts.size() - 1]) {
                 continue;
             }
-            for (size_t j = i; j < count; j++) {
-                _lines.push_back({
-                    .textRenderer = _textRendererPool.pull(textLayouts[j]),
-                    .yOffset = 0,
-                    .isVisible = true,
-                });
-            }
+            _visibleTextLayouts.insert(_visibleTextLayouts.end(), newVisibleTextLayouts + i,
+                                       newVisibleTextLayouts + count);
             break;
         }
     }
-}
 
-std::shared_ptr<rendell_text::ITextRenderer>
-TextDrawer::TextRendererPool::pull(std::shared_ptr<rendell_text::ITextLayout> textLayout) {
-    assert(textLayout);
-    return rendell_text::createTextRenderer(textLayout);
-}
+    std::shared_ptr<rendell_text::ITextBuffer> currentTextBuffer;
+    size_t offset = 0;
+    for (auto &textLayout : _visibleTextLayouts) {
+        while (true) {
+            const size_t remaining = currentTextBuffer->update(offset, textLayout);
+            if (remaining == 0) {
+                offset += textLayout->getTextLength();
+                break;
+            }
+            offset = 0;
+            // get nextTextBuffer;
+        }
+    }
 
-void TextDrawer::TextRendererPool::push(std::shared_ptr<rendell_text::ITextRenderer> textRenderer) {
+    const size_t visibleTextLength = std::accumulate(
+        _visibleTextLayouts.begin(), _visibleTextLayouts.end(), size_t(0),
+        [](size_t accum, const std::shared_ptr<rendell_text::ITextLayout> &textLayout) {
+            return accum + textLayout->getTextLength();
+        });
+    const size_t textBufferSize = 500;
+    const size_t textBufferCount = (visibleTextLength + textBufferSize - 1) / textBufferSize;
+
+    _textBuffers.resize(std::max(textBufferCount, _textBuffers.size()));
+    for (size_t i = 0; i < textBufferCount; i++) {
+        std::shared_ptr<rendell_text::ITextBuffer> &textBuffer = _textBuffers[i];
+        if (!textBuffer) {
+            textBuffer = rendell_text::createTextBuffer();
+        }
+        assert(textBuffer);
+        textBuffer->update(_textBuffer);
+    }
 }
 
 } // namespace rendell_ui

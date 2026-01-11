@@ -1,21 +1,21 @@
-#include "../String/StringExtension.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <rendell_ui/Viewport.h>
 #include <rendell_ui/Widgets/TextEditWidget.h>
 #include <rendell_ui/Widgets/private/Cursor.h>
 
-namespace rendell_ui {
-static rendell_text::TextRendererSharedPtr
-createTextRenderer(const rendell_text::TextLayoutSharedPtr &textLayout) {
-    rendell_text::TextRendererSharedPtr result = rendell_text::makeTextRenderer();
-    result->setTextLayout(textLayout);
-    result->setBackgroundColor(glm::vec4(31.0f / 255.0, 31.0f / 255.0, 31.0f / 255.0, 1.0f));
-    result->setColor(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-    return result;
-}
+#include <rendell_text/factory.h>
 
+#include <FontStorage.h>
+#include <TextModel.h>
+#include <rendell_ui/ITextModel.h>
+
+namespace rendell_ui {
 TextEditWidget::TextEditWidget()
-    : Widget() {
+    : Widget()
+    , _glyphAtlasCache(FontStorage::getInstance()->getDefaultGlyphAtlasCache())
+    , _textModel(std::make_shared<TextModel>(_glyphAtlasCache))
+    , _textEditor(_textModel, _glyphAtlasCache)
+    , _textDrawer(_textModel) {
     setName("TextEditWidget");
     _textLayoutClearedConnectionId =
         _textEditor.textLayoutCleared.connect(this, &TextEditWidget::onTextLayoutCleared);
@@ -86,12 +86,8 @@ void TextEditWidget::onProcessMouseScrolled(glm::dvec2 scroll) {
     onMouseScrolled(scroll);
 }
 
-const std::wstring &TextEditWidget::getText() const {
+const rendell_text::String &TextEditWidget::getText() const {
     return _textEditor.getText();
-}
-
-size_t TextEditWidget::getLineCount() const {
-    return _textDrawer.getLines().size();
 }
 
 bool TextEditWidget::getScrollEnabled() const {
@@ -102,12 +98,8 @@ double TextEditWidget::getScrollSensitivity() const {
     return _scrollSensitivity;
 }
 
-void TextEditWidget::setText(const std::wstring &value) {
-    _textEditor.setText(value);
-}
-
-void TextEditWidget::setFontSize(glm::ivec2 value) {
-    _textEditor.setScale(value);
+void TextEditWidget::setText(rendell_text::String value) {
+    _textEditor.setText(std::move(value));
 }
 
 void TextEditWidget::setScrollEnabled(bool value) {
@@ -142,13 +134,6 @@ void TextEditWidget::onTextLayoutCleared() {
 
 void TextEditWidget::onTextLayoutRemoved(size_t index) {
     _textDrawer.removeLine(index);
-    _scrollbarWidget->updateProgress();
-}
-
-void TextEditWidget::onTextLayoutAdded(size_t index,
-                                       const rendell_text::TextLayoutSharedPtr &textLayout) {
-    const rendell_text::TextRendererSharedPtr &textRenderer = createTextRenderer(textLayout);
-    _textDrawer.addLine(index, textRenderer);
     _scrollbarWidget->updateProgress();
 }
 
@@ -240,16 +225,16 @@ void TextEditWidget::onKeyInputted(const KeyboardInput &keyboardInput) {
 }
 
 void TextEditWidget::onCharInputted(unsigned char character) {
-    const std::wstring string(1, static_cast<wchar_t>(character));
+    const rendell_text::String string(1, static_cast<wchar_t>(character));
     _textEditor.insertAfterCursor(string);
 }
 
 void TextEditWidget::processKeyEnter(InputModControl modControl) {
-    _textEditor.insertAfterCursor(L"\n");
+    _textEditor.insertAfterCursor(U"\n");
 }
 
 void TextEditWidget::processKeyTab(InputModControl modControl) {
-    static const std::wstring tabString = L"    ";
+    static const rendell_text::String tabString = U"    ";
     _textEditor.insertAfterCursor(tabString);
 }
 
