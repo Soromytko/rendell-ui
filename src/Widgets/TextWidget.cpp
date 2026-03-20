@@ -6,6 +6,12 @@
 #include <rendell_ui/IFont.h>
 #include <rendell_ui/Viewport.h>
 
+#include <rendell_text/IFont.h>
+#include <rendell_text/IFontMetricsProvider.h>
+#include <rendell_text/IGlyphShaper.h>
+#include <rendell_text/TextRun.h>
+#include <rendell_text/font_loading.h>
+
 #include <cassert>
 
 namespace rendell_ui {
@@ -56,6 +62,18 @@ void TextWidget::setBackgroundColor(glm::vec4 value) {
 }
 
 void TextWidget::setText(rendell_text::String value) {
+    auto font = rendell_text::loadFont("dsd");
+    _fontInstance = rendell_text::FontInstance{
+        .font = font,
+        .size = 24,
+    };
+    auto textRun = rendell_text::TextRun{
+        .text = value,
+        .fontInstance = _fontInstance,
+    };
+    auto glyphShaper = rendell_text::createGlyphShaper();
+    auto shapedGlyphs = glyphShaper->shape(textRun);
+
     assert(_textModel);
     _textModel->setText(std::move(value));
 }

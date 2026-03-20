@@ -2,7 +2,14 @@
 #include "Widget.h"
 #include <rendell_ui/Widgets/private/TextDrawer.h>
 
+#include <rendell_text/FontInstance.h>
+#include <rendell_text/IFont.h>
+
 #include <memory>
+
+namespace rendell_text {
+class IGlyphShaper;
+}
 
 namespace rendell_ui {
 class IFont;
@@ -33,6 +40,9 @@ private:
     std::shared_ptr<rendell_text::IGlyphAtlasCache> _glyphAtlasCache{};
     std::vector<std::unique_ptr<rendell_text::ITextLayout>> _textLayouts{};
     std::vector<std::shared_ptr<rendell_text::ITextRenderer>> _visibleTextLines{};
+
+    rendell_text::FontInstance _fontInstance;
+    std::shared_ptr<rendell_text::IGlyphShaper> _shaper;
 
     std::shared_ptr<ITextModel> _textModel;
     TextDrawer _textDrawer;

@@ -276,7 +276,7 @@ std::shared_ptr<rendell_text::ITextLayout>
 TextEditor::createTextLayout(rendell_text::String &&text) {
     assert(_glyphAtlasCache);
     auto result = rendell_text::createTextLayout(_glyphAtlasCache);
-    result->setText(std::move(text));
+    result->supplyText(std::move(text));
     return result;
 }
 

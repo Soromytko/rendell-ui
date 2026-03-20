@@ -121,7 +121,7 @@ void TextModel::setText(rendell_text::String text) {
     if (oldLineCount < _lines.size()) {
         for (size_t i = 0; i < oldLineCount; i++) {
             rendell_text::String lineText = std::move(lines[i]);
-            _lines[i]->setText(lineText);
+            _lines[i]->supplyText(lineText);
         }
         for (size_t i = oldLineCount; i < _lines.size(); i++) {
             rendell_text::String lineText = std::move(lines[i]);
@@ -133,7 +133,7 @@ void TextModel::setText(rendell_text::String text) {
 
     for (size_t i = 0; i < _lines.size(); i++) {
         rendell_text::String lineText = std::move(lines[i]);
-        _lines[i]->setText(std::move(lineText));
+        _lines[i]->supplyText(std::move(lineText));
     }
 
     _cachedText = std::move(text);
@@ -288,7 +288,7 @@ std::shared_ptr<rendell_text::ITextLayout>
 TextModel::createTextLayout(rendell_text::String &&text) {
     assert(_glyphAtlasCache);
     auto result = rendell_text::createTextLayout(_glyphAtlasCache);
-    result->setText(std::move(text));
+    result->supplyText(std::move(text));
     return result;
 }
 
