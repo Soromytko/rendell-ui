@@ -8,8 +8,10 @@
 
 #include <rendell_text/IFont.h>
 #include <rendell_text/IFontMetricsProvider.h>
+#include <rendell_text/IGlyphRaster.h>
 #include <rendell_text/IGlyphShaper.h>
 #include <rendell_text/TextRun.h>
+#include <rendell_text/factory.h>
 #include <rendell_text/font_loading.h>
 
 #include <cassert>
@@ -23,12 +25,7 @@ static std::shared_ptr<ITextModel> createDefaultTextModel() {
 
 TextWidget::TextWidget()
     : Widget()
-    , _textModel([]() {
-        auto result = createDefaultTextModel();
-        assert(result);
-        return result;
-    }())
-    , _textDrawer({_textModel}) {
+    , _textBuffer(std::make_unique<TextBuffer>(1024)) {
     setName("TextWidget");
     auto font = FontStorage::getInstance()->getDefaultFont();
     setFont(font);
@@ -71,11 +68,15 @@ void TextWidget::setText(rendell_text::String value) {
         .text = value,
         .fontInstance = _fontInstance,
     };
+    auto fontFallbackResolver = rendell_text::createFontFallbackResolver();
     auto glyphShaper = rendell_text::createGlyphShaper();
-    auto shapedGlyphs = glyphShaper->shape(textRun);
+    auto shapedResult = glyphShaper->shape(textRun, *fontFallbackResolver);
 
-    assert(_textModel);
-    _textModel->setText(std::move(value));
+    auto glyphRaster = rendell_text::createGlyphRaster();
+    // auto rasterizedResult =
+    glyphRaster->rasterize(shapedResult, _glyphAtlasCache, rendell_text::AtlasType::msdf);
+
+    //_textBuffer->setGlyphs(rasterizedResult.glyphs);
 }
 
 std::shared_ptr<IFont> TextWidget::getFont() const {

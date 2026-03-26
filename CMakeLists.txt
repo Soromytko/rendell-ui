@@ -55,6 +55,7 @@ set(SOURCE_FILES
     src/String/StringExtension.cpp
 
     src/Text/TextModel.cpp
+    src/Renderer/TextBuffer.cpp
 )
 
 set(HEADER_FILES
@@ -116,6 +117,8 @@ set(HEADER_FILES
     internal/StringExtension.h
 
     internal/TextModel.h
+
+    internal/Renderer/TextBuffer.h
 )
 
 add_library(${BINARY_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})

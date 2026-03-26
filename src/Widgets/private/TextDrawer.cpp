@@ -1,6 +1,8 @@
 #include <rendell_ui/Widgets/private/TextDrawer.h>
 
+#include <rendell_text/IGlyphAtlasCache.h>
 #include <rendell_text/ITextBuffer.h>
+
 #include <rendell_text/ITextLayout.h>
 #include <rendell_text/ITextRenderer.h>
 #include <rendell_text/factory.h>
@@ -13,12 +15,8 @@
 #include <numeric>
 
 namespace rendell_ui {
-TextDrawer::TextDrawer(std::shared_ptr<ITextModel> textModel)
-    : _textModel(textModel) {
-    assert(_textModel);
-
-#error
-    _textRenderer = rendell_text::createTextRenderer(nullptr, nullptr);
+TextDrawer::TextDrawer(std::shared_ptr<rendell_text::IGlyphAtlasCache> glyphAtlasCache)
+    : _glyphAtlasCache(glyphAtlasCache) {
 }
 
 double TextDrawer::getScrollProgress() const {
@@ -89,108 +87,12 @@ void TextDrawer::setSize(glm::dvec2 value) {
     }
 }
 
-bool TextDrawer::isVisibleLine(const TextLine &textLine) const {
-    return true;
-    /*  assert(_textModel);
-      const uint32_t lineHeight = [&]() {
-          assert(textLine.textRenderer);
-          assert(textLine.textRenderer->getTextLayout());
-          return textLine.textRenderer->getTextLayout()->getHeight();
-      }();
-      const float viewYOffset = static_cast<float>(_textModel->getHeight()) * _scrollProgress;
-      const float viewHeight = _size.y;
-
-      return textLine.yOffset + static_cast<float>(lineHeight) < viewYOffset + viewHeight;*/
-}
-
-std::pair<const std::shared_ptr<rendell_text::ITextLayout> *, size_t>
-TextDrawer::findVisibleTextLayouts() {
-    size_t count = 0;
-
-    return {_visibleTextLayoutContainer.data(), count};
-}
-
 void TextDrawer::updateScroll() {
     _scroll = (static_cast<double>(_textHeight) - _size.y) * _scrollProgress;
     _scroll = std::max(0.0, _scroll);
 }
 
 void TextDrawer::onScrollProgressChanged(float lastScrollProgress, float newScrollProgress) {
-    assert(_textModel);
-
-    // Remove invisible lines
-    if (lastScrollProgress < newScrollProgress) {
-        auto it = std::find_if(_lines.rbegin(), _lines.rend(),
-                               [this](const std::shared_ptr<TextLine> &line) {
-                                   assert(line);
-                                   return isVisibleLine(*line.get());
-                               });
-        _lines.erase(it.base(), _lines.end());
-    } else {
-        auto it = std::find_if(_lines.begin(), _lines.end(),
-                               [this](const std::shared_ptr<TextLine> &line) {
-                                   assert(line);
-                                   return isVisibleLine(*line.get());
-                               });
-        _lines.erase(_lines.begin(), it);
-    }
-
-    // Add new lines
-    auto [newVisibleTextLayouts, count] = findVisibleTextLayouts();
-    if (_visibleTextLayouts.size() == 0) {
-        _visibleTextLayouts.insert(_visibleTextLayouts.end(), newVisibleTextLayouts,
-                                   newVisibleTextLayouts + count);
-    } else if (lastScrollProgress < newScrollProgress) {
-        assert(_visibleTextLayouts[0]);
-        auto targetTextLayout =
-            std::find(newVisibleTextLayouts, newVisibleTextLayouts + count, _visibleTextLayouts[0]);
-        const size_t countToCopy = static_cast<size_t>(targetTextLayout - newVisibleTextLayouts);
-        _visibleTextLayouts.insert(_visibleTextLayouts.begin(), newVisibleTextLayouts,
-                                   newVisibleTextLayouts + countToCopy);
-    } else {
-        for (size_t i = count - 1; i != 0; i--) {
-            auto textLayout = newVisibleTextLayouts[i];
-            assert(textLayout);
-            if (textLayout != _visibleTextLayouts[_visibleTextLayouts.size() - 1]) {
-                continue;
-            }
-            _visibleTextLayouts.insert(_visibleTextLayouts.end(), newVisibleTextLayouts + i,
-                                       newVisibleTextLayouts + count);
-            break;
-        }
-    }
-
-    std::shared_ptr<rendell_text::ITextBuffer> currentTextBuffer;
-    size_t offset = 0;
-    for (auto &textLayout : _visibleTextLayouts) {
-        while (true) {
-            const size_t remaining = currentTextBuffer->update(offset, textLayout);
-            if (remaining == 0) {
-                offset += textLayout->getTextLength();
-                break;
-            }
-            offset = 0;
-            // get nextTextBuffer;
-        }
-    }
-
-    const size_t visibleTextLength = std::accumulate(
-        _visibleTextLayouts.begin(), _visibleTextLayouts.end(), size_t(0),
-        [](size_t accum, const std::shared_ptr<rendell_text::ITextLayout> &textLayout) {
-            return accum + textLayout->getTextLength();
-        });
-    const size_t textBufferSize = 500;
-    const size_t textBufferCount = (visibleTextLength + textBufferSize - 1) / textBufferSize;
-
-    _textBuffers.resize(std::max(textBufferCount, _textBuffers.size()));
-    for (size_t i = 0; i < textBufferCount; i++) {
-        std::shared_ptr<rendell_text::ITextBuffer> &textBuffer = _textBuffers[i];
-        if (!textBuffer) {
-            textBuffer = rendell_text::createTextBuffer();
-        }
-        assert(textBuffer);
-        textBuffer->update(_textBuffer);
-    }
 }
 
 } // namespace rendell_ui

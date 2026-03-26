@@ -12,8 +12,7 @@ class IGlyphShaper;
 }
 
 namespace rendell_ui {
-class IFont;
-class ITextModel;
+class TextBuffer;
 
 class TextWidget final : public Widget {
 public:
@@ -39,13 +38,10 @@ private:
     std::shared_ptr<IFont> _font{};
     std::shared_ptr<rendell_text::IGlyphAtlasCache> _glyphAtlasCache{};
     std::vector<std::unique_ptr<rendell_text::ITextLayout>> _textLayouts{};
-    std::vector<std::shared_ptr<rendell_text::ITextRenderer>> _visibleTextLines{};
 
     rendell_text::FontInstance _fontInstance;
     std::shared_ptr<rendell_text::IGlyphShaper> _shaper;
-
-    std::shared_ptr<ITextModel> _textModel;
-    TextDrawer _textDrawer;
+    std::unique_ptr<TextBuffer> _textBuffer;
 };
 
 RENDELL_UI_DECLARE_WIDGET(TextWidget)
